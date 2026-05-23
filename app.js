@@ -1572,10 +1572,50 @@
     statusInfo.textContent = '已切換至 Explore 模式（瀏覽）';
   };
 
-  // 對齊文字至圖形：每個 text 物件對齊到包含它中心的最小形狀，啟用 word-wrap
+  // 對齊文字至圖形：每個 text 物件對齊到包含它中心的最小形狀，
+  // 自動縮小字級確保完整顯示
   $('#btn-fit-texts').onclick = () => doFitTextsToShapes();
+
+  // 實際測量 HTML 文字渲染高度（鏡像 buildTextNode 的 foreignObject 樣式）
+  // 用隱藏 div 暫時加入 DOM 取得 offsetHeight，再移除
+  function measureForeignTextHeight(text, fontFamily, fontSize, width) {
+    const div = document.createElement('div');
+    div.style.cssText = [
+      'position:fixed', 'left:-9999px', 'top:0', 'visibility:hidden',
+      `width:${width}px`,
+      `font-family:${fontFamily}`,
+      `font-size:${fontSize}px`,
+      'line-height:1.2',
+      'padding:1px 2px',
+      'white-space:pre-wrap',
+      'word-break:break-all',
+      'overflow-wrap:anywhere',
+      'box-sizing:border-box',
+    ].join(';');
+    div.textContent = String(text || '');
+    document.body.appendChild(div);
+    const h = div.offsetHeight;
+    document.body.removeChild(div);
+    return h;
+  }
+
+  // 二分搜尋：找出能讓文字完整裝進 (width × maxHeight) 的最大字級（上限為 currentFontSize）
+  function findFittingFontSize(text, fontFamily, currentFontSize, width, maxHeight) {
+    // 先以目前字級測量；若已裝得下，直接回傳（不放大）
+    const h0 = measureForeignTextHeight(text, fontFamily, currentFontSize, width);
+    if (h0 <= maxHeight) return currentFontSize;
+    // 太高 → 二分搜尋向下
+    let lo = 3, hi = currentFontSize;
+    for (let i = 0; i < 14; i++) {
+      if (hi - lo < 0.25) break;
+      const mid = (lo + hi) / 2;
+      const h = measureForeignTextHeight(text, fontFamily, mid, width);
+      if (h <= maxHeight) lo = mid; else hi = mid;
+    }
+    return Math.max(3, Math.floor(lo * 10) / 10);
+  }
+
   function doFitTextsToShapes() {
-    // 候選對象：若有選取就只處理選取的 text；否則處理畫布上所有 text
     let targets;
     if (state.selected.size > 0) {
       targets = Array.from(state.selected).map(findObj).filter((o) => o && o.type === 'text');
@@ -1588,40 +1628,38 @@
     }
     const shapes = state.objects.filter((o) => o.type !== 'text' && o.type !== 'image' && !o.ghostFor);
     let fitted = 0;
+    let shrunk = 0;
     targets.forEach((t) => {
       const cx = t.x + t.w / 2;
       const cy = t.y + t.h / 2;
-      // 找出所有包含 text 中心的形狀，取面積最小者（最緊密的容器）
       const containers = shapes.filter((s) => cx >= s.x && cx <= s.x + s.w && cy >= s.y && cy <= s.y + s.h);
       if (containers.length === 0) return;
       containers.sort((a, b) => (a.w * a.h) - (b.w * b.h));
       const c = containers[0];
 
-      // 小 padding（2%），避免過度縮小 bbox 造成內容被 overflow:hidden 裁切
-      // draw.io 原檔的 shape 與 text 尺寸常常幾乎相同，過大 padding 會直接吃掉文字
+      // 2% padding：保留少許邊距，避免文字緊貼邊框
       const pad = Math.max(2, Math.min(c.w, c.h) * 0.02);
       const interiorW = Math.max(20, c.w - pad * 2);
       const interiorH = Math.max(16, c.h - pad * 2);
 
-      // 估算當前字級下、interiorW 寬度內、容納 text 內容所需的最小高度
-      // 中文每字約 fontSize × 0.65 寬，行距 1.3
-      const charsPerLine = Math.max(1, Math.floor(interiorW / Math.max(4, t.fontSize * 0.65)));
-      const estLines = Math.ceil((String(t.text || '').length || 1) / charsPerLine);
-      const estHeight = estLines * t.fontSize * 1.3 + 4;
+      // 自動縮小字級至能完整裝進 bbox
+      const fontFamily = t.fontFamily || 'Tahoma, sans-serif';
+      const newFont = findFittingFontSize(String(t.text || ''), fontFamily, t.fontSize, interiorW, interiorH);
+      if (newFont < t.fontSize) shrunk += 1;
 
-      // bbox 高度取「容器內部」與「文字需求」的最大值，避免裁切
+      t.fontSize = newFont;
       t.x = c.x + pad;
       t.y = c.y + pad;
       t.w = interiorW;
-      t.h = Math.max(interiorH, estHeight);
-      t.useForeignObject = true;       // 強制啟用 word-wrap
+      t.h = interiorH;
+      t.useForeignObject = true;
       t.textAlign = 'center';
       t.textVAlign = 'middle';
       fitted += 1;
     });
     renderAll();
     pushHistory('對齊文字至圖形', `${fitted} 個文字`);
-    statusInfo.textContent = `已對齊 ${fitted} 個文字至所在圖形（共偵測 ${targets.length} 個文字、${shapes.length} 個圖形）`;
+    statusInfo.textContent = `已對齊 ${fitted} 個文字（其中 ${shrunk} 個自動縮小字級以完整顯示）`;
   }
 
   // 拆解匯入：把選取的 compound shape 展開為個別可編輯物件
@@ -1731,7 +1769,7 @@
         useForeignObject: true,
       });
       obj.fontFamily = fontFamily;
-      obj.fontSize = Math.max(6, fontSize * Math.min(sx, sy));
+      obj.fontSize = Math.max(3, fontSize * Math.min(sx, sy));
       obj.textColor = textColor;
       obj.fillEnabled = false;
       obj.strokeEnabled = false;
@@ -1805,7 +1843,7 @@
         useForeignObject: true,
       });
       obj.fontFamily = fontFamily.replace(/['"]/g, '') + ', sans-serif';
-      obj.fontSize = Math.max(6, fontSize * Math.min(sx, sy));
+      obj.fontSize = Math.max(3, fontSize * Math.min(sx, sy));
       obj.fontWeight = (fontWeight === 'bold' || parseInt(fontWeight, 10) >= 600) ? 'bold' : 'normal';
       obj.fontStyle = fontStyle === 'italic' ? 'italic' : 'normal';
       obj.textColor = fill;

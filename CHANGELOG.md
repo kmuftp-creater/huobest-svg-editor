@@ -7,7 +7,23 @@
 
 ---
 
-## v0.2.3（當前）
+## v0.2.4（當前）
+### 修正
+- **拆解時字級被強制放大導致溢出**：`decomposeCompound` 兩處的 `Math.max(6, fontSize × scale)` 把 4.5 px 級的小字硬拉到 6 px（+33%）。匯入大型 SVG 時 scale 通常 < 1，原本 12 px CSS 字級在畫面上實際只有 4.5 px 左右；放大 33% 之後原本能容納的文字裝不下、bbox 被 `overflow:hidden` 裁切。**修正**：下限改為 3，精確保留原始視覺尺寸。
+- **「對齊文字至圖形」改為自動測量 + 縮字級**：
+  - 新增 `measureForeignTextHeight`：用隱藏 div 鏡像 `buildTextNode` 的 foreignObject CSS（line-height、padding、word-break）實際渲染後讀 offsetHeight
+  - 新增 `findFittingFontSize`：先以目前字級測量；若超過 bbox 高，二分搜尋（最多 14 次迭代、精度 0.25 px）找出能完整裝進的最大字級
+  - 替換 v0.2.3 的「成長 bbox」策略：現在 bbox 嚴格等於 shape 內部，字級自動縮小到適配；不放大字級（避免文字突然變大）
+  - 統計欄位：狀態列顯示「對齊 N 個文字（其中 M 個自動縮小字級）」
+
+### 行為對照
+| 情境 | v0.2.3 | v0.2.4 |
+|---|---|---|
+| Shape 比文字大很多 | bbox = shape，字級不變 | bbox = shape，字級不變 |
+| Shape 與文字尺寸相同 | bbox 收縮 12% → 文字裁切 | bbox = shape，字級不變或微調 |
+| Shape 比文字小 | bbox 向下延伸超出 shape | bbox = shape，字級縮小至完整顯示 |
+
+## v0.2.3
 ### 修正
 - **「對齊文字至圖形」過度縮小導致文字裁切**：原本邏輯預設 shape 比 text 大很多、套用 6% padding。但 draw.io 原檔的 shape 與 foreignObject 尺寸常常幾乎相同，6% padding (寬高各減 12%) 把 bbox 縮小後文字裝不下 → 被 `overflow:hidden` 裁切。
   - **修正**：
