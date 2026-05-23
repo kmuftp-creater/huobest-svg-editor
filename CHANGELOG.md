@@ -7,7 +7,20 @@
 
 ---
 
-## v0.2.1（當前）
+## v0.2.2（當前）
+### 修正
+- **拆解後某些文字消失（如「跟進解法」標題）**：root cause 是 draw.io 對於粗體 / 大字級標題會用原生 SVG `<text>` 而非 foreignObject 渲染。原本 `decomposeCompound` 只走 foreignObject，這些 `<text>` 元素就被遺漏（compound 移除後它們也跟著消失）。
+  - **修正**：新增 `root.querySelectorAll('text')` 處理迴圈
+  - 繼承父層 `<g>` 的 `font-family / font-size / font-weight / font-style / fill / text-anchor` 屬性
+  - 累積父層所有 `translate(x,y)` transform
+  - 將 SVG `<text>` 的 baseline 錨點換算為 bbox 左上座標（x 依 text-anchor 取 start/middle/end 偏移、y 減去 fontSize 取得頂端）
+  - 寬高以「字數 × fontSize × 0.7」估算，配合 useForeignObject 啟用 word-wrap
+  - 跳過 foreignObject 內部的 text 避免重複抽取
+
+### 改進
+- **選 ghost 也能直接拆解**：原本只接受選取 compound shape，選到 ghost 文字會跳「未選取」對話框。改進為：選 ghost → 從 `ghostFor.compoundId` 找到其所屬 compound 直接拆解，省去多餘步驟。
+
+## v0.2.1
 ### 改進
 - **拆解匯入後文字溢出修正**：拆解時建立的 text 物件加上 `useForeignObject: true`，HTML word-wrap 自動換行，不會單行延伸出 bbox。
 - **拆解後狀態列加上 Ctrl+Z 提示**：明確告知使用者「不滿意可一鍵還原」。

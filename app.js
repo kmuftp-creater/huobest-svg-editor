@@ -1614,9 +1614,22 @@
   // 拆解匯入：把選取的 compound shape 展開為個別可編輯物件
   $('#btn-decompose').onclick = () => doDecompose();
   function doDecompose() {
-    const targets = Array.from(state.selected)
-      .map(findObj)
-      .filter((o) => o && o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported'));
+    const selectedObjs = Array.from(state.selected).map(findObj).filter(Boolean);
+    const targets = selectedObjs.filter((o) => o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported'));
+
+    // 若選取的是 ghost，自動找到其所屬 compound
+    if (targets.length === 0) {
+      const compoundIdsFromGhosts = new Set();
+      selectedObjs.forEach((o) => {
+        if (o.ghostFor && o.ghostFor.compoundId) compoundIdsFromGhosts.add(o.ghostFor.compoundId);
+      });
+      compoundIdsFromGhosts.forEach((cid) => {
+        const compound = findObj(cid);
+        if (compound) targets.push(compound);
+      });
+    }
+
+    // 仍沒有目標 → 詢問是否拆解全部
     if (targets.length === 0) {
       if (!confirm('未選取匯入的 compound shape。\n要嘗試拆解畫布上所有的匯入物件嗎？')) return;
       state.objects.forEach((o) => {
@@ -1711,6 +1724,82 @@
       obj.strokeEnabled = false;
       obj.textAlign = 'center';
       obj.textVAlign = 'middle';
+      obj.name = uid('text');
+      newObjs.push(obj);
+    });
+
+    // 二之二、處理原生 SVG <text> 元素
+    //    draw.io 對某些粗體 / 大字級標題會用 <text> 而非 foreignObject
+    //    必須單獨處理，否則拆解後這些文字會完全消失
+    root.querySelectorAll('text').forEach((el) => {
+      // 跳過 foreignObject 內部的 text（已由上方處理）
+      if (el.closest && el.closest('foreignObject')) return;
+      const text = (el.textContent || '').trim();
+      if (!text) return;
+
+      // 收集位置與樣式（包含父層 g 的繼承）
+      let x = parseFloat(el.getAttribute('x')) || 0;
+      let y = parseFloat(el.getAttribute('y')) || 0;
+      let fontFamily = el.getAttribute('font-family') || '';
+      let fontSize = parseFloat(el.getAttribute('font-size')) || 0;
+      let fontWeight = el.getAttribute('font-weight') || '';
+      let fontStyle = el.getAttribute('font-style') || '';
+      let fill = el.getAttribute('fill') || '';
+      let textAnchor = el.getAttribute('text-anchor') || '';
+
+      let p = el.parentNode;
+      while (p && p !== root && p.getAttribute) {
+        if (!fontFamily) fontFamily = p.getAttribute('font-family') || '';
+        if (!fontSize) {
+          const fsAttr = p.getAttribute('font-size');
+          if (fsAttr) fontSize = parseFloat(fsAttr) || 0;
+        }
+        if (!fontWeight) fontWeight = p.getAttribute('font-weight') || '';
+        if (!fontStyle) fontStyle = p.getAttribute('font-style') || '';
+        if (!fill) fill = p.getAttribute('fill') || '';
+        if (!textAnchor) textAnchor = p.getAttribute('text-anchor') || '';
+        // 累積父層的 translate transform
+        const tr = p.getAttribute('transform');
+        if (tr) {
+          const m = /translate\(\s*([-\d.]+)[ ,]+([-\d.]+)\s*\)/.exec(tr);
+          if (m) { x += parseFloat(m[1]); y += parseFloat(m[2]); }
+        }
+        p = p.parentNode;
+      }
+
+      // 預設值
+      if (!fontFamily) fontFamily = 'Tahoma, sans-serif';
+      if (!fontSize) fontSize = 16;
+      if (!fill) fill = '#000000';
+
+      // text-anchor → 我的 textAlign 映射 + bbox 左上計算
+      // SVG <text> 的 x, y 是「baseline 錨點」，需轉換成 bbox 左上
+      let textAlign = 'left';
+      const estWidth = Math.max(40, text.length * fontSize * 0.7);
+      const estHeight = fontSize * 1.4;
+      let bboxX;
+      if (textAnchor === 'middle') { textAlign = 'center'; bboxX = x - estWidth / 2; }
+      else if (textAnchor === 'end') { textAlign = 'right'; bboxX = x - estWidth; }
+      else { bboxX = x; }
+      const bboxY = y - fontSize;
+
+      const obj = createObject('text', {
+        x: (bboxX - vb.x) * sx + ox,
+        y: (bboxY - vb.y) * sy + oy,
+        w: estWidth * sx,
+        h: estHeight * sy,
+        text,
+        useForeignObject: true,
+      });
+      obj.fontFamily = fontFamily.replace(/['"]/g, '') + ', sans-serif';
+      obj.fontSize = Math.max(6, fontSize * Math.min(sx, sy));
+      obj.fontWeight = (fontWeight === 'bold' || parseInt(fontWeight, 10) >= 600) ? 'bold' : 'normal';
+      obj.fontStyle = fontStyle === 'italic' ? 'italic' : 'normal';
+      obj.textColor = fill;
+      obj.textAlign = textAlign;
+      obj.textVAlign = 'middle';
+      obj.fillEnabled = false;
+      obj.strokeEnabled = false;
       obj.name = uid('text');
       newObjs.push(obj);
     });
