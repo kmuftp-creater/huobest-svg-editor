@@ -1230,7 +1230,8 @@
       if (items.length === 0) return;
       const d = document.createElement('details');
       d.className = 'shape-group';
-      if (idx < 3 || f) d.open = true;
+      // 預設只展開「一般」分類；搜尋時所有命中分類都展開
+      if (idx === 0 || f) d.open = true;
       d.innerHTML = `<summary>${cat.cat}</summary><div class="shape-grid"></div>`;
       const grid = d.querySelector('.shape-grid');
       items.forEach((shape) => {

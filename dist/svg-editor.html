@@ -2,8 +2,8 @@
 <!--
   ============================================================
    霍家私塾 SVG 編輯器（HuoBest SVG Editor）
-   版本：v0.2.4
-   建置時間：2026-05-23 10:59:27
+   版本：v0.2.5
+   建置時間：2026-05-23 12:04:05
    官方網站：https://huobest.com/
    授權：MIT License
   ============================================================
@@ -371,6 +371,13 @@ body[data-theme='dark'] .theme-ico {
 }
 .zoom-controls { display: flex; align-items: center; gap: 4px; }
 .zoom-value { min-width: 48px; text-align: center; color: var(--text-sub); font-variant-numeric: tabular-nums; }
+/* 縮放控制列中含文字的按鈕：自動寬度 + nowrap，避免 2 字中文「符合」被擠成直書 */
+.zoom-controls .tool {
+  min-width: 32px;
+  width: auto;
+  padding: 0 10px;
+  white-space: nowrap;
+}
 
 .canvas-host {
   flex: 1;
@@ -509,16 +516,16 @@ body[data-theme='dark'] .theme-ico {
 /* 文字內容編輯區 */
 .text-content-input {
   width: 100%;
-  min-height: 64px;
-  max-height: 200px;
-  padding: 8px 10px;
+  min-height: 140px;
+  max-height: 420px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--r-btn);
   background: var(--surface);
   color: var(--text-main);
   font-family: var(--font-base);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   resize: vertical;
   outline: none;
   box-sizing: border-box;
@@ -910,17 +917,18 @@ body[data-theme='dark'] .theme-ico {
 
 </style>
   <script>
-    /* 預設主題：依使用者偏好持久化 / 系統 prefers-color-scheme */
+    /* 預設主題：以使用者持久化偏好為主，未設定時預設暗色 */
     (function () {
       try {
         const saved = localStorage.getItem('svgeditor-theme');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = saved || (prefersDark ? 'dark' : 'light');
+        const theme = saved || 'dark';
         document.documentElement.dataset.bootTheme = theme;
         document.addEventListener('DOMContentLoaded', () => {
           document.body.dataset.theme = theme;
         });
-      } catch (e) {}
+      } catch (e) {
+        document.documentElement.dataset.bootTheme = 'dark';
+      }
     })();
   </script>
 </head>
@@ -1072,7 +1080,7 @@ body[data-theme='dark'] .theme-ico {
           <div class="form-row">
             <label class="check"><input type="checkbox" id="fill-enable" checked /><span>填滿</span></label>
             <select class="select" id="fill-mode">
-              <option value="solid">Auto</option>
+              <option value="solid">自動</option>
               <option value="none">無</option>
             </select>
             <div class="color-pick">
@@ -1217,7 +1225,7 @@ body[data-theme='dark'] .theme-ico {
             <label class="check"><input type="checkbox" id="text-format" checked /><span>格式化文字</span></label>
           </div>
           <div class="form-row">
-            <label class="check"><input type="checkbox" id="text-to-path" /><span>Convert labels to SVG</span></label>
+            <label class="check"><input type="checkbox" id="text-to-path" /><span>將文字轉為向量</span></label>
           </div>
 
           <div class="form-row labeled">
@@ -1293,7 +1301,7 @@ body[data-theme='dark'] .theme-ico {
           </div>
 
           <div class="section-title">對齊</div>
-          <button class="btn-block" id="snap-grid">Snap to Grid</button>
+          <button class="btn-block" id="snap-grid">對齊網格</button>
           <button class="btn-block" id="btn-group">群組</button>
           <button class="btn-block" id="btn-duplicate">複製大小</button>
           <div class="form-row">
@@ -1305,7 +1313,7 @@ body[data-theme='dark'] .theme-ico {
             </select>
           </div>
           <button class="btn-block" id="btn-lock">鎖定 / 解鎖</button>
-          <button class="btn-block" id="btn-explore">Explore</button>
+          <button class="btn-block" id="btn-explore">瀏覽模式</button>
 
           <div class="section-title">匯入內容</div>
           <button class="btn-block" id="btn-decompose" title="將匯入的 SVG 拆解為個別可編輯物件">拆解匯入（個別編輯）</button>
@@ -1382,9 +1390,46 @@ body[data-theme='dark'] .theme-ico {
         <h3>進階操作</h3>
         <ul>
           <li><strong>智慧對齊</strong>：拖曳物件接近其他物件邊界 / 中線時自動吸附並顯示粉紅輔助線（按 Alt 暫停）。</li>
-          <li><strong>框選</strong>：在空白處按下拖曳即可框選多物件，Shift+框選可加入既有選取。</li>
-          <li><strong>群組</strong>：選取多物件後 Ctrl+G 建立群組，點擊任一成員即整組選取；Ctrl+Shift+G 解散。</li>
-          <li><strong>清除畫布</strong>：頂部「清除」按鈕一鍵清空（可 Ctrl+Z 還原）。</li>
+          <li><strong>框選</strong>：在空白處按下拖曳即可框選多物件，Shift + 框選可加入既有選取。</li>
+          <li><strong>群組</strong>：選取多物件後 Ctrl + G 建立群組，點擊任一成員即整組選取；Ctrl + Shift + G 解散。</li>
+          <li><strong>清除畫布</strong>：頂部「清除」按鈕一鍵清空（可 Ctrl + Z 還原）。</li>
+        </ul>
+
+        <h3>調整面板功能</h3>
+        <h4 style="margin:10px 0 4px;font-size:12px;color:var(--text-sub);">圖層次序</h4>
+        <ul>
+          <li><strong>移動到最上層 / 最下層</strong>：將選取物件移至所有物件的最前 / 最後。</li>
+          <li><strong>上移一層 / 下移一層</strong>：與上 / 下方相鄰物件交換次序。</li>
+        </ul>
+
+        <h4 style="margin:10px 0 4px;font-size:12px;color:var(--text-sub);">尺寸與位置</h4>
+        <ul>
+          <li><strong>大小（寬 / 高）</strong>：直接輸入數值精準調整尺寸。</li>
+          <li><strong>限制寬高比</strong>：勾選後拖角控點維持原始長寬比；不勾選時可自由縮放。</li>
+          <li><strong>位置（左 / 上）</strong>：物件左上角的 X / Y 座標。</li>
+        </ul>
+
+        <h4 style="margin:10px 0 4px;font-size:12px;color:var(--text-sub);">旋轉與翻轉</h4>
+        <ul>
+          <li><strong>角度</strong>：以物件中心為軸的旋轉角度（度）。</li>
+          <li><strong>旋轉 90°</strong>：一鍵順時針旋轉 90 度。</li>
+          <li><strong>水平 / 垂直翻轉</strong>：以物件中心為軸鏡像反轉。</li>
+        </ul>
+
+        <h4 style="margin:10px 0 4px;font-size:12px;color:var(--text-sub);">對齊與群組</h4>
+        <ul>
+          <li><strong>對齊網格</strong>：開啟後物件移動時自動吸附至 10px 網格交點。</li>
+          <li><strong>群組</strong>：將選取的多個物件視為單一單元；點任一成員整組選取。</li>
+          <li><strong>複製大小</strong>：建立選取物件的副本（位置略偏移）。</li>
+          <li><strong>重設…</strong>：恢復位置 / 大小 / 旋轉為預設值。</li>
+          <li><strong>鎖定 / 解鎖</strong>：鎖定後物件無法被移動 / 縮放，避免誤觸。</li>
+          <li><strong>瀏覽模式</strong>：切換至預覽模式（暫不支援編輯）。</li>
+        </ul>
+
+        <h4 style="margin:10px 0 4px;font-size:12px;color:var(--text-sub);">匯入內容</h4>
+        <ul>
+          <li><strong>拆解匯入</strong>：將 draw.io 匯入的 compound shape 展開為個別可編輯物件（rect / ellipse / path / text）。</li>
+          <li><strong>對齊文字至圖形</strong>：拆解後若文字與圖形位置 / 尺寸不一致，可一鍵自動將每個文字對齊到其所在的形狀內部，必要時自動縮小字級確保完整顯示。</li>
         </ul>
       </div>
     </div>
@@ -1395,7 +1440,7 @@ body[data-theme='dark'] .theme-ico {
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.2.4</span>
+    <span>系統版本 v0.2.5</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
@@ -1435,8 +1480,8 @@ const SHAPES = [
     { id: 'cloud', name: '雲朵', svg: `<path d="M22 38 Q12 38 14 28 Q14 20 24 20 Q26 12 36 14 Q44 8 54 14 Q66 12 70 22 Q80 22 80 30 Q86 32 84 40 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
     { id: 'document', name: '文件', svg: `<path d="M6 14 H94 V42 Q72 50 50 42 Q28 34 6 42 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
     { id: 'callout', name: '對話框', svg: `<path d="M6 14 H94 V40 H58 L50 50 L46 40 H6 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
-    { id: 'text-only', name: '文字', svg: `<text x="50" y="38" text-anchor="middle" font-size="20" fill="currentColor" font-family="Inter">Text</text>` },
-    { id: 'heading', name: '標題', svg: `<text x="50" y="36" text-anchor="middle" font-size="18" fill="currentColor" font-weight="700" font-family="Inter">Heading</text>` },
+    { id: 'text-only', name: '文字', svg: `<text x="50" y="38" text-anchor="middle" font-size="20" fill="currentColor" font-family="'Noto Sans TC', sans-serif">文字</text>` },
+    { id: 'heading', name: '標題', svg: `<text x="50" y="36" text-anchor="middle" font-size="18" fill="currentColor" font-weight="700" font-family="'Noto Sans TC', sans-serif">標題</text>` },
   ]},
 
   /* ============ 基本圖形（純幾何） ============ */
@@ -2747,7 +2792,8 @@ if (typeof window !== 'undefined') {
       if (items.length === 0) return;
       const d = document.createElement('details');
       d.className = 'shape-group';
-      if (idx < 3 || f) d.open = true;
+      // 預設只展開「一般」分類；搜尋時所有命中分類都展開
+      if (idx === 0 || f) d.open = true;
       d.innerHTML = `<summary>${cat.cat}</summary><div class="shape-grid"></div>`;
       const grid = d.querySelector('.shape-grid');
       items.forEach((shape) => {

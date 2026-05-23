@@ -31,8 +31,8 @@ const SHAPES = [
     { id: 'cloud', name: '雲朵', svg: `<path d="M22 38 Q12 38 14 28 Q14 20 24 20 Q26 12 36 14 Q44 8 54 14 Q66 12 70 22 Q80 22 80 30 Q86 32 84 40 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
     { id: 'document', name: '文件', svg: `<path d="M6 14 H94 V42 Q72 50 50 42 Q28 34 6 42 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
     { id: 'callout', name: '對話框', svg: `<path d="M6 14 H94 V40 H58 L50 50 L46 40 H6 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
-    { id: 'text-only', name: '文字', svg: `<text x="50" y="38" text-anchor="middle" font-size="20" fill="currentColor" font-family="Inter">Text</text>` },
-    { id: 'heading', name: '標題', svg: `<text x="50" y="36" text-anchor="middle" font-size="18" fill="currentColor" font-weight="700" font-family="Inter">Heading</text>` },
+    { id: 'text-only', name: '文字', svg: `<text x="50" y="38" text-anchor="middle" font-size="20" fill="currentColor" font-family="'Noto Sans TC', sans-serif">文字</text>` },
+    { id: 'heading', name: '標題', svg: `<text x="50" y="36" text-anchor="middle" font-size="18" fill="currentColor" font-weight="700" font-family="'Noto Sans TC', sans-serif">標題</text>` },
   ]},
 
   /* ============ 基本圖形（純幾何） ============ */

@@ -348,6 +348,13 @@ body[data-theme='dark'] .theme-ico {
 }
 .zoom-controls { display: flex; align-items: center; gap: 4px; }
 .zoom-value { min-width: 48px; text-align: center; color: var(--text-sub); font-variant-numeric: tabular-nums; }
+/* 縮放控制列中含文字的按鈕：自動寬度 + nowrap，避免 2 字中文「符合」被擠成直書 */
+.zoom-controls .tool {
+  min-width: 32px;
+  width: auto;
+  padding: 0 10px;
+  white-space: nowrap;
+}
 
 .canvas-host {
   flex: 1;
@@ -486,16 +493,16 @@ body[data-theme='dark'] .theme-ico {
 /* 文字內容編輯區 */
 .text-content-input {
   width: 100%;
-  min-height: 64px;
-  max-height: 200px;
-  padding: 8px 10px;
+  min-height: 140px;
+  max-height: 420px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--r-btn);
   background: var(--surface);
   color: var(--text-main);
   font-family: var(--font-base);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   resize: vertical;
   outline: none;
   box-sizing: border-box;
