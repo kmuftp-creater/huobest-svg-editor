@@ -9,7 +9,13 @@
 
 ## 線上 Demo
 
-> 部署完成後此處填入連結
+**直接使用（多檔版本）**：
+https://kmuftp-creater.github.io/huobest-svg-editor/
+
+**單檔下載（離線使用）**：
+https://kmuftp-creater.github.io/huobest-svg-editor/dist/svg-editor.html
+
+下載單檔後雙擊即可使用，無需安裝、無依賴。可放隨身碟、寄給朋友、上傳至內部網路。
 
 ## 一、快速開始
 
