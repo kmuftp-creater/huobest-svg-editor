@@ -7,7 +7,16 @@
 
 ---
 
-## v0.2.2（當前）
+## v0.2.3（當前）
+### 修正
+- **「對齊文字至圖形」過度縮小導致文字裁切**：原本邏輯預設 shape 比 text 大很多、套用 6% padding。但 draw.io 原檔的 shape 與 foreignObject 尺寸常常幾乎相同，6% padding (寬高各減 12%) 把 bbox 縮小後文字裝不下 → 被 `overflow:hidden` 裁切。
+  - **修正**：
+    - padding 由 6% 降為 2%
+    - bbox 高度取「容器內部高度」與「文字內容估算需求高度」的最大值
+    - 估算公式：`charsPerLine = floor(width / (fontSize × 0.65))`、`lines = ceil(text.length / charsPerLine)`、`needHeight = lines × fontSize × 1.3 + 4`
+  - 結果：shape 夠大 → 文字置中、含 word-wrap；shape 太小 → bbox 自動向下延伸以完整顯示文字（保留 draw.io overflow:visible 的視覺行為）
+
+## v0.2.2
 ### 修正
 - **拆解後某些文字消失（如「跟進解法」標題）**：root cause 是 draw.io 對於粗體 / 大字級標題會用原生 SVG `<text>` 而非 foreignObject 渲染。原本 `decomposeCompound` 只走 foreignObject，這些 `<text>` 元素就被遺漏（compound 移除後它們也跟著消失）。
   - **修正**：新增 `root.querySelectorAll('text')` 處理迴圈

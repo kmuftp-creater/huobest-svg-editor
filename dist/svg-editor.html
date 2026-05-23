@@ -2,8 +2,8 @@
 <!--
   ============================================================
    霍家私塾 SVG 編輯器（HuoBest SVG Editor）
-   版本：v0.2.2
-   建置時間：2026-05-23 10:21:47
+   版本：v0.2.3
+   建置時間：2026-05-23 10:46:18
    官方網站：https://huobest.com/
    授權：MIT License
   ============================================================
@@ -1395,7 +1395,7 @@ body[data-theme='dark'] .theme-ico {
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.2.2</span>
+    <span>系統版本 v0.2.3</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
@@ -3113,11 +3113,24 @@ if (typeof window !== 'undefined') {
       if (containers.length === 0) return;
       containers.sort((a, b) => (a.w * a.h) - (b.w * b.h));
       const c = containers[0];
-      const pad = Math.max(4, Math.min(c.w, c.h) * 0.06);
+
+      // 小 padding（2%），避免過度縮小 bbox 造成內容被 overflow:hidden 裁切
+      // draw.io 原檔的 shape 與 text 尺寸常常幾乎相同，過大 padding 會直接吃掉文字
+      const pad = Math.max(2, Math.min(c.w, c.h) * 0.02);
+      const interiorW = Math.max(20, c.w - pad * 2);
+      const interiorH = Math.max(16, c.h - pad * 2);
+
+      // 估算當前字級下、interiorW 寬度內、容納 text 內容所需的最小高度
+      // 中文每字約 fontSize × 0.65 寬，行距 1.3
+      const charsPerLine = Math.max(1, Math.floor(interiorW / Math.max(4, t.fontSize * 0.65)));
+      const estLines = Math.ceil((String(t.text || '').length || 1) / charsPerLine);
+      const estHeight = estLines * t.fontSize * 1.3 + 4;
+
+      // bbox 高度取「容器內部」與「文字需求」的最大值，避免裁切
       t.x = c.x + pad;
       t.y = c.y + pad;
-      t.w = Math.max(20, c.w - pad * 2);
-      t.h = Math.max(16, c.h - pad * 2);
+      t.w = interiorW;
+      t.h = Math.max(interiorH, estHeight);
       t.useForeignObject = true;       // 強制啟用 word-wrap
       t.textAlign = 'center';
       t.textVAlign = 'middle';
