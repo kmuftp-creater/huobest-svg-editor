@@ -228,20 +228,179 @@ compound.shapeSvg = html;
 - v0.1.0 的關鍵突破來自使用者提示：「之前的版本文字都在框內」
 - 提醒：「曾經正確的」狀態值得保留並基於它改進，而非全盤重來
 
-## 九、踩過的坑（紀錄供未來避免）
+## 九、打包工具的詭異 bug（v0.1.2）
+
+### 使用者反饋
+單檔版 `svg-editor.html` 開啟後「開啟」按鈕沒反應、其他按鈕也都失效。
+
+### Root Cause
+`build.js` 用 `String.prototype.replace(regex, replacementStr)` 內聯 app.js。replace 的第二參數是**字串**時，JavaScript 把替換字串中的特殊字元解讀為正則回溯：
+
+| 字串 | 解讀為 |
+|---|---|
+| `$$` | 字面 `$`（吃掉一個） |
+| `$&` | 整段匹配 |
+| `` $` `` | 匹配之前的文字 |
+| `$'` | 匹配之後的文字 |
+| `$n` | 第 n 個分組 |
+
+app.js 內有 14 處 `$$`（querySelectorAll 短記法 `const $$ = sel => ...`），全部被吃成 `$`：
+- `const $$ = ...` → `const $ = ...`（覆寫原本的 `$`）
+- `$$('.tool').forEach(...)` → `$('.tool').forEach(...)`（querySelector 不回傳陣列）
+- 第一個 `.forEach is not a function` 例外中斷整個 IIFE
+
+所有後續事件綁定（包括「開啟」按鈕）都未執行 → 整個應用「死寂」。
+
+### 修正
+build.js 改用 replace 的**函式回呼**形式：
+```js
+.replace(regex, () => replacementStr)  // 回呼回傳的字串不會被解讀特殊字元
+```
+加入「`$$` 個數一致」驗證，避免未來再次踩到。
+
+### 教訓
+**處理使用者代碼時，避免 `String.prototype.replace` 的字串第二參數。** 永遠用函式回呼或 `String.prototype.replaceAll`（仍需 ES2021+）。
+
+## 十、畫布捲動 & ghost 跟隨（v0.1.3）
+
+### 反饋 1：放大後左側被吃掉
+flex `justify-content: center` 在子元素超過容器時，**start 端不可達**（捲動條卡在 0 但內容已被推出視窗）。
+
+### 修正
+```css
+align-items: safe center;
+justify-content: safe center;
+```
+`safe` 關鍵字：放得下時置中、超出時降為 start 對齊。
+
+### 反饋 2：compound 縮放時 ghost 不跟隨
+compound shape 縮放時，內部 foreignObject 跟著 compound 變形（瀏覽器原生渲染），但獨立的 ghost 物件位置不變 → 視覺與 hit-test 區域脫鉤。
+
+### 修正
+- pointerdown 時 `captureGhostsForCompounds` 記錄所有 ghost 原始狀態
+- pointermove (move) 套用相同 dx, dy
+- pointermove (resize) 計算 sx, sy 對 ghost 相對位置與字級等比變換
+
+## 十一、拆解匯入功能演進（v0.2.0 ~ v0.2.4）
+
+### v0.2.0 — 初版實作
+反饋：「圖層只有 svg-XX + N 個 text-XX，個別形狀不能單獨操作」。
+
+新增「拆解匯入」按鈕：把 compound 展開為 N 個獨立物件（rect / ellipse / path / text）。
+
+同時補：
+- Ghost 選取時隱藏縮放控點（紫色虛線框 + 不顯示 handle）
+- 文字 `\n` 換行：用 `<br>` 元素注入 foreignObject
+
+### v0.2.1 — 拆解後排版補強
+拆解後文字（單行 SVG `<text>`）長中文句溢出。改用 `useForeignObject: true`，HTML word-wrap 自動換行。
+
+新增「對齊文字至圖形」按鈕：找出每個 text 中心點所在的最緊密形狀，自動對齊 bbox。
+
+### v0.2.2 — 找回失蹤的文字
+反饋：拆解後「跟進解法」標題消失。
+
+Root cause：draw.io 對**粗體 / 大字級標題**使用原生 SVG `<text>` 而非 foreignObject 渲染：
+```html
+<g fill="#FF8000" font-family="Tahoma" font-weight="bold" font-size="60px">
+  <text x="1204" y="822">跟進解法</text>
+</g>
+```
+
+原本 `decomposeCompound` 只處理 foreignObject，這些原生 text 被遺漏 → compound 移除後文字徹底消失。
+
+修正：新增 `querySelectorAll('text')` 處理迴圈，繼承父層 `<g>` 的 font / fill / text-anchor 屬性，累積父層 translate transform，將 baseline 錨點換算為 bbox 左上座標。
+
+附帶 UX 改進：選取 ghost 後按拆解匯入，自動找到所屬 compound 直接拆解。
+
+### v0.2.3 — 對齊不過度縮小
+反饋：對齊後文字被裁切。
+
+Root cause：原邏輯預設 shape 比 text 大很多、padding 取 6%。但 draw.io 內 shape 與 foreignObject 尺寸常幾乎相同，6% padding (寬高各減 12%) 把 bbox 縮小後文字裝不下 → `overflow:hidden` 裁切。
+
+修正：padding 6% → 2%，bbox 高度取 max(shape 內部高, 文字需求高)。
+
+### v0.2.4 — 終極解：自動縮字級
+反饋：「拆解後文字變大，封裝沒有縮小」。
+
+Root cause（兩層）：
+1. `decomposeCompound` 兩處 `Math.max(6, fontSize × scale)` 把 4.5 px 小字硬拉到 6 px（+33%），原本能容納的文字裝不下
+2. 「對齊文字至圖形」未調整字級，shape 變小時文字溢出
+
+修正：
+1. 字級下限 6 → 3，精確保留原始視覺尺寸
+2. 「對齊文字至圖形」改為實測 + 縮字級：
+   - `measureForeignTextHeight`：用隱藏 div 鏡像 foreignObject CSS（line-height、padding、word-break）實際渲染後讀 `offsetHeight`
+   - `findFittingFontSize`：先用目前字級測量；若超過 bbox 高，二分搜尋（最多 14 次迭代、精度 0.25 px）找出能完整裝進的最大字級
+3. bbox 嚴格等於 shape 內部，字級縮小確保不裁切（不放大）
+
+### 教訓
+- **不要靠估算公式預測 HTML 文字渲染尺寸**，實測才準確
+- **字級下限要保守**（原本 6 px 看似合理但對小型 SVG 已過大）
+- **複合修正要驗證**：v0.2.3 看似修了卻沒修，因為沒解決字級膨脹的根因
+
+## 十二、UX 收尾（v0.2.5 ~ v0.2.6）
+
+### v0.2.5
+反饋：
+- 說明 Modal 沒有「調整」面板的功能說明
+- 文字內容 textarea 太小
+- 部分 UI 還是英文（Auto / Convert labels to SVG / Snap to Grid / Explore）
+- 形狀庫預設展開三個分類太多
+- 預設亮色不符合使用情境
+- 「符合」按鈕變直書
+
+修正：
+- 說明 Modal 加入「調整面板功能」整段（5 個子段落）
+- textarea min-height 64 → 140
+- 全面中文化（Auto → 自動、Convert → 將文字轉為向量、Snap → 對齊網格、Explore → 瀏覽模式、Text → 文字、Heading → 標題）
+- 形狀庫只展開「一般」（其他預設收摺）
+- 預設改為暗色主題（不再隨 OS 偏好）
+- 「符合」直書修正：`.zoom-controls .tool { width: auto; padding: 0 10px; white-space: nowrap; }`
+
+### v0.2.6 — 補漏
+反饋：物件樣式面板的 `Sketch` 沒翻。
+
+修正：`Sketch` → `草圖`。
+
+## 十三、踩過的坑（更新版）
 
 | 問題 | 嘗試方案 | 結果 | 最終解 |
 |---|---|---|---|
 | draw.io 文字看不到 | 抽取 foreignObject 內容成獨立物件 | 文字溢出 bbox | Ghost + 保留 compound 內 foreignObject |
-| 文字重疊 | widthBoost 放大 bbox | bbox 互相侵入 | 不放大，接受 < 8px 字級 |
+| 文字重疊 | widthBoost 放大 bbox | bbox 互相侵入 | 不放大，接受小字級 |
 | 文字編輯失效 | — | text 物件沒命中區 | 加透明 hit-test rect |
-| 編輯後畫面消失 | createElement('div') 解析 | gradient 元素小寫化 | DOMParser + image/svg+xml |
+| 編輯後畫面消失 | createElement('div') 解析 SVG | gradient 元素小寫化 | DOMParser + image/svg+xml |
 | Textarea 失焦 | renderAll 後重設 value | 游標重置 | 檢查 activeElement、debounce 重序列化 |
+| 單檔版按鈕無反應 | `String.replace(re, str)` 內聯 | `$$` 被吞 → IIFE 中斷 | replace 改用函式回呼 |
+| 放大後左側不可達 | flex `justify-content: center` | start 端被推出視窗 | `safe center` 關鍵字 |
+| compound 縮放 ghost 不跟 | 預設物件獨立 | 視覺與 hit-test 脫鉤 | drag 起始時捕捉 ghost 原始狀態，move/resize 同步變換 |
+| 拆解後「跟進解法」消失 | 只處理 foreignObject | 漏掉原生 `<text>` | 額外 querySelectorAll('text')，繼承父層樣式 |
+| 對齊後文字裁切 | padding 6% 一律縮 bbox | 文字裝不下 | padding 2%、bbox 高度動態決定 |
+| 拆解後文字變大 | `Math.max(6, ...)` 拉高字級 | 文字溢出 | 字級下限改 3、對齊時實測 + 二分縮字級 |
+| 「符合」直書 | `width: 32px` 容不下 2 字 | 瀏覽器拆行 | 縮放列按鈕 `width: auto; nowrap` |
 
-## 十、未實作但 PRD 提及（後續排程）
+## 十四、未實作但 PRD 提及（後續排程）
 - Google Fonts 雲端整合
 - PWA 離線支援
 - 路徑節點 > 1000 時切 Canvas 渲染
 - 完整鋼筆工具（錨點 + 把手編輯）
 
 詳見 `05-roadmap.md`。
+
+## 十五、整體開發節奏觀察
+
+從 v0.0.1 到 v0.2.6 共 **20 個版本**、約 **60 個任務**。可分為三個階段：
+
+| 階段 | 版本 | 主軸 | 關鍵突破 |
+|---|---|---|---|
+| **建構期** | v0.0.1 ~ v0.0.5 | 從零搭起 MVP + 第一輪 UX | 三大屬性面板、初步 draw.io 支援 |
+| **困難期** | v0.0.6 ~ v0.0.8 | 文字溢出三連敗 | 連續三版本嘗試自繪文字失敗，逼出架構重設計需求 |
+| **架構期** | v0.1.0 ~ v0.1.3 | Ghost 物件架構落地 | 接受「無法重繪 foreignObject」前提，視覺與編輯解耦 |
+| **功能期** | v0.2.0 ~ v0.2.6 | 拆解 / 對齊 / 中文化 / 部署 | 真正可用的編輯能力 + 上線 |
+
+### 反思
+1. **使用者一句話勝過工程師十次嘗試**：v0.1.0 的關鍵突破來自使用者一句「之前版本文字都在框內」。
+2. **不要在錯誤前提上修補**：v0.0.6 ~ v0.0.8 三次嘗試都失敗，因為前提「自繪 foreignObject 內容」本身錯誤。
+3. **實測勝過估算**：v0.2.4 把字級估算改為實測，一次到位。
+4. **小細節影響大體驗**：v0.2.5 ~ v0.2.6 全是 UX 收尾（中文化、暗色、按鈕直書），但這些是使用者直接感受的差異。
