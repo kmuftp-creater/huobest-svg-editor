@@ -85,26 +85,31 @@ function build() {
   ============================================================
 -->\n`;
 
-  // 4. 內聯 CSS
+  // 4. 內聯 CSS、shapes.js、app.js
+  // 重要：必須用「函式回呼」當 replace 的第二參數，否則替換字串中的
+  //   $$ 會被解讀為字面 $（吃掉一個 $）
+  //   $&、$`、$' 會被解讀為匹配的部分
+  // 例如 app.js 內的 const $$ = ... 會被破壞成 const $ = ...
   let bundled = html.replace(
     /<link rel="stylesheet" href="styles\.css"\s*\/?>/,
-    `<style>\n/* === styles.css === */\n${css}\n</style>`
+    () => `<style>\n/* === styles.css === */\n${css}\n</style>`
   );
 
   // 5. 內聯 shapes.js（順序：shapes 必須先於 app）
   bundled = bundled.replace(
     /<script src="shapes\.js"><\/script>/,
-    `<script>\n/* === shapes.js === */\n${shapes}\n</script>`
+    () => `<script>\n/* === shapes.js === */\n${shapes}\n</script>`
   );
 
   // 6. 內聯 app.js
   bundled = bundled.replace(
     /<script src="app\.js"><\/script>/,
-    `<script>\n/* === app.js === */\n${app}\n</script>`
+    () => `<script>\n/* === app.js === */\n${app}\n</script>`
   );
 
   // 7. 加上建置標頭（緊接 <!DOCTYPE html> 之後）
-  bundled = bundled.replace(/^(<!DOCTYPE[^>]+>\s*)/, `$1${buildHeader}`);
+  //    這裡可繼續用字串模式，因 buildHeader 不含 $ 特殊字元
+  bundled = bundled.replace(/^(<!DOCTYPE[^>]+>\s*)/, (match) => match + buildHeader);
 
   // 8. 寫入 dist
   if (!fs.existsSync(DIST)) {
@@ -114,12 +119,17 @@ function build() {
   const outputPath = path.join(DIST, OUTPUT_NAME);
   fs.writeFileSync(outputPath, bundled);
 
-  // 9. 驗證：檢查替換是否成功
+  // 9. 驗證：檢查替換是否成功 + 完整性比對
+  // 透過原始檔內的特徵字串確認內容未被 $$ / $& 等字元污染
   const checks = {
     '內聯 CSS': !bundled.includes('href="styles.css"') && bundled.includes('/* === styles.css === */'),
     '內聯 shapes.js': !bundled.includes('src="shapes.js"') && bundled.includes('/* === shapes.js === */'),
     '內聯 app.js': !bundled.includes('src="app.js"') && bundled.includes('/* === app.js === */'),
   };
+  // 完整性檢查：app.js 內的 $$ 與 $() 個數必須與 bundle 內一致
+  const appDoubleDollar = (app.match(/\$\$/g) || []).length;
+  const bundleDoubleDollar = (bundled.match(/\$\$/g) || []).length;
+  checks['$$ 個數一致 (' + appDoubleDollar + '→' + bundleDoubleDollar + ')'] = appDoubleDollar === bundleDoubleDollar;
   let allPass = true;
   console.log('驗證：');
   Object.entries(checks).forEach(([name, pass]) => {

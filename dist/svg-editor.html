@@ -2,8 +2,8 @@
 <!--
   ============================================================
    霍家私塾 SVG 編輯器（HuoBest SVG Editor）
-   版本：v0.1.1
-   建置時間：2026-05-23 08:12:15
+   版本：v0.1.2
+   建置時間：2026-05-23 08:36:58
    官方網站：https://huobest.com/
    授權：MIT License
   ============================================================
@@ -1383,7 +1383,7 @@ body[data-theme='dark'] .theme-ico {
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.1.1</span>
+    <span>系統版本 v0.1.2</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
@@ -1544,7 +1544,7 @@ if (typeof window !== 'undefined') {
 
   // ====== DOM References ======
   const $ = (sel) => document.querySelector(sel);
-  const $ = (sel) => Array.from(document.querySelectorAll(sel));
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
   const stage = $('#stage');
   const layerRoot = $('#layer-root');
@@ -2015,8 +2015,8 @@ if (typeof window !== 'undefined') {
     }
   }
   function setActivePropTab(name) {
-    $('.prop-tabs .tab').forEach((t) => t.classList.toggle('active', t.dataset.prop === name));
-    $('.prop-pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === name));
+    $$('.prop-tabs .tab').forEach((t) => t.classList.toggle('active', t.dataset.prop === name));
+    $$('.prop-pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === name));
   }
 
   // ====== 將指定物件平滑捲動至畫布視窗中央 ======
@@ -2579,7 +2579,7 @@ if (typeof window !== 'undefined') {
   // ====== Tool Selection ======
   function setTool(t) {
     state.tool = t;
-    $('.tool[data-tool]').forEach((b) => b.setAttribute('data-active', b.dataset.tool === t ? 'true' : 'false'));
+    $$('.tool[data-tool]').forEach((b) => b.setAttribute('data-active', b.dataset.tool === t ? 'true' : 'false'));
     // 手型工具下：游標切為手掌、SVG 設為 pointer-events: none 以避免誤觸物件
     if (t === 'hand') {
       canvasHost.classList.add('panning');
@@ -2590,7 +2590,7 @@ if (typeof window !== 'undefined') {
     }
     statusInfo.textContent = '工具：' + ({ select: '選擇', hand: '手型（拖曳畫布）', text: '文字', rect: '矩形', ellipse: '橢圓', line: '直線' }[t] || t);
   }
-  $('.tool[data-tool]').forEach((b) => b.addEventListener('click', () => setTool(b.dataset.tool)));
+  $$('.tool[data-tool]').forEach((b) => b.addEventListener('click', () => setTool(b.dataset.tool)));
 
   $('#btn-zoom-in').onclick = () => setZoom(state.zoom * ZOOM_STEP);
   $('#btn-zoom-out').onclick = () => setZoom(state.zoom / ZOOM_STEP);
@@ -2602,24 +2602,24 @@ if (typeof window !== 'undefined') {
   };
 
   // ====== Tabs ======
-  $('.panel-tabs .tab').forEach((tab) => {
+  $$('.panel-tabs .tab').forEach((tab) => {
     tab.addEventListener('click', () => {
       const group = tab.parentElement;
       group.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
       tab.classList.add('active');
       const pane = tab.dataset.prop;
       if (pane) {
-        $('.prop-pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === pane));
+        $$('.prop-pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === pane));
       }
     });
   });
   // 底部圖層 / 歷史紀錄分頁
-  $('.bot-tab').forEach((tab) => {
+  $$('.bot-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
-      $('.bot-tab').forEach((t) => t.classList.remove('active'));
+      $$('.bot-tab').forEach((t) => t.classList.remove('active'));
       tab.classList.add('active');
       const pane = tab.dataset.bottab;
-      $('.bot-pane').forEach((p) => p.classList.toggle('active', p.dataset.botpane === pane));
+      $$('.bot-pane').forEach((p) => p.classList.toggle('active', p.dataset.botpane === pane));
       $('#panel-bottom').classList.remove('collapsed'); // 點分頁自動展開
     });
   });
@@ -2752,8 +2752,8 @@ if (typeof window !== 'undefined') {
     $('#text-size').value = first.fontSize;
     $('#text-fill').value = first.textColor;
     $('#text-opacity').value = Math.round(first.opacity * 100);
-    $('.btn-bar [data-align]').forEach((b) => b.classList.toggle('active', b.dataset.align === first.textAlign));
-    $('.btn-bar [data-valign]').forEach((b) => b.classList.toggle('active', b.dataset.valign === first.textVAlign));
+    $$('.btn-bar [data-align]').forEach((b) => b.classList.toggle('active', b.dataset.align === first.textAlign));
+    $$('.btn-bar [data-valign]').forEach((b) => b.classList.toggle('active', b.dataset.valign === first.textVAlign));
     $('#text-bold').classList.toggle('active', first.fontWeight === 'bold');
     $('#text-italic').classList.toggle('active', first.fontStyle === 'italic');
     $('#text-underline').classList.toggle('active', first.textDecoration === 'underline');
@@ -2872,11 +2872,11 @@ if (typeof window !== 'undefined') {
     modifyObject(id, { textDecoration: o.textDecoration === 'line-through' ? 'none' : 'line-through' }, '切換刪除線');
   });
 
-  $('.btn-bar [data-align]').forEach((b) => b.addEventListener('click', () => {
+  $$('.btn-bar [data-align]').forEach((b) => b.addEventListener('click', () => {
     state.selected.forEach((id) => modifyObject(id, { textAlign: b.dataset.align }, '水平對齊'));
     syncPropertyPanel();
   }));
-  $('.btn-bar [data-valign]').forEach((b) => b.addEventListener('click', () => {
+  $$('.btn-bar [data-valign]').forEach((b) => b.addEventListener('click', () => {
     state.selected.forEach((id) => modifyObject(id, { textVAlign: b.dataset.valign }, '垂直對齊'));
     syncPropertyPanel();
   }));

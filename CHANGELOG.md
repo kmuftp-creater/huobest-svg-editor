@@ -7,7 +7,16 @@
 
 ---
 
-## v0.1.1（當前）
+## v0.1.2（當前）
+### 修正（打包工具）
+- **單檔版本所有按鈕無反應**：root cause 是 `build.js` 用 `String.prototype.replace(regex, str)` 內聯 app.js，replace 的第二參數為字串時，會把 `$$` 解讀為「字面 `$`」、把 `$&` 解讀為「整段匹配」。app.js 內有 14 處 `$$`（querySelectorAll 短記法），全被破壞為 `$`，導致：
+  - `const $$ = ...` 變成 `const $ = ...`（覆寫了原本的 `$`）
+  - `$$('.tool').forEach(...)` 變成 `$('.tool').forEach(...)`（querySelector 不回傳陣列）
+  - `.forEach is not a function` 例外中斷整個 IIFE，所有後續事件綁定都未執行
+- **修正**：build.js 改用 replace 的「函式回呼」形式（`(match) => replacement`），回呼回傳的字串不會被解讀特殊字元。
+- **加固**：build 時新增 `$$ 個數一致` 驗證（app.js 原本 14 個 → bundle 內也必須 14 個），避免未來再次踩到相同陷阱。
+
+## v0.1.1
 ### 修正（嚴重）
 - **編輯文字後整個 compound 視覺消失**：root cause 是 `updateCompoundForeignText` 用 `document.createElement('div')`（HTML namespace）解析 SVG 字串。HTML parser 不區分大小寫，把 `<linearGradient>` 小寫化成 `<lineargradient>`、`<clipPath>` → `<clippath>`；序列化回 compound.shapeSvg 後，所有 `url(#mx-gradient-xxx)` 填色找不到對應定義 → 整個 compound 變透明、看起來像不見了。
 - **修正**：改用 `DOMParser({ "image/svg+xml" })` 在 SVG 命名空間下解析，配合 `XMLSerializer` 序列化，保留所有 SVG 元素的原始大小寫與命名空間。
