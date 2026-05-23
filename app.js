@@ -1572,6 +1572,45 @@
     statusInfo.textContent = '已切換至 Explore 模式（瀏覽）';
   };
 
+  // 對齊文字至圖形：每個 text 物件對齊到包含它中心的最小形狀，啟用 word-wrap
+  $('#btn-fit-texts').onclick = () => doFitTextsToShapes();
+  function doFitTextsToShapes() {
+    // 候選對象：若有選取就只處理選取的 text；否則處理畫布上所有 text
+    let targets;
+    if (state.selected.size > 0) {
+      targets = Array.from(state.selected).map(findObj).filter((o) => o && o.type === 'text');
+    } else {
+      targets = state.objects.filter((o) => o.type === 'text');
+    }
+    if (targets.length === 0) {
+      statusInfo.textContent = '沒有可對齊的文字物件';
+      return;
+    }
+    const shapes = state.objects.filter((o) => o.type !== 'text' && o.type !== 'image' && !o.ghostFor);
+    let fitted = 0;
+    targets.forEach((t) => {
+      const cx = t.x + t.w / 2;
+      const cy = t.y + t.h / 2;
+      // 找出所有包含 text 中心的形狀，取面積最小者（最緊密的容器）
+      const containers = shapes.filter((s) => cx >= s.x && cx <= s.x + s.w && cy >= s.y && cy <= s.y + s.h);
+      if (containers.length === 0) return;
+      containers.sort((a, b) => (a.w * a.h) - (b.w * b.h));
+      const c = containers[0];
+      const pad = Math.max(4, Math.min(c.w, c.h) * 0.06);
+      t.x = c.x + pad;
+      t.y = c.y + pad;
+      t.w = Math.max(20, c.w - pad * 2);
+      t.h = Math.max(16, c.h - pad * 2);
+      t.useForeignObject = true;       // 強制啟用 word-wrap
+      t.textAlign = 'center';
+      t.textVAlign = 'middle';
+      fitted += 1;
+    });
+    renderAll();
+    pushHistory('對齊文字至圖形', `${fitted} 個文字`);
+    statusInfo.textContent = `已對齊 ${fitted} 個文字至所在圖形（共偵測 ${targets.length} 個文字、${shapes.length} 個圖形）`;
+  }
+
   // 拆解匯入：把選取的 compound shape 展開為個別可編輯物件
   $('#btn-decompose').onclick = () => doDecompose();
   function doDecompose() {
@@ -1600,7 +1639,7 @@
     state.selected.clear();
     renderAll();
     pushHistory('拆解匯入', `${targets.length} 張 → ${totalNew} 個物件`);
-    statusInfo.textContent = `已拆解 ${targets.length} 張匯入：新增 ${totalNew} 個個別物件`;
+    statusInfo.textContent = `已拆解 ${targets.length} 張匯入為 ${totalNew} 個個別物件（不滿意可按 Ctrl+Z 還原；亦可使用「對齊文字至圖形」按鈕修正排版）`;
   }
 
   function decomposeCompound(compound) {
@@ -1654,12 +1693,16 @@
         if (fs) fontSize = parseFloat(fs[1]);
         if (co) textColor = co[1];
       }
+      // 拆解的文字使用 foreignObject 渲染 → 保留 HTML word-wrap，
+      // 避免長中文句溢出 bbox（同 v0.0.7 修正策略，但因已脫離 ghost
+      // 不再有「相鄰 ghost 互相重疊」問題）
       const obj = createObject('text', {
         x: (tx - vb.x) * sx + ox,
         y: (ty - vb.y) * sy + oy,
         w: Math.max(20, wf * sx),
         h: Math.max(16, hf * sy),
         text,
+        useForeignObject: true,
       });
       obj.fontFamily = fontFamily;
       obj.fontSize = Math.max(6, fontSize * Math.min(sx, sy));

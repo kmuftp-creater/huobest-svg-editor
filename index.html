@@ -408,7 +408,8 @@
 
           <div class="section-title">匯入內容</div>
           <button class="btn-block" id="btn-decompose" title="將匯入的 SVG 拆解為個別可編輯物件">拆解匯入（個別編輯）</button>
-          <div class="text-content-hint" style="margin-top:4px">拆解後每個形狀都可獨立選取與縮放，但會失去原始 HTML 文字排版細節。</div>
+          <button class="btn-block" id="btn-fit-texts" title="將文字標籤對齊至所在的圖形 bbox 並啟用換行">對齊文字至圖形</button>
+          <div class="text-content-hint" style="margin-top:4px">拆解後每個形狀都可獨立選取與縮放；若文字溢出可使用「對齊文字至圖形」自動修復。</div>
         </div>
       </div>
 
@@ -493,7 +494,7 @@
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.2.0</span>
+    <span>系統版本 v0.2.1</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>

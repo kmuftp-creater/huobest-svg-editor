@@ -7,7 +7,17 @@
 
 ---
 
-## v0.2.0（當前）
+## v0.2.1（當前）
+### 改進
+- **拆解匯入後文字溢出修正**：拆解時建立的 text 物件加上 `useForeignObject: true`，HTML word-wrap 自動換行，不會單行延伸出 bbox。
+- **拆解後狀態列加上 Ctrl+Z 提示**：明確告知使用者「不滿意可一鍵還原」。
+
+### 新功能
+- **「對齊文字至圖形」按鈕**（調整面板）：自動分析每個 text 物件，找出包含它中心的最緊密形狀（最小面積），把 text bbox 對齊到該形狀內部範圍（含 6% padding）並啟用 word-wrap。適用於：拆解後文字位置 / 大小不理想時一鍵修復。
+  - 操作彈性：若有選取則只處理選取的 text；否則處理畫布上所有 text
+  - 範圍判斷：以幾何 bbox 為準（不考慮旋轉）；若 text 不在任何形狀內則跳過
+
+## v0.2.0
 ### 新功能
 - **拆解匯入（Decompose Import）**：調整面板新增「拆解匯入（個別編輯）」按鈕。將選取的 compound shape 拆解為 N 個獨立物件（rect / ellipse / circle / line / path / polygon / text），失去原 foreignObject HTML 排版細節但取得完全個別編輯能力。每個形狀都可獨立選取、縮放、改色。
 
