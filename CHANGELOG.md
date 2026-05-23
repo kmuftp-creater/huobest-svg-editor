@@ -7,7 +7,21 @@
 
 ---
 
-## v0.1.3（當前）
+## v0.2.0（當前）
+### 新功能
+- **拆解匯入（Decompose Import）**：調整面板新增「拆解匯入（個別編輯）」按鈕。將選取的 compound shape 拆解為 N 個獨立物件（rect / ellipse / circle / line / path / polygon / text），失去原 foreignObject HTML 排版細節但取得完全個別編輯能力。每個形狀都可獨立選取、縮放、改色。
+
+### 修正
+- **Ghost 選取顯示縮放控點易誤導**：選到文字 ghost 時改為顯示「紫色細虛線框」、不顯示 8 個縮放控點與旋轉控點。明確傳達「此為文字標籤，請於右側文字分頁編輯內容；要縮放整張匯入請點圖形區（非文字區）」。
+- **文字內容換行不顯示**：`updateCompoundForeignText` 用 `textContent = newText` 寫入時，HTML 規則把 `\n` 摺疊為空白。改為以 `\n` 切分後注入「textNode + `<br>` + textNode」混合結構，瀏覽器正確渲染為新行。
+
+### 圖層列表設計確認
+匯入 draw.io 後圖層列表只顯示 `svg-XX`（compound）+ N 個 `text-XX`（ghost），個別形狀並未獨立列出。這是 Ghost 架構的預期行為：
+- compound 保留完整原始 SVG（含 foreignObject）→ 視覺由瀏覽器原生渲染
+- ghost 提供文字編輯介面
+- 若需個別操作形狀，請使用本版新增的「拆解匯入」按鈕
+
+## v0.1.3
 ### 修正
 - **畫布放大後左側內容被吃掉、拖曳也看不到**：root cause 是 `.stage-wrap` 使用 `justify-content: center` + `align-items: center`，當子元素（stage）尺寸超過父容器時，flex 置中對齊會使 **start 端不可達**（捲動條卡在 0 但內容已被往右推出可視範圍）。改用 `safe center` 關鍵字：放得下時置中，放不下時自動降級為 start 對齊，確保左 / 上邊始終可捲動到達。
 - **匯入 SVG 後縮放，文字標籤不跟隨變形**：compound shape 縮放時，其關聯的 ghost 文字物件位置與尺寸停留在原座標 → 視覺上與 compound 內部 foreignObject 錯位。新增 `applyGhostTranslate` 與 `applyGhostScale` 兩個輔助函式：

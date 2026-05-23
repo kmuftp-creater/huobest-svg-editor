@@ -782,6 +782,11 @@ body[data-theme='dark'] .theme-ico {
   stroke-dasharray: 4 3;
   pointer-events: none;
 }
+.selection-rect.ghost-select {
+  stroke: var(--secondary);
+  stroke-dasharray: 3 3;
+  stroke-width: 1.2;
+}
 .marquee-rect {
   fill: var(--primary);
   fill-opacity: 0.08;

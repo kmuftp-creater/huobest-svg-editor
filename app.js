@@ -407,7 +407,12 @@
       box.setAttribute('width', obj.w);
       box.setAttribute('height', obj.h);
       box.setAttribute('transform', `rotate(${obj.rotation} ${obj.x + obj.w/2} ${obj.y + obj.h/2})`);
+      if (obj.ghostFor) box.classList.add('ghost-select');
       overlay.appendChild(box);
+
+      // Ghost 物件：不渲染縮放與旋轉控點（避免誤以為可以縮放）
+      // 編輯文字請於右側「文字」分頁；縮放整張匯入請點 compound（非文字區）
+      if (obj.ghostFor) return;
 
       // 8 個縮放點 + 1 個旋轉點
       const positions = [
@@ -531,10 +536,33 @@
     while ((n = walker.nextNode())) {
       if (n.textContent.replace(/\s+/g, '').length > 0) textNodes.push(n);
     }
+    // 處理換行：HTML 的 textContent 會把 \n 當作空白摺疊。
+    // 必須將 \n 切分後以 textNode + <br> 元素混合注入，瀏覽器才會渲染為新行。
+    const XHTML = 'http://www.w3.org/1999/xhtml';
+    const lines = String(newText).split('\n');
+    const insertMultilineInto = (parent, anchorTextNode) => {
+      // 將 anchorTextNode 替換為「第一行」，後續行以 <br> + textNode 接續
+      anchorTextNode.textContent = lines[0];
+      let prev = anchorTextNode;
+      for (let i = 1; i < lines.length; i++) {
+        const br = doc.createElementNS(XHTML, 'br');
+        parent.insertBefore(br, prev.nextSibling);
+        const t = doc.createTextNode(lines[i]);
+        parent.insertBefore(t, br.nextSibling);
+        prev = t;
+      }
+    };
     if (textNodes.length === 0) {
-      fo.textContent = newText;
+      // 沒有任何文字節點：在 foreignObject 下建立含 br 的內容
+      while (fo.firstChild) fo.removeChild(fo.firstChild);
+      const div = doc.createElementNS(XHTML, 'div');
+      div.setAttribute('xmlns', XHTML);
+      div.setAttribute('style', 'text-align:center;');
+      div.appendChild(doc.createTextNode(''));
+      fo.appendChild(div);
+      insertMultilineInto(div, div.firstChild);
     } else {
-      textNodes[0].textContent = newText;
+      insertMultilineInto(textNodes[0].parentNode, textNodes[0]);
       for (let i = 1; i < textNodes.length; i++) textNodes[i].textContent = '';
     }
 
@@ -1543,6 +1571,191 @@
   $('#btn-explore').onclick = () => {
     statusInfo.textContent = '已切換至 Explore 模式（瀏覽）';
   };
+
+  // 拆解匯入：把選取的 compound shape 展開為個別可編輯物件
+  $('#btn-decompose').onclick = () => doDecompose();
+  function doDecompose() {
+    const targets = Array.from(state.selected)
+      .map(findObj)
+      .filter((o) => o && o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported'));
+    if (targets.length === 0) {
+      if (!confirm('未選取匯入的 compound shape。\n要嘗試拆解畫布上所有的匯入物件嗎？')) return;
+      state.objects.forEach((o) => {
+        if (o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported')) {
+          targets.push(o);
+        }
+      });
+      if (targets.length === 0) {
+        statusInfo.textContent = '畫布上沒有可拆解的匯入物件';
+        return;
+      }
+    }
+    if (!confirm(`即將拆解 ${targets.length} 個匯入物件為個別形狀與文字。\n拆解後將失去原始 foreignObject 的 HTML 排版細節（但仍可編輯）。\n確定繼續？`)) return;
+
+    let totalNew = 0;
+    targets.forEach((compound) => {
+      const newObjs = decomposeCompound(compound);
+      totalNew += newObjs.length;
+    });
+    state.selected.clear();
+    renderAll();
+    pushHistory('拆解匯入', `${targets.length} 張 → ${totalNew} 個物件`);
+    statusInfo.textContent = `已拆解 ${targets.length} 張匯入：新增 ${totalNew} 個個別物件`;
+  }
+
+  function decomposeCompound(compound) {
+    const vb = compound.shapeViewBox || { x: 0, y: 0, w: 100, h: 60 };
+    const sx = compound.w / vb.w;
+    const sy = compound.h / vb.h;
+    const ox = compound.x;
+    const oy = compound.y;
+
+    // 解析 compound.shapeSvg（SVG 命名空間）
+    const wrapped = `<svg xmlns="${SVG_NS}" xmlns:xlink="http://www.w3.org/1999/xlink">${compound.shapeSvg}</svg>`;
+    const doc = new DOMParser().parseFromString(wrapped, 'image/svg+xml');
+    const root = doc.documentElement;
+    if (!root) return [];
+
+    const newObjs = [];
+    // 一、處理形狀元素
+    root.querySelectorAll('rect, circle, ellipse, line, polygon, polyline, path').forEach((el) => {
+      const obj = decomposeElementToObject(el, ox, oy, sx, sy, vb);
+      if (obj) {
+        obj.name = uid(obj.type);
+        newObjs.push(obj);
+      }
+    });
+    // 二、處理 foreignObject 文字（替代原 ghost）
+    root.querySelectorAll('foreignObject').forEach((fo) => {
+      const text = (fo.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      let tx = 0, ty = 0;
+      let parent = fo.parentNode;
+      while (parent && parent !== root) {
+        const t = parent.getAttribute && parent.getAttribute('transform');
+        if (t) {
+          const m = /translate\(\s*([-\d.]+)[ ,]+([-\d.]+)\s*\)/.exec(t);
+          if (m) { tx += parseFloat(m[1]); ty += parseFloat(m[2]); break; }
+        }
+        parent = parent.parentNode;
+      }
+      const wf = parseFloat(fo.getAttribute('width')) || 80;
+      const hf = parseFloat(fo.getAttribute('height')) || 20;
+      let fontFamily = 'Tahoma, sans-serif';
+      let fontSize = 12;
+      let textColor = '#1F2937';
+      const inner = fo.querySelector('div, span, p');
+      if (inner) {
+        const style = inner.getAttribute('style') || '';
+        const ff = /font-family:\s*([^;"]+)/i.exec(style);
+        const fs = /font-size:\s*([\d.]+)px/i.exec(style);
+        const co = /color:\s*(rgb\([^)]+\)|#[0-9a-f]{3,8})/i.exec(style);
+        if (ff) fontFamily = ff[1].trim() + ', sans-serif';
+        if (fs) fontSize = parseFloat(fs[1]);
+        if (co) textColor = co[1];
+      }
+      const obj = createObject('text', {
+        x: (tx - vb.x) * sx + ox,
+        y: (ty - vb.y) * sy + oy,
+        w: Math.max(20, wf * sx),
+        h: Math.max(16, hf * sy),
+        text,
+      });
+      obj.fontFamily = fontFamily;
+      obj.fontSize = Math.max(6, fontSize * Math.min(sx, sy));
+      obj.textColor = textColor;
+      obj.fillEnabled = false;
+      obj.strokeEnabled = false;
+      obj.textAlign = 'center';
+      obj.textVAlign = 'middle';
+      obj.name = uid('text');
+      newObjs.push(obj);
+    });
+
+    // 三、把新物件加進 state，並移除 compound 與其 ghosts
+    const compoundIdx = state.objects.findIndex((o) => o.id === compound.id);
+    const ghostIds = new Set(
+      state.objects
+        .filter((o) => o.ghostFor && o.ghostFor.compoundId === compound.id)
+        .map((o) => o.id)
+    );
+    state.objects = state.objects.filter((o) => o.id !== compound.id && !ghostIds.has(o.id));
+    // 把新物件插在原 compound 位置（保留圖層次序）
+    state.objects.splice(compoundIdx, 0, ...newObjs);
+    return newObjs;
+  }
+
+  function decomposeElementToObject(el, ox, oy, sx, sy, vb) {
+    const tag = el.nodeName.toLowerCase();
+    const fill = el.getAttribute('fill');
+    const stroke = el.getAttribute('stroke');
+    const strokeWidth = (parseFloat(el.getAttribute('stroke-width')) || 1) * Math.min(sx, sy);
+    const common = {
+      fill: fill && fill !== 'none' ? fill : '#FFFFFF',
+      fillEnabled: !!(fill && fill !== 'none'),
+      stroke: stroke && stroke !== 'none' ? stroke : '#333',
+      strokeEnabled: !!(stroke && stroke !== 'none'),
+      strokeWidth,
+    };
+    const toX = (v) => (v - vb.x) * sx + ox;
+    const toY = (v) => (v - vb.y) * sy + oy;
+    const toSX = (v) => v * sx;
+    const toSY = (v) => v * sy;
+
+    if (tag === 'rect') {
+      const x = parseFloat(el.getAttribute('x')) || 0;
+      const y = parseFloat(el.getAttribute('y')) || 0;
+      const w = parseFloat(el.getAttribute('width')) || 0;
+      const h = parseFloat(el.getAttribute('height')) || 0;
+      if (w === 0 || h === 0) return null;
+      const obj = createObject('rect', { x: toX(x), y: toY(y), w: toSX(w), h: toSY(h) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'circle') {
+      const cx = parseFloat(el.getAttribute('cx')) || 0;
+      const cy = parseFloat(el.getAttribute('cy')) || 0;
+      const r = parseFloat(el.getAttribute('r')) || 0;
+      if (r === 0) return null;
+      const obj = createObject('ellipse', { x: toX(cx - r), y: toY(cy - r), w: toSX(r * 2), h: toSY(r * 2) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'ellipse') {
+      const cx = parseFloat(el.getAttribute('cx')) || 0;
+      const cy = parseFloat(el.getAttribute('cy')) || 0;
+      const rx = parseFloat(el.getAttribute('rx')) || 0;
+      const ry = parseFloat(el.getAttribute('ry')) || 0;
+      if (rx === 0 || ry === 0) return null;
+      const obj = createObject('ellipse', { x: toX(cx - rx), y: toY(cy - ry), w: toSX(rx * 2), h: toSY(ry * 2) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'line') {
+      const x1 = parseFloat(el.getAttribute('x1')) || 0;
+      const y1 = parseFloat(el.getAttribute('y1')) || 0;
+      const x2 = parseFloat(el.getAttribute('x2')) || 0;
+      const y2 = parseFloat(el.getAttribute('y2')) || 0;
+      const x = Math.min(x1, x2), y = Math.min(y1, y2);
+      const obj = createObject('line', { x: toX(x), y: toY(y), w: Math.max(1, toSX(Math.abs(x2 - x1))), h: Math.max(1, toSY(Math.abs(y2 - y1))) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'polygon' || tag === 'polyline' || tag === 'path') {
+      const bbox = approxBBox(el);
+      if (bbox.w === 0 || bbox.h === 0) return null;
+      const obj = createObject('shape', {
+        x: toX(bbox.x), y: toY(bbox.y),
+        w: toSX(bbox.w), h: toSY(bbox.h),
+        shapeId: tag, shapeSvg: el.outerHTML,
+        shapeViewBox: { x: bbox.x, y: bbox.y, w: bbox.w, h: bbox.h },
+        preserveStyle: true,
+      });
+      Object.assign(obj, common);
+      return obj;
+    }
+    return null;
+  }
 
   $('#btn-copy-style').onclick = () => {
     if (state.selected.size === 0) return;
