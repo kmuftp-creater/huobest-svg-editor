@@ -1,0 +1,86 @@
+# 變更紀錄 — 霍家私塾 SVG 編輯器
+
+## 版本規則
+- **Bug fix（修正）**：第三碼 +1（例：`0.0.5` → `0.0.6`）
+- **新增功能**：第二碼 +1，第三碼歸 0（例：`0.0.6` → `0.1.0`）
+- **重大架構變更**：第一碼 +1，後兩碼歸 0（例：`0.1.0` → `1.0.0`）
+
+---
+
+## v0.1.1（當前）
+### 修正（嚴重）
+- **編輯文字後整個 compound 視覺消失**：root cause 是 `updateCompoundForeignText` 用 `document.createElement('div')`（HTML namespace）解析 SVG 字串。HTML parser 不區分大小寫，把 `<linearGradient>` 小寫化成 `<lineargradient>`、`<clipPath>` → `<clippath>`；序列化回 compound.shapeSvg 後，所有 `url(#mx-gradient-xxx)` 填色找不到對應定義 → 整個 compound 變透明、看起來像不見了。
+- **修正**：改用 `DOMParser({ "image/svg+xml" })` 在 SVG 命名空間下解析，配合 `XMLSerializer` 序列化，保留所有 SVG 元素的原始大小寫與命名空間。
+- **附加優化**：textarea 輸入加上 80ms debounce，避免 80KB+ 大型 SVG 在每次按鍵都全量重解析造成卡頓（即時 UI 更新仍每鍵觸發，僅 compound 重序列化延後）。
+
+## v0.1.0
+### 架構變更（新功能級別）
+- **Ghost 文字物件架構**：回到 v0.0.5 的視覺策略並強化編輯能力
+  - **compound shape 保留完整 foreignObject** → 視覺由瀏覽器原生渲染，無條件還原 draw.io 排版（不再嘗試自行重繪文字）
+  - **Ghost 文字物件**（`obj.ghostFor = { compoundId, foreignIndex }`）只負責：
+    - 提供 hit-test 區域（可在畫布或圖層面板點選）
+    - 在右側「文字」分頁的 textarea 接收編輯
+  - **雙向綁定**：當 ghost.text 變更時，自動定位 compound.shapeSvg 內第 N 個 foreignObject，以 TreeWalker 保留原 HTML 結構地替換文字內容（保留 font / color / 對齊等樣式）
+- **圖層列表標示**：ghost 物件以紫色「T」前綴與紫色邊框圖示區分
+- **圖層點擊不擴展群組**：讓使用者能單獨選取 ghost 進行編輯
+
+### 為何重新設計
+- v0.0.6–0.0.8 嘗試將 foreignObject 拆解為自繪 SVG `<text>` 或 `<foreignObject>` + flex div：永遠無法 100% 還原 draw.io 的 HTML 排版細節（white-space、inline-block、混合 span 樣式等）
+- 唯一可靠方案：將原始 foreignObject 完整交給瀏覽器渲染，自己只負責「定位編輯介面」
+
+## v0.0.8
+### 修正
+- **v0.0.7 仍然溢出的真正 root cause**：上一版的 `widthBoost` 邏輯把每個 bbox 等比放大 1.67×，因 draw.io 原始排版極度緊湊，放大後相鄰文字標籤的 bbox 互相重疊 → 視覺上像文字跨越進隔壁框內。
+- **修正策略**：
+  1. 移除 widthBoost，bbox 嚴格按 `wf * scale` 比例縮放
+  2. 字級下限由 8px 降為 6px（小於 8px 時保留小字體，依賴使用者放大畫布閱讀）
+  3. foreignObject 與內層 div 雙層 `overflow:hidden` clip
+  4. CSS 改用 `word-break:break-all` + `overflow-wrap:anywhere`，連續中文字串也強制斷字
+  5. 高度自動估算：以「字數 / 每行可容字數 × 字級高度」估算實際所需高度，最多展開 4 倍原高度；避免 draw.io 寫了 `height=28` 但實際內容需要 60px 時被截斷
+
+## v0.0.7
+### 修正
+- **draw.io 匯入文字溢出 bbox**：原本將 foreignObject 內含 HTML auto-wrap 的多行文字硬轉為單行 SVG `<text>` + `text-anchor='middle'`，導致長文字左右兩端遠超過原始 72px 的 bbox、視覺上散布畫面各處。改以 `<foreignObject>` + HTML `<div>`（`white-space: pre-wrap`、`word-break: break-word`、`overflow: hidden`）渲染，文字嚴格收束在 bbox 內，與 draw.io 原視覺一致。
+- 文字物件新增 `useForeignObject` 旗標：draw.io 匯入時自動啟用；T 工具建立的短文字仍使用標準 SVG `<text>` 渲染以維持向量輸出純淨度。
+
+## v0.0.6
+### 修正
+- **draw.io 匯入後文字重複顯示**：匯入時將 compound shape 內的 `<foreignObject>` 剝除，讓抽取出的可編輯文字標籤成為唯一文字來源，避免兩層相同文字疊加。
+- **圖層點擊不會自動切到對應屬性分頁**：選取文字物件時，右側面板自動切換至「文字」分頁。
+- **形狀庫存在跨類別視覺重複**：移除「基本圖形.square」、流程圖中與一般類重複的 7 個項目、ER 中與一般類重複的 3 個項目、UML 中與一般類重複的 3 個項目；總形狀數由 65 降為 51，視覺更聚焦。
+- **「鋼筆 / 路徑」工具與直線重複**：移除該工具及 P 快捷鍵；未來補完整路徑編輯時再重新加入。
+
+## v0.0.4 → v0.0.5
+- 文字頁籤新增「文字內容」即時編輯區（textarea）
+- 圖層 / 歷史紀錄合併至右側面板底部，移除浮動 float-panel
+- 點圖層自動平滑捲動置中，並以光暈閃爍提示
+- 移除「內容　數值」鍵值預覽區
+
+## v0.0.4
+- 修正 text-only 物件無法被點選與雙擊編輯
+- 修正 opacity=0 物件遮蔽底層點擊
+- 內嵌文字編輯器字級隨畫布縮放
+- 移除「佈景主題」分頁、「匯入 PNG」按鈕、「霍家私塾 v0.x」副標題、預設色卡下方的小點
+
+## v0.0.3（功能合併）
+- 一鍵清除按鈕（含確認、可 Undo）
+- 移除啟動時的預設範例
+- 手型工具（H 快捷鍵 + 工具列圖示）
+- 智慧對齊輔助線（Smart Guides，Alt 暫停）
+- Marquee 框選（Shift 加入既有選取）
+- 真正的群組功能（Ctrl+G / Ctrl+Shift+G）
+
+## v0.0.2
+- draw.io / mxGraph 格式 SVG 匯入支援
+- 大尺寸檔案自動縮放至畫布
+- 內嵌文字編輯（取代 prompt）
+- Space + 拖曳平移、方向鍵微調、長寬比鎖定
+- 主題持久化 + 系統偏好偵測
+
+## v0.0.1（首版）
+- HTML / CSS / JS 骨架
+- 三大屬性面板（物件樣式 / 文字 / 調整）
+- 形狀庫 6 大分類
+- 選取、變形、旋轉、翻轉
+- 歷史紀錄（Undo / Redo，上限 50 筆）
+- SVG / PNG 匯出

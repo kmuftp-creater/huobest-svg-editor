@@ -1,0 +1,3494 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+   霍家私塾 SVG 編輯器（HuoBest SVG Editor）
+   版本：v0.1.1
+   建置時間：2026-05-23 08:12:15
+   官方網站：https://huobest.com/
+   授權：MIT License
+  ============================================================
+   單檔版本：本檔案內聯所有 CSS 與 JavaScript，
+   可離線開啟、單獨分享、上傳至任何靜態託管平台。
+  ============================================================
+-->
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>霍家私塾 SVG 專業向量編輯器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+/* === styles.css === */
+/* =============================================================
+   霍家私塾 SVG 編輯器 - 設計系統
+   遵循 8px 網格、Inter + Noto Sans TC、Pill / 12px Card 圓角
+   ============================================================= */
+
+:root {
+  /* 核心色盤（亮色） */
+  --primary: #4A90E2;
+  --primary-600: #3A7BC8;
+  --primary-50: #E8F1FC;
+  --secondary: #9B6EF3;
+  --success: #5AC8A5;
+  --error: #F06292;
+  --warning: #FFB74D;
+  --info: #4FC3F7;
+
+  --bg: #F5F7FA;
+  --surface: #FFFFFF;
+  --surface-2: #FAFBFD;
+  --canvas-bg: #FFFFFF;
+  --border: #E3E8EF;
+  --border-strong: #C9D2DD;
+  --text-main: #1F2937;
+  --text-sub: #4B5563;
+  --text-mute: #9AA3AF;
+  --grid: rgba(74, 144, 226, 0.08);
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  --r-btn: 8px;
+  --r-card: 12px;
+  --r-pill: 999px;
+
+  --header-h: 56px;
+  --footer-h: 36px;
+  --panel-w-left: 280px;
+  --panel-w-right: 296px;
+
+  --font-en: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-tc: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  --font-base: var(--font-en), var(--font-tc);
+}
+
+[data-theme='dark'] {
+  --bg: #0F1623;
+  --surface: #1A2233;
+  --surface-2: #232C40;
+  --canvas-bg: #2A3247;
+  --border: #2E3850;
+  --border-strong: #3A465F;
+  --text-main: #ECEFF6;
+  --text-sub: #B8C0CF;
+  --text-mute: #7A8597;
+  --primary-50: rgba(74, 144, 226, 0.18);
+  --grid: rgba(155, 110, 243, 0.16);
+}
+
+/* ----- Reset ----- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-base);
+  font-size: 14px;
+  color: var(--text-main);
+  background: var(--bg);
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button { font-family: inherit; font-size: 13px; cursor: pointer; }
+input, select, textarea { font-family: inherit; font-size: 13px; color: var(--text-main); }
+
+/* ============================================================
+   Header
+   ============================================================ */
+.app-header {
+  height: var(--header-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  z-index: 5;
+}
+.header-inner {
+  width: 100%;
+  max-width: 80rem; /* max-w-7xl */
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark { display: flex; align-items: center; justify-content: center; }
+.brand-text { line-height: 1.15; }
+.brand-title { font-weight: 700; font-size: 15px; }
+.brand-sub { font-size: 11px; color: var(--text-mute); letter-spacing: 0.04em; }
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+.btn-toolbar {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-sub);
+  padding: 6px 12px;
+  border-radius: var(--r-btn);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.btn-toolbar:hover { background: var(--surface-2); color: var(--text-main); }
+.btn-toolbar.primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-toolbar.primary:hover { background: var(--primary-600); border-color: var(--primary-600); color: #fff; }
+.btn-toolbar.danger { color: var(--error); }
+.btn-toolbar.danger:hover { background: var(--error); color: #fff; border-color: var(--error); }
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text-main);
+  font-weight: 500;
+  font-size: 12.5px;
+  transition: all 0.15s ease;
+}
+.btn-pill:hover { border-color: var(--primary); color: var(--primary); }
+.theme-ico {
+  width: 14px; height: 14px;
+  display: inline-block;
+  background: currentColor;
+  -webkit-mask: center / contain no-repeat;
+          mask: center / contain no-repeat;
+}
+body[data-theme='light'] .theme-ico {
+  color: #F5B70A;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z' fill='black'/></svg>");
+          mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z' fill='black'/></svg>");
+}
+body[data-theme='dark'] .theme-ico {
+  color: #FFD341;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 4V2m0 20v-2M4 12H2m20 0h-2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8M19.8 4.2l-1.4 1.4M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z' stroke='black' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+          mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 4V2m0 20v-2M4 12H2m20 0h-2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4 4.2 19.8M19.8 4.2l-1.4 1.4M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z' stroke='black' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+}
+
+/* ============================================================
+   Main 三欄佈局
+   ============================================================ */
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: var(--panel-w-left) 1fr var(--panel-w-right);
+  min-height: 0;
+  position: relative;
+  background: var(--bg);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.panel-left { border-right: 1px solid var(--border); border-left: none; border-top: none; border-bottom: none; }
+.panel-right { border-left: 1px solid var(--border); border-right: none; border-top: none; border-bottom: none; }
+
+.panel-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding: 0 8px;
+  background: var(--surface);
+  position: relative;
+}
+.panel-tabs .tab {
+  background: none;
+  border: none;
+  padding: 12px 14px 10px;
+  color: var(--text-sub);
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.panel-tabs .tab.active {
+  color: var(--text-main);
+  border-bottom-color: var(--primary);
+}
+.panel-tabs .tab-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-mute);
+  font-size: 18px;
+  width: 24px; height: 24px;
+  border-radius: 6px;
+}
+.panel-tabs .tab-close:hover { background: var(--surface-2); color: var(--text-main); }
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* ----- Search Box ----- */
+.search-box {
+  position: relative;
+  margin-bottom: 12px;
+}
+.search-box input {
+  width: 100%;
+  padding: 8px 30px 8px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-box input:focus { border-color: var(--primary); background: var(--surface); }
+.search-box svg {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-mute);
+}
+
+/* ----- 形狀分類 ----- */
+.shape-categories { display: flex; flex-direction: column; gap: 4px; }
+.shape-group { border-radius: var(--r-btn); overflow: hidden; }
+.shape-group summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 8px 6px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.shape-group summary::-webkit-details-marker { display: none; }
+.shape-group summary::before {
+  content: '▸';
+  font-size: 10px;
+  color: var(--text-mute);
+  transition: transform 0.2s;
+}
+.shape-group[open] summary::before { transform: rotate(90deg); }
+.shape-group summary:hover { background: var(--surface-2); }
+
+.shape-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 6px 2px 10px;
+}
+.shape-item {
+  aspect-ratio: 1 / 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: all 0.15s;
+  padding: 6px;
+}
+.shape-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-50);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.shape-item:active { cursor: grabbing; }
+.shape-item svg { width: 100%; height: 100%; color: var(--text-main); }
+
+/* ============================================================
+   畫布
+   ============================================================ */
+.canvas-area {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+.canvas-toolbar {
+  height: 44px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.tools { display: flex; gap: 4px; }
+.tool {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-btn);
+  background: transparent;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-sub);
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.tool:hover { background: var(--surface-2); color: var(--text-main); }
+.tool[data-active='true'] {
+  background: var(--primary-50);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.zoom-controls { display: flex; align-items: center; gap: 4px; }
+.zoom-value { min-width: 48px; text-align: center; color: var(--text-sub); font-variant-numeric: tabular-nums; }
+
+.canvas-host {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  background:
+    radial-gradient(circle at 1px 1px, var(--grid) 1px, transparent 0) 0 0 / 24px 24px,
+    var(--bg);
+}
+.canvas-host.panning { cursor: grab; }
+.canvas-host.panning.active { cursor: grabbing; }
+.stage-wrap {
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+#stage {
+  display: block;
+  background: var(--canvas-bg);
+  box-shadow: var(--shadow-md);
+  border-radius: 4px;
+  width: 1200px;
+  height: 800px;
+  flex: 0 0 auto;
+}
+#canvas-grid {
+  color: var(--grid);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.show-grid #canvas-grid { opacity: 1; }
+
+.status-bar {
+  height: 28px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 11.5px;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- Drop overlay ----- */
+.drop-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 144, 226, 0.08);
+  border: 2px dashed var(--primary);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+.drop-overlay.show { display: flex; }
+.drop-card {
+  background: var(--surface);
+  padding: 28px 36px;
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  color: var(--primary);
+}
+.drop-title { font-weight: 600; margin-top: 8px; font-size: 16px; color: var(--text-main); }
+.drop-sub { color: var(--text-mute); font-size: 12px; margin-top: 4px; }
+
+/* ============================================================
+   屬性面板
+   ============================================================ */
+.panel-right .panel-body { padding: 14px; }
+.prop-pane { display: none; }
+.prop-pane.active { display: block; }
+
+.section-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-sub);
+  letter-spacing: 0.04em;
+  margin: 14px 0 6px;
+  text-transform: uppercase;
+}
+.section-title:first-child { margin-top: 0; }
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.form-row.labeled label {
+  width: 56px;
+  font-size: 12.5px;
+  color: var(--text-sub);
+}
+.form-row.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.form-row.two-col.mini { margin-top: -4px; margin-bottom: 12px; }
+.mini-label { font-size: 11px; color: var(--text-mute); text-align: center; }
+.form-row.btn-bar { gap: 4px; }
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-sub);
+  cursor: pointer;
+  flex: 1 0 auto;
+}
+.check input { accent-color: var(--primary); }
+
+.select {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  background: var(--surface);
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+}
+.select:focus { border-color: var(--primary); }
+.select.stroke-style { font-family: monospace; letter-spacing: 0.5px; }
+.font-picker { width: 100%; text-align: center; font-weight: 500; }
+
+/* 文字內容編輯區 */
+.text-content-input {
+  width: 100%;
+  min-height: 64px;
+  max-height: 200px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  background: var(--surface);
+  color: var(--text-main);
+  font-family: var(--font-base);
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.text-content-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-50); }
+.text-content-input:disabled {
+  background: var(--surface-2);
+  color: var(--text-mute);
+  cursor: not-allowed;
+}
+.text-content-hint {
+  font-size: 11px;
+  color: var(--text-mute);
+  margin: 4px 0 12px;
+  line-height: 1.4;
+}
+.text-content-hint.warn { color: var(--warning); }
+
+.color-pick {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.color-pick input[type='color'] {
+  width: 32px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+}
+.dropper {
+  width: 22px; height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-mute);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.dropper:hover { color: var(--primary); background: var(--primary-50); }
+
+.num-input {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  background: var(--surface);
+  padding: 0 6px 0 8px;
+  flex: 1;
+  min-width: 0;
+}
+.num-input:focus-within { border-color: var(--primary); }
+.num-input input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 6px 0;
+  font-variant-numeric: tabular-nums;
+}
+.num-input input::-webkit-outer-spin-button,
+.num-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.num-input .unit { font-size: 11px; color: var(--text-mute); padding-left: 4px; }
+
+.btn-square {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-sub);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+.btn-square:hover { color: var(--primary); border-color: var(--primary); }
+.btn-square.active {
+  background: var(--primary-50);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.vsep { width: 1px; height: 22px; background: var(--border); margin: 0 4px; }
+
+.btn-block {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-main);
+  border-radius: var(--r-btn);
+  margin-bottom: 6px;
+  font-size: 12.5px;
+  text-align: center;
+  transition: all 0.15s;
+}
+.btn-block:hover { border-color: var(--primary); color: var(--primary); background: var(--surface); }
+.btn-block.sm { padding: 6px 10px; font-size: 12px; margin-bottom: 0; }
+
+/* Preset 樣式格 */
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.preset-cell {
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.preset-cell:hover { transform: scale(1.04); border-color: var(--primary); }
+
+/* Padding grid */
+.padding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 8px 0 12px;
+}
+.pad-cell { display: flex; flex-direction: column; gap: 2px; align-items: stretch; }
+.pad-cell label { font-size: 11px; color: var(--text-mute); text-align: center; }
+.num-pair { display: flex; flex-direction: column; gap: 2px; }
+.pair-label { font-size: 11px; color: var(--text-mute); text-align: center; }
+
+/* ============================================================
+   右側面板底部：圖層 / 歷史紀錄
+   ============================================================ */
+.panel-right { display: flex; flex-direction: column; }
+.panel-right .panel-body { flex: 1 1 auto; min-height: 0; }
+
+.panel-bottom {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  min-height: 38px;
+  transition: max-height 0.2s ease;
+}
+.panel-bottom.collapsed { max-height: 38px; }
+.panel-bottom.collapsed .panel-bottom-body { display: none; }
+.panel-bottom-tabs {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 6px;
+  flex: 0 0 auto;
+  height: 38px;
+}
+.bot-tab {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 12.5px;
+  color: var(--text-sub);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-weight: 500;
+}
+.bot-tab.active { color: var(--text-main); border-bottom-color: var(--primary); }
+.bot-tab:hover { color: var(--text-main); }
+.bot-toggle {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-mute);
+  width: 24px; height: 24px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.bot-toggle:hover { background: var(--surface-2); color: var(--text-main); }
+.panel-bottom.collapsed .bot-toggle { transform: rotate(180deg); }
+.panel-bottom-body { flex: 1 1 auto; overflow-y: auto; padding: 6px; min-height: 0; }
+.bot-pane { display: none; }
+.bot-pane.active { display: block; }
+
+.float-list { font-size: 12px; color: var(--text-sub); }
+.float-list .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.float-list .row:hover { background: var(--surface-2); }
+.float-list .row.selected {
+  background: var(--primary-50);
+  color: var(--primary);
+  font-weight: 500;
+}
+.float-list .row .type-ico {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  background: var(--primary);
+  flex: 0 0 auto;
+}
+.float-list .row .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.float-list .row .lock,
+.float-list .row .vis { color: var(--text-mute); cursor: pointer; padding: 0 2px; }
+.float-list .row .lock:hover,
+.float-list .row .vis:hover { color: var(--primary); }
+.float-list .empty { padding: 12px; text-align: center; color: var(--text-mute); }
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 100; }
+.modal.open { display: flex; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
+.modal-card {
+  position: relative;
+  background: var(--surface);
+  width: min(680px, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-lg);
+}
+.modal-card header {
+  display: flex; align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-card h2 { margin: 0; font-size: 16px; }
+.modal-close {
+  margin-left: auto;
+  background: none; border: none;
+  font-size: 22px; line-height: 1;
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  color: var(--text-mute);
+}
+.modal-close:hover { background: var(--surface-2); color: var(--text-main); }
+.modal-body { padding: 16px 24px 24px; line-height: 1.7; }
+.modal-body h3 { margin: 16px 0 6px; font-size: 13px; color: var(--primary); }
+.modal-body h3:first-child { margin-top: 0; }
+.modal-body ul { margin: 0; padding-left: 18px; color: var(--text-sub); }
+.modal-body code {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--primary);
+}
+.hotkeys { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; list-style: none; padding-left: 0; }
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.app-footer {
+  height: var(--footer-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+.app-footer .dot { color: var(--text-mute); }
+
+/* ============================================================
+   Selection overlay
+   ============================================================ */
+.selection-rect {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+}
+.marquee-rect {
+  fill: var(--primary);
+  fill-opacity: 0.08;
+  stroke: var(--primary);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+.smart-guide {
+  stroke: #FF4FA3;
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  pointer-events: none;
+}
+.group-rect {
+  fill: none;
+  stroke: var(--secondary);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 3;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.handle {
+  fill: var(--surface);
+  stroke: var(--primary);
+  stroke-width: 1.5;
+  cursor: nwse-resize;
+  pointer-events: all;
+}
+.handle.h-n, .handle.h-s { cursor: ns-resize; }
+.handle.h-e, .handle.h-w { cursor: ew-resize; }
+.handle.h-ne, .handle.h-sw { cursor: nesw-resize; }
+.handle.h-rotate {
+  fill: var(--primary);
+  cursor: grab;
+}
+
+/* 物件 hover 游標 */
+#layer-root [data-id] { cursor: move; }
+#layer-root [data-id][data-locked='true'] { cursor: not-allowed; }
+
+/* 圖層點擊置中時的閃爍效果 */
+@keyframes flash-pulse {
+  0%   { filter: drop-shadow(0 0 0 rgba(74, 144, 226, 0)); }
+  30%  { filter: drop-shadow(0 0 12px rgba(74, 144, 226, 0.9)); }
+  100% { filter: drop-shadow(0 0 0 rgba(74, 144, 226, 0)); }
+}
+#layer-root [data-id].flash-highlight {
+  animation: flash-pulse 0.8s ease-out;
+}
+
+/* 內嵌文字編輯器 */
+.inline-text-editor:empty::before {
+  content: '輸入文字…';
+  color: var(--text-mute);
+}
+
+/* 響應式 */
+@media (max-width: 1200px) {
+  :root { --panel-w-left: 240px; --panel-w-right: 280px; }
+}
+
+@media (max-width: 960px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+  .panel-left, .panel-right {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 280px;
+    z-index: 6;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .panel-left { left: 0; }
+  .panel-right { right: 0; transform: translateX(100%); }
+  .panel-left.open { transform: translateX(0); }
+  .panel-right.open { transform: translateX(0); }
+  .header-actions .btn-toolbar { display: none; }
+  .header-actions .btn-toolbar.primary { display: inline-flex; }
+}
+
+/* Scrollbar 客製化 */
+.panel-body::-webkit-scrollbar,
+.panel-bottom-body::-webkit-scrollbar,
+.modal-card::-webkit-scrollbar,
+.canvas-host::-webkit-scrollbar { width: 8px; height: 8px; }
+.panel-body::-webkit-scrollbar-thumb,
+.panel-bottom-body::-webkit-scrollbar-thumb,
+.modal-card::-webkit-scrollbar-thumb,
+.canvas-host::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+}
+.panel-body::-webkit-scrollbar-thumb:hover { background: var(--text-mute); }
+
+</style>
+  <script>
+    /* 預設主題：依使用者偏好持久化 / 系統 prefers-color-scheme */
+    (function () {
+      try {
+        const saved = localStorage.getItem('svgeditor-theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = saved || (prefersDark ? 'dark' : 'light');
+        document.documentElement.dataset.bootTheme = theme;
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.dataset.theme = theme;
+        });
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <!-- 頂部導覽列 -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28">
+            <defs>
+              <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#4A90E2" />
+                <stop offset="100%" stop-color="#9B6EF3" />
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="26" height="26" rx="7" fill="url(#brandGrad)" />
+            <path d="M10 22 L16 10 L22 22 M12.5 17 L19.5 17" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">SVG 編輯器</div>
+        </div>
+      </div>
+
+      <nav class="header-actions">
+        <button class="btn-toolbar" id="btn-new" title="新建空白畫布">新建</button>
+        <button class="btn-toolbar" id="btn-open" title="開啟 SVG / PNG">開啟</button>
+        <span class="divider" aria-hidden="true"></span>
+        <button class="btn-toolbar" id="btn-undo" title="撤銷 Ctrl+Z">撤銷</button>
+        <button class="btn-toolbar" id="btn-redo" title="重做 Ctrl+Y">重做</button>
+        <button class="btn-toolbar danger" id="btn-clear" title="清除整個畫布">清除</button>
+        <span class="divider" aria-hidden="true"></span>
+        <button class="btn-toolbar primary" id="btn-export-svg">匯出 SVG</button>
+        <button class="btn-toolbar primary" id="btn-export-png">匯出 PNG</button>
+        <span class="divider" aria-hidden="true"></span>
+        <button class="btn-pill" id="btn-help" title="操作說明">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v15a1 1 0 0 1-1.45.89L12 17.5l-6.55 3.39A1 1 0 0 1 4 20V4.5Z" fill="#4A90E2" />
+          </svg>
+          <span>說明</span>
+        </button>
+        <button class="btn-pill" id="btn-theme" title="切換主題">
+          <span class="theme-ico" id="theme-ico" aria-hidden="true"></span>
+          <span id="theme-label">暗色</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主視圖：左側形狀庫 / 中央畫布 / 右側屬性面板 -->
+  <main class="app-main">
+    <!-- 左側形狀庫 -->
+    <aside class="panel panel-left" id="panel-left">
+      <div class="panel-tabs">
+        <button class="tab active" data-tab="shapes">圖形</button>
+        <button class="tab-close" id="btn-collapse-left" title="收摺左側面板">×</button>
+      </div>
+      <div class="panel-body">
+        <div class="search-box">
+          <input type="search" id="shape-search" placeholder="輸入 / 以搜尋" />
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="shape-categories" id="shape-categories"></div>
+      </div>
+    </aside>
+
+    <!-- 中央畫布區 -->
+    <section class="canvas-area" id="canvas-area">
+      <div class="canvas-toolbar">
+        <div class="tools">
+          <button class="tool" data-tool="select" title="選擇工具 (V)" data-active="true">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l14 7-6.2 1.6L11 19 5 3z" fill="currentColor"/></svg>
+          </button>
+          <button class="tool" data-tool="hand" title="手型工具 / 拖曳畫布 (H)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M7 11V5.5a1.5 1.5 0 0 1 3 0V11M10 11V4.5a1.5 1.5 0 0 1 3 0V11M13 11V5.5a1.5 1.5 0 0 1 3 0V12M16 8.5a1.5 1.5 0 0 1 3 0V14c0 4.5-3 7-6 7s-6-2.5-6-5v-1l-2.4-3a1.5 1.5 0 0 1 2.4-1.8L9 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="tool" data-tool="text" title="文字工具 (T)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 5h14v3h-5v11h-4V8H5z" fill="currentColor"/></svg>
+          </button>
+          <button class="tool" data-tool="rect" title="矩形 (R)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><rect x="4" y="6" width="16" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="tool" data-tool="ellipse" title="橢圓 (O)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><ellipse cx="12" cy="12" rx="8" ry="6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="tool" data-tool="line" title="直線 (L)">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 20 L20 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="zoom-controls">
+          <button class="tool" id="btn-zoom-out" title="縮小">－</button>
+          <span class="zoom-value" id="zoom-value">100%</span>
+          <button class="tool" id="btn-zoom-in" title="放大">＋</button>
+          <button class="tool" id="btn-zoom-fit" title="符合視窗">符合</button>
+          <button class="tool" id="btn-zoom-100" title="實際大小">1:1</button>
+        </div>
+      </div>
+
+      <div class="canvas-host" id="canvas-host">
+        <div class="stage-wrap" id="stage-wrap">
+        <svg id="stage" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1200 800">
+          <defs>
+            <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="0.5" />
+            </pattern>
+          </defs>
+          <rect id="canvas-bg" x="0" y="0" width="1200" height="800" fill="var(--canvas-bg)" />
+          <rect id="canvas-grid" x="0" y="0" width="1200" height="800" fill="url(#grid-pattern)" pointer-events="none" />
+          <g id="layer-root"></g>
+          <g id="overlay" pointer-events="none"></g>
+        </svg>
+
+        </div>
+        <!-- 拖曳覆蓋層 -->
+        <div class="drop-overlay" id="drop-overlay">
+          <div class="drop-card">
+            <svg viewBox="0 0 24 24" width="48" height="48"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="drop-title">放開以匯入檔案</div>
+            <div class="drop-sub">支援 SVG、PNG 格式</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部狀態列 -->
+      <div class="status-bar">
+        <span id="status-coord">X: 0, Y: 0</span>
+        <span id="status-info">就緒</span>
+        <span id="status-selection">未選取物件</span>
+      </div>
+    </section>
+
+    <!-- 右側屬性面板 -->
+    <aside class="panel panel-right" id="panel-right">
+      <div class="panel-tabs prop-tabs">
+        <button class="tab active" data-prop="style">物件樣式</button>
+        <button class="tab" data-prop="text">文字</button>
+        <button class="tab" data-prop="adjust">調整</button>
+        <button class="tab-close" id="btn-collapse-right" title="收摺右側面板">×</button>
+      </div>
+      <div class="panel-body" id="prop-body">
+        <!-- 物件樣式 -->
+        <div class="prop-pane active" data-pane="style">
+          <div class="preset-grid" id="preset-grid"></div>
+
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="fill-enable" checked /><span>填滿</span></label>
+            <select class="select" id="fill-mode">
+              <option value="solid">Auto</option>
+              <option value="none">無</option>
+            </select>
+            <div class="color-pick">
+              <input type="color" id="fill-color" value="#FFD8C2" />
+              <span class="dropper" title="取色">⌖</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="gradient-enable" /><span>漸層</span></label>
+          </div>
+
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="stroke-enable" checked /><span>邊線</span></label>
+            <div class="color-pick">
+              <input type="color" id="stroke-color" value="#E96A4F" />
+              <span class="dropper" title="取色">⌖</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <select class="select stroke-style" id="stroke-style">
+              <option value="solid">─────  實線</option>
+              <option value="dash">- - - - 虛線</option>
+              <option value="dot">·······  點線</option>
+              <option value="dashdot">- · - · 點虛</option>
+            </select>
+            <div class="num-input">
+              <input type="number" id="stroke-width" value="1" min="0" max="40" step="0.5" />
+              <span class="unit">pt</span>
+            </div>
+          </div>
+          <div class="form-row labeled">
+            <label>周長</label>
+            <div class="num-input">
+              <input type="number" id="perimeter" value="0" step="0.5" />
+              <span class="unit">pt</span>
+            </div>
+          </div>
+          <div class="form-row labeled">
+            <label>不透明度</label>
+            <div class="num-input">
+              <input type="number" id="opacity" value="100" min="0" max="100" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+          <div class="form-row two-col">
+            <label class="check"><input type="checkbox" id="effect-sketch" /><span>Sketch</span></label>
+            <label class="check"><input type="checkbox" id="effect-shadow" /><span>陰影</span></label>
+          </div>
+
+          <div class="form-row">
+            <select class="select" id="edit-menu">
+              <option>編輯…</option>
+              <option value="copy-style">複製樣式</option>
+              <option value="paste-style">貼上樣式</option>
+              <option value="reset-style">重設樣式</option>
+            </select>
+          </div>
+          <button class="btn-block" id="btn-copy-style">複製樣式</button>
+          <button class="btn-block" id="btn-default-style">設為預設樣式</button>
+        </div>
+
+        <!-- 文字 -->
+        <div class="prop-pane" data-pane="text">
+          <div class="section-title">文字內容</div>
+          <textarea id="text-content-input" class="text-content-input" rows="3" placeholder="選取文字物件以編輯內容…"></textarea>
+          <div class="text-content-hint" id="text-content-hint">提示：可直接於此處輸入或修改文字，無需在畫布上點選。</div>
+
+          <div class="section-title">字型</div>
+          <select class="select font-picker" id="font-family">
+            <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+            <option value="'Times New Roman', Times, serif">Times New Roman</option>
+            <option value="Garamond, serif">Garamond</option>
+            <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+            <option value="'Courier New', monospace">Courier New</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Lucida Console', monospace">Lucida Console</option>
+            <option value="Tahoma, sans-serif">Tahoma</option>
+            <option value="'Noto Sans TC', sans-serif">Noto Sans TC</option>
+            <option value="'Microsoft JhengHei', sans-serif">微軟正黑體</option>
+          </select>
+
+          <div class="form-row btn-bar">
+            <button class="btn-square" id="text-bold" title="粗體"><b>B</b></button>
+            <button class="btn-square" id="text-italic" title="斜體"><i>I</i></button>
+            <button class="btn-square" id="text-underline" title="底線"><u>U</u></button>
+            <button class="btn-square" id="text-strike" title="刪除線"><s>S</s></button>
+            <div class="num-input">
+              <input type="number" id="text-size" value="12" min="6" max="240" />
+              <span class="unit">px</span>
+            </div>
+          </div>
+
+          <div class="form-row btn-bar">
+            <button class="btn-square" data-align="left" title="靠左"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 6h16M4 11h10M4 16h16M4 21h10" stroke="currentColor" stroke-width="2"/></svg></button>
+            <button class="btn-square active" data-align="center" title="置中"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 6h16M7 11h10M4 16h16M7 21h10" stroke="currentColor" stroke-width="2"/></svg></button>
+            <button class="btn-square" data-align="right" title="靠右"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 6h16M10 11h10M4 16h16M10 21h10" stroke="currentColor" stroke-width="2"/></svg></button>
+            <span class="vsep"></span>
+            <button class="btn-square" data-valign="top" title="靠上"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 4h16M8 9v10M16 9v10" stroke="currentColor" stroke-width="2"/></svg></button>
+            <button class="btn-square active" data-valign="middle" title="置中"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 12h16M8 6v12M16 6v12" stroke="currentColor" stroke-width="2"/></svg></button>
+            <button class="btn-square" data-valign="bottom" title="靠下"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 20h16M8 5v10M16 5v10" stroke="currentColor" stroke-width="2"/></svg></button>
+          </div>
+
+          <div class="form-row labeled">
+            <label>位置</label>
+            <select class="select" id="text-position">
+              <option value="center">置中</option>
+              <option value="top">頂端</option>
+              <option value="bottom">底部</option>
+              <option value="custom">自訂</option>
+            </select>
+          </div>
+          <div class="form-row labeled">
+            <label>書寫方向</label>
+            <select class="select" id="text-writing">
+              <option value="auto">自動</option>
+              <option value="lr">由左至右</option>
+              <option value="rl">由右至左</option>
+              <option value="vertical">垂直</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="text-fill-enable" checked /><span>文字顏色</span></label>
+            <div class="color-pick"><input type="color" id="text-fill" value="#1F2937" /></div>
+          </div>
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="text-bg-enable" /><span>背景顏色</span></label>
+            <div class="color-pick"><input type="color" id="text-bg" value="#FFFFFF" /></div>
+          </div>
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="text-border-enable" /><span>邊框顏色</span></label>
+            <div class="color-pick"><input type="color" id="text-border" value="#E96A4F" /></div>
+          </div>
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="text-shadow" /><span>陰影</span></label>
+          </div>
+
+          <div class="form-row two-col">
+            <label class="check"><input type="checkbox" id="text-wrap" checked /><span>自動換行</span></label>
+            <label class="check"><input type="checkbox" id="text-format" checked /><span>格式化文字</span></label>
+          </div>
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="text-to-path" /><span>Convert labels to SVG</span></label>
+          </div>
+
+          <div class="form-row labeled">
+            <label>不透明度</label>
+            <div class="num-input"><input type="number" id="text-opacity" value="100" min="0" max="100" /><span class="unit">%</span></div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="num-pair">
+              <span class="pair-label">間距</span>
+              <div class="num-input"><input type="number" id="text-letter" value="0" /><span class="unit">pt</span></div>
+            </div>
+            <div class="num-pair">
+              <span class="pair-label">全域</span>
+              <div class="num-input"><input type="number" id="text-line" value="2" /><span class="unit">pt</span></div>
+            </div>
+          </div>
+
+          <div class="padding-grid">
+            <div class="pad-cell"><label>上</label><div class="num-input"><input type="number" id="pad-top" value="0"/><span class="unit">pt</span></div></div>
+            <div class="pad-cell"><label>左</label><div class="num-input"><input type="number" id="pad-left" value="0"/><span class="unit">pt</span></div></div>
+            <div class="pad-cell"><label>下</label><div class="num-input"><input type="number" id="pad-bottom" value="0"/><span class="unit">pt</span></div></div>
+            <div class="pad-cell"><label>右</label><div class="num-input"><input type="number" id="pad-right" value="0"/><span class="unit">pt</span></div></div>
+          </div>
+
+          <button class="btn-block" id="btn-clear-format">清除格式</button>
+        </div>
+
+        <!-- 調整 -->
+        <div class="prop-pane" data-pane="adjust">
+          <div class="form-row two-col">
+            <button class="btn-block sm" id="layer-top">移動到最上層</button>
+            <button class="btn-block sm" id="layer-bottom">移動到最下層</button>
+          </div>
+          <div class="form-row two-col">
+            <button class="btn-block sm" id="layer-up">上移一層</button>
+            <button class="btn-block sm" id="layer-down">下移一層</button>
+          </div>
+
+          <div class="form-row labeled">
+            <label>大小</label>
+            <div class="num-input"><input type="number" id="size-w" value="0" /><span class="unit">pt</span></div>
+            <div class="num-input"><input type="number" id="size-h" value="0" /><span class="unit">pt</span></div>
+          </div>
+          <div class="form-row two-col mini">
+            <span class="mini-label">寬</span>
+            <span class="mini-label">高</span>
+          </div>
+          <div class="form-row">
+            <label class="check"><input type="checkbox" id="ratio-lock" /><span>限制寬高比</span></label>
+          </div>
+
+          <div class="form-row labeled">
+            <label>位置</label>
+            <div class="num-input"><input type="number" id="pos-x" value="0" step="0.5" /><span class="unit">pt</span></div>
+            <div class="num-input"><input type="number" id="pos-y" value="0" step="0.5" /><span class="unit">pt</span></div>
+          </div>
+          <div class="form-row two-col mini">
+            <span class="mini-label">左</span>
+            <span class="mini-label">上</span>
+          </div>
+
+          <div class="form-row labeled">
+            <label>角度</label>
+            <div class="num-input"><input type="number" id="rotate" value="0" /><span class="unit">°</span></div>
+          </div>
+          <button class="btn-block" id="btn-rotate-90">旋轉 90°</button>
+
+          <div class="section-title">翻轉</div>
+          <div class="form-row two-col">
+            <button class="btn-block sm" id="flip-h">水平</button>
+            <button class="btn-block sm" id="flip-v">垂直</button>
+          </div>
+
+          <div class="section-title">對齊</div>
+          <button class="btn-block" id="snap-grid">Snap to Grid</button>
+          <button class="btn-block" id="btn-group">群組</button>
+          <button class="btn-block" id="btn-duplicate">複製大小</button>
+          <div class="form-row">
+            <select class="select" id="reset-menu">
+              <option>重設…</option>
+              <option value="reset-pos">重設位置</option>
+              <option value="reset-size">重設大小</option>
+              <option value="reset-rotate">重設旋轉</option>
+            </select>
+          </div>
+          <button class="btn-block" id="btn-lock">鎖定 / 解鎖</button>
+          <button class="btn-block" id="btn-explore">Explore</button>
+        </div>
+      </div>
+
+      <!-- 底部固定區：圖層 / 歷史紀錄 -->
+      <div class="panel-bottom" id="panel-bottom">
+        <div class="panel-bottom-tabs">
+          <button class="bot-tab active" data-bottab="layers">圖層</button>
+          <button class="bot-tab" data-bottab="history">歷史紀錄</button>
+          <button class="bot-toggle" id="bot-toggle" title="收摺 / 展開">▾</button>
+        </div>
+        <div class="panel-bottom-body">
+          <div class="bot-pane active" data-botpane="layers">
+            <div class="float-list" id="layer-list">尚無物件</div>
+          </div>
+          <div class="bot-pane" data-botpane="history">
+            <div class="float-list" id="history-list">尚無紀錄</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- 說明 Modal -->
+  <div class="modal" id="modal-help" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <header>
+        <h2>操作說明</h2>
+        <button class="modal-close" id="btn-modal-close">×</button>
+      </header>
+      <div class="modal-body">
+        <h3>基本操作</h3>
+        <ul>
+          <li>從左側「圖形」面板點選或拖曳形狀至畫布。</li>
+          <li>在畫布上點擊物件以選取，再於右側面板調整屬性。</li>
+          <li>雙擊文字物件可直接編輯內容。</li>
+          <li>按住空白鍵 + 拖曳可平移畫布；滾輪縮放畫布。</li>
+        </ul>
+        <h3>檔案</h3>
+        <ul>
+          <li>支援將 SVG / PNG 直接拖曳至應用程式視窗匯入。</li>
+          <li>匯入多檔時，系統自動以 item-01、item-02 規則編號。</li>
+          <li>可匯出為 SVG（保留向量資訊）或 PNG（高品質點陣圖）。</li>
+        </ul>
+        <h3>快捷鍵</h3>
+        <ul class="hotkeys">
+          <li><code>V</code> 選擇</li>
+          <li><code>H</code> 手型工具</li>
+          <li><code>T</code> 文字</li>
+          <li><code>R</code> 矩形</li>
+          <li><code>O</code> 橢圓</li>
+          <li><code>L</code> 直線</li>
+          <li><code>Ctrl + Z</code> 撤銷</li>
+          <li><code>Ctrl + Y</code> / <code>Ctrl + Shift + Z</code> 重做</li>
+          <li><code>Ctrl + D</code> 原地複製</li>
+          <li><code>Ctrl + A</code> 全選</li>
+          <li><code>Delete</code> 刪除</li>
+          <li><code>Ctrl + S</code> 匯出 SVG</li>
+          <li><code>Ctrl + G</code> 建立群組</li>
+          <li><code>Ctrl + Shift + G</code> 解散群組</li>
+          <li><code>方向鍵</code> 微調 1px（Shift 10px）</li>
+          <li><code>Space + 拖曳</code> 平移畫布</li>
+          <li><code>Ctrl + 滾輪</code> 縮放畫布</li>
+          <li><code>Shift + 拖曳</code> 框選時加入既有選取</li>
+          <li><code>Alt + 拖曳</code> 拖曳時暫停智慧對齊</li>
+        </ul>
+
+        <h3>進階操作</h3>
+        <ul>
+          <li><strong>智慧對齊</strong>：拖曳物件接近其他物件邊界 / 中線時自動吸附並顯示粉紅輔助線（按 Alt 暫停）。</li>
+          <li><strong>框選</strong>：在空白處按下拖曳即可框選多物件，Shift+框選可加入既有選取。</li>
+          <li><strong>群組</strong>：選取多物件後 Ctrl+G 建立群組，點擊任一成員即整組選取；Ctrl+Shift+G 解散。</li>
+          <li><strong>清除畫布</strong>：頂部「清除」按鈕一鍵清空（可 Ctrl+Z 還原）。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 隱藏的檔案選擇器 -->
+  <input type="file" id="file-input" accept=".svg,image/svg+xml,.png,image/png" style="display:none" multiple />
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <span>系統版本 v0.1.1</span>
+    <span class="dot">·</span>
+    <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
+  </footer>
+
+  <script>
+/* === shapes.js === */
+/* =============================================================
+   形狀庫資料（v0.0.6 去重版）
+   原則：
+   - 一般：基礎容器與文字
+   - 基本圖形：純幾何形狀
+   - 流程圖：只保留流程圖語義獨特的形狀（一般已涵蓋的 rect / diamond /
+     pill / parallelogram / hexagon / circle 不重複收錄）
+   - 箭頭：方向標記
+   - 實體關係：僅保留 ER 語義獨特的標記
+   - UML：僅保留 UML 語義獨特的標記
+   stroke 統一為 currentColor，可適應亮 / 暗主題
+   ============================================================= */
+
+const SHAPE_STROKE = 'currentColor';
+const SHAPE_FILL = 'transparent';
+
+const SHAPES = [
+  /* ============ 一般 ============ */
+  { cat: '一般', items: [
+    { id: 'rect', name: '矩形', svg: `<rect x="6" y="14" width="88" height="32" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'rect-round', name: '圓角矩形', svg: `<rect x="6" y="14" width="88" height="32" rx="6" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'rect-pill', name: '膠囊', svg: `<rect x="6" y="14" width="88" height="32" rx="16" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'rect-double', name: '雙線矩形', svg: `<rect x="6" y="14" width="88" height="32" fill="transparent" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="17" width="82" height="26" fill="none" stroke="currentColor" stroke-width="0.8"/>` },
+    { id: 'ellipse', name: '橢圓', svg: `<ellipse cx="50" cy="30" rx="44" ry="18" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'circle', name: '圓形', svg: `<circle cx="50" cy="30" r="22" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'diamond', name: '菱形', svg: `<polygon points="50,8 92,30 50,52 8,30" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'parallelogram', name: '平行四邊形', svg: `<polygon points="20,14 96,14 80,46 4,46" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'trapezoid', name: '梯形', svg: `<polygon points="20,14 80,14 96,46 4,46" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'hexagon', name: '六邊形', svg: `<polygon points="20,14 80,14 96,30 80,46 20,46 4,30" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'note', name: '註記', svg: `<path d="M6 14 H82 L94 26 V46 H6 Z M82 14 V26 H94" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'cloud', name: '雲朵', svg: `<path d="M22 38 Q12 38 14 28 Q14 20 24 20 Q26 12 36 14 Q44 8 54 14 Q66 12 70 22 Q80 22 80 30 Q86 32 84 40 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'document', name: '文件', svg: `<path d="M6 14 H94 V42 Q72 50 50 42 Q28 34 6 42 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'callout', name: '對話框', svg: `<path d="M6 14 H94 V40 H58 L50 50 L46 40 H6 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'text-only', name: '文字', svg: `<text x="50" y="38" text-anchor="middle" font-size="20" fill="currentColor" font-family="Inter">Text</text>` },
+    { id: 'heading', name: '標題', svg: `<text x="50" y="36" text-anchor="middle" font-size="18" fill="currentColor" font-weight="700" font-family="Inter">Heading</text>` },
+  ]},
+
+  /* ============ 基本圖形（純幾何） ============ */
+  { cat: '基本圖形', items: [
+    { id: 'triangle', name: '三角形', svg: `<polygon points="50,10 90,50 10,50" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'pentagon', name: '五邊形', svg: `<polygon points="50,8 92,30 78,52 22,52 8,30" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'octagon', name: '八邊形', svg: `<polygon points="30,8 70,8 92,22 92,38 70,52 30,52 8,38 8,22" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'star', name: '星形', svg: `<polygon points="50,6 60,24 80,26 65,40 70,58 50,48 30,58 35,40 20,26 40,24" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'heart', name: '心形', svg: `<path d="M50 50 C20 32 20 14 36 14 C44 14 50 22 50 22 C50 22 56 14 64 14 C80 14 80 32 50 50 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'lightning', name: '閃電', svg: `<polygon points="48,6 28,32 44,32 36,54 64,28 48,28 56,6" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'moon', name: '月亮', svg: `<path d="M62 30 A24 24 0 1 1 38 6 A18 18 0 0 0 62 30 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'drop', name: '水滴', svg: `<path d="M50 8 C32 30 30 50 50 52 C70 50 68 30 50 8 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'cross', name: '十字', svg: `<polygon points="40,8 60,8 60,22 76,22 76,38 60,38 60,52 40,52 40,38 24,38 24,22 40,22" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+  ]},
+
+  /* ============ 流程圖（語義獨特，與一般類不重複） ============ */
+  { cat: '流程圖', items: [
+    { id: 'flow-manual', name: '人工輸入', svg: `<polygon points="6,22 94,14 94,46 6,46" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'flow-database', name: '資料庫', svg: `<path d="M6 16 Q6 8 50 8 Q94 8 94 16 V44 Q94 52 50 52 Q6 52 6 44 Z M6 16 Q6 24 50 24 Q94 24 94 16" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'flow-subroutine', name: '子流程', svg: `<rect x="6" y="14" width="88" height="32" fill="transparent" stroke="currentColor" stroke-width="1.5"/><line x1="14" y1="14" x2="14" y2="46" stroke="currentColor" stroke-width="1.5"/><line x1="86" y1="14" x2="86" y2="46" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'flow-display', name: '顯示', svg: `<path d="M14 14 H88 L94 30 L88 46 H14 L4 30 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'flow-merge', name: '合併', svg: `<polygon points="50,52 14,14 86,14" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'flow-storage', name: '儲存', svg: `<path d="M14 14 H94 V46 H14 Q4 30 14 14 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'flow-delay', name: '延遲', svg: `<path d="M6 14 H78 Q94 14 94 30 Q94 46 78 46 H6 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+  ]},
+
+  /* ============ 箭頭 ============ */
+  { cat: '箭頭', items: [
+    { id: 'arrow-right', name: '右箭頭', svg: `<polygon points="6,22 64,22 64,12 94,30 64,48 64,38 6,38" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-left', name: '左箭頭', svg: `<polygon points="94,22 36,22 36,12 6,30 36,48 36,38 94,38" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-up', name: '上箭頭', svg: `<polygon points="38,52 38,18 26,18 50,4 74,18 62,18 62,52" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-down', name: '下箭頭', svg: `<polygon points="38,4 38,38 26,38 50,52 74,38 62,38 62,4" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-double-h', name: '雙向（水平）', svg: `<polygon points="6,30 22,12 22,22 78,22 78,12 94,30 78,48 78,38 22,38 22,48" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-double-v', name: '雙向（垂直）', svg: `<polygon points="50,4 68,18 60,18 60,42 68,42 50,56 32,42 40,42 40,18 32,18" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-bent', name: '彎折', svg: `<polygon points="10,18 50,18 50,8 78,28 50,48 50,38 10,38" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'arrow-curved', name: '曲線箭頭', svg: `<path d="M6 46 Q40 6 86 26 L78 16 M86 26 L74 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>` },
+    { id: 'arrow-simple-r', name: '線段右', svg: `<line x1="6" y1="30" x2="86" y2="30" stroke="currentColor" stroke-width="1.8"/><polyline points="80,22 92,30 80,38" fill="none" stroke="currentColor" stroke-width="1.8"/>` },
+    { id: 'arrow-dashed', name: '虛線右', svg: `<line x1="6" y1="30" x2="86" y2="30" stroke="currentColor" stroke-width="1.8" stroke-dasharray="4 3"/><polyline points="80,22 92,30 80,38" fill="none" stroke="currentColor" stroke-width="1.8"/>` },
+  ]},
+
+  /* ============ 實體關係（僅保留 ER 獨有標記） ============ */
+  { cat: '實體關係', items: [
+    { id: 'er-weak', name: '弱實體', svg: `<rect x="6" y="14" width="88" height="32" fill="transparent" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="18" width="80" height="24" fill="none" stroke="currentColor" stroke-width="1"/>` },
+    { id: 'er-multi', name: '多值屬性', svg: `<ellipse cx="50" cy="30" rx="40" ry="18" fill="transparent" stroke="currentColor" stroke-width="1.5"/><ellipse cx="50" cy="30" rx="36" ry="14" fill="none" stroke="currentColor" stroke-width="1"/>` },
+    { id: 'er-key', name: '鍵屬性', svg: `<ellipse cx="50" cy="30" rx="40" ry="18" fill="transparent" stroke="currentColor" stroke-width="1.5"/><line x1="22" y1="40" x2="78" y2="40" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'er-derived', name: '衍生屬性', svg: `<ellipse cx="50" cy="30" rx="40" ry="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>` },
+  ]},
+
+  /* ============ UML（僅保留 UML 獨有標記） ============ */
+  { cat: 'UML', items: [
+    { id: 'uml-class', name: '類別', svg: `<rect x="6" y="6" width="88" height="48" fill="transparent" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="22" x2="94" y2="22" stroke="currentColor" stroke-width="1"/><line x1="6" y1="38" x2="94" y2="38" stroke="currentColor" stroke-width="1"/>` },
+    { id: 'uml-actor', name: '行動者', svg: `<circle cx="50" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="50" y1="20" x2="50" y2="40" stroke="currentColor" stroke-width="1.5"/><line x1="36" y1="28" x2="64" y2="28" stroke="currentColor" stroke-width="1.5"/><line x1="50" y1="40" x2="38" y2="54" stroke="currentColor" stroke-width="1.5"/><line x1="50" y1="40" x2="62" y2="54" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'uml-package', name: '套件', svg: `<path d="M6 16 H40 V22 H94 V52 H6 Z" fill="transparent" stroke="currentColor" stroke-width="1.5"/>` },
+    { id: 'uml-interface', name: '介面', svg: `<circle cx="50" cy="30" r="18" fill="transparent" stroke="currentColor" stroke-width="1.5"/><text x="50" y="35" text-anchor="middle" font-size="10" fill="currentColor" font-family="Inter">I</text>` },
+    { id: 'uml-component', name: '元件', svg: `<rect x="14" y="14" width="80" height="32" fill="transparent" stroke="currentColor" stroke-width="1.5"/><rect x="6" y="20" width="14" height="8" fill="transparent" stroke="currentColor" stroke-width="1"/><rect x="6" y="34" width="14" height="8" fill="transparent" stroke="currentColor" stroke-width="1"/>` },
+  ]},
+];
+
+/* 樣式預設色卡（呼應 image.png 中的色塊） */
+const PRESET_STYLES = [
+  { fill: '#FFFFFF', stroke: '#222831' },
+  { fill: '#ECEEF1', stroke: '#333333' },
+  { fill: '#D6E4F5', stroke: '#4A90E2' },
+  { fill: '#D9EFE0', stroke: '#5AC8A5' },
+  { fill: '#FFE5D0', stroke: '#FFB74D' },
+  { fill: '#FFF4C9', stroke: '#E0A700' },
+  { fill: '#FFD7E0', stroke: '#F06292' },
+  { fill: '#E6D9FA', stroke: '#9B6EF3' },
+];
+
+if (typeof window !== 'undefined') {
+  window.__SHAPES__ = SHAPES;
+  window.__PRESETS__ = PRESET_STYLES;
+}
+
+</script>
+  <script>
+/* === app.js === */
+/* =============================================================
+   霍家私塾 SVG 編輯器 - 應用程式核心
+   架構：
+   - state：扁平化儲存所有物件（id → node）
+   - render：將 state 寫回 SVG DOM
+   - history：操作堆疊（最多 50 筆）
+   - selection / transform：選取與變形
+   - propertyPanel：右側面板雙向綁定
+   ============================================================= */
+
+(function () {
+  'use strict';
+
+  // ====== Constants ======
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const XHTML_NS = 'http://www.w3.org/1999/xhtml';
+  const HISTORY_LIMIT = 50;
+  const ZOOM_MIN = 0.1;
+  const ZOOM_MAX = 8;
+  const ZOOM_STEP = 1.15;
+  const CANVAS_W = 1200;
+  const CANVAS_H = 800;
+
+  // ====== State ======
+  const state = {
+    objects: [],         // 物件陣列（保留順序，索引大者在上層）
+    selected: new Set(), // 選取的 id
+    tool: 'select',
+    zoom: 1,
+    autoCounter: 0,      // 自動編號計數
+    history: [],
+    historyIndex: -1,
+    clipboard: null,
+    snapToGrid: false,
+    gridSize: 10,
+    smartGuides: [],   // 對齊輔助線（暫存渲染用）
+    groupCounter: 0,   // 群組 ID 計數
+  };
+
+  // ====== DOM References ======
+  const $ = (sel) => document.querySelector(sel);
+  const $ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  const stage = $('#stage');
+  const layerRoot = $('#layer-root');
+  const overlay = $('#overlay');
+  const canvasHost = $('#canvas-host');
+  const statusCoord = $('#status-coord');
+  const statusInfo = $('#status-info');
+  const statusSel = $('#status-selection');
+  const layerList = $('#layer-list');
+  const historyList = $('#history-list');
+  const dropOverlay = $('#drop-overlay');
+  const textContentInput = $('#text-content-input');
+  const textContentHint = $('#text-content-hint');
+
+  // ====== Utility ======
+  function uid(prefix) {
+    state.autoCounter += 1;
+    const n = String(state.autoCounter).padStart(2, '0');
+    return `${prefix || 'item'}-${n}`;
+  }
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+  function snap(v) { return state.snapToGrid ? Math.round(v / state.gridSize) * state.gridSize : v; }
+  function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+  // ====== Object Factory ======
+  function createObject(type, props) {
+    const id = props.id || uid('item');
+    const base = {
+      id,
+      type,
+      x: props.x ?? 100,
+      y: props.y ?? 100,
+      w: props.w ?? 120,
+      h: props.h ?? 80,
+      rotation: 0,
+      flipH: false,
+      flipV: false,
+      opacity: 1,
+      fill: props.fill ?? '#FFFFFF',
+      fillEnabled: true,
+      stroke: props.stroke ?? '#333333',
+      strokeEnabled: true,
+      strokeWidth: 1.5,
+      strokeStyle: 'solid', // solid / dash / dot / dashdot
+      shadow: false,
+      sketch: false,
+      locked: false,
+      name: props.name || type,
+      // 文字屬性
+      text: props.text || '',
+      fontFamily: 'Helvetica, Arial, sans-serif',
+      fontSize: 16,
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+      textDecoration: 'none',
+      textAlign: 'center',     // left / center / right
+      textVAlign: 'middle',    // top / middle / bottom
+      textColor: '#1F2937',
+      // shape 特定資料
+      shapeId: props.shapeId || null,
+      shapeSvg: props.shapeSvg || null,
+      imgHref: props.imgHref || null,
+      preserveStyle: props.preserveStyle || false, // 匯入時保留原始顏色
+      shapeViewBox: props.shapeViewBox || null,    // { x, y, w, h } for compound shapes
+      groupId: props.groupId || null,              // 群組 ID
+      useForeignObject: props.useForeignObject || false,
+      // Ghost 文字物件：視覺由所屬 compound shape 的 foreignObject 提供，自身只負責 hit-test 與編輯介面
+      // 結構：{ compoundId: string, foreignIndex: number }
+      ghostFor: props.ghostFor || null,
+    };
+    return base;
+  }
+
+  // ====== 群組輔助 ======
+  function expandSelectionByGroups() {
+    // 將選取集擴張至所有同 groupId 成員
+    const ids = new Set(state.selected);
+    const groups = new Set();
+    ids.forEach((id) => {
+      const o = findObj(id);
+      if (o && o.groupId) groups.add(o.groupId);
+    });
+    state.objects.forEach((o) => {
+      if (o.groupId && groups.has(o.groupId)) ids.add(o.id);
+    });
+    state.selected = ids;
+  }
+  function getGroupBBox(groupId) {
+    const objs = state.objects.filter((o) => o.groupId === groupId);
+    if (objs.length === 0) return null;
+    let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+    objs.forEach((o) => {
+      x1 = Math.min(x1, o.x);
+      y1 = Math.min(y1, o.y);
+      x2 = Math.max(x2, o.x + o.w);
+      y2 = Math.max(y2, o.y + o.h);
+    });
+    return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+  }
+
+  // ====== History ======
+  function pushHistory(action, meta) {
+    // 截斷未來
+    state.history = state.history.slice(0, state.historyIndex + 1);
+    const snapshot = state.objects.map(deepClone);
+    state.history.push({ action, meta: meta || '', snapshot, ts: Date.now() });
+    if (state.history.length > HISTORY_LIMIT) {
+      state.history.shift();
+    } else {
+      state.historyIndex += 1;
+    }
+    renderHistory();
+  }
+  function undo() {
+    if (state.historyIndex <= 0) return;
+    state.historyIndex -= 1;
+    state.objects = state.history[state.historyIndex].snapshot.map(deepClone);
+    state.selected.clear();
+    renderAll();
+  }
+  function redo() {
+    if (state.historyIndex >= state.history.length - 1) return;
+    state.historyIndex += 1;
+    state.objects = state.history[state.historyIndex].snapshot.map(deepClone);
+    state.selected.clear();
+    renderAll();
+  }
+
+  // ====== Rendering ======
+  function renderAll() {
+    layerRoot.innerHTML = '';
+    state.objects.forEach((obj) => {
+      const el = renderObject(obj);
+      if (el) layerRoot.appendChild(el);
+    });
+    renderOverlay();
+    renderLayers();
+    syncPropertyPanel();
+  }
+
+  function renderObject(obj) {
+    const g = document.createElementNS(SVG_NS, 'g');
+    g.setAttribute('data-id', obj.id);
+    const cx = obj.x + obj.w / 2;
+    const cy = obj.y + obj.h / 2;
+    const sx = obj.flipH ? -1 : 1;
+    const sy = obj.flipV ? -1 : 1;
+    g.setAttribute('transform', `translate(${cx} ${cy}) rotate(${obj.rotation}) scale(${sx} ${sy}) translate(${-obj.w / 2} ${-obj.h / 2})`);
+    g.setAttribute('opacity', obj.opacity);
+    // 隱藏（opacity 0）物件不應攔截點擊事件，避免遮蔽下層可見物件
+    if (obj.opacity === 0) g.setAttribute('pointer-events', 'none');
+    if (obj.shadow) g.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(0,0,0,0.25))');
+    if (obj.locked) g.setAttribute('data-locked', 'true');
+
+    const shape = buildShape(obj);
+    if (shape) g.appendChild(shape);
+
+    // 內嵌文字（除了 text-only 類型）
+    if (obj.text && obj.type !== 'image') {
+      const txt = buildTextNode(obj);
+      if (txt) g.appendChild(txt);
+    }
+
+    return g;
+  }
+
+  function buildShape(obj) {
+    const strokeAttr = obj.strokeEnabled ? obj.stroke : 'none';
+    const fillAttr = obj.fillEnabled ? obj.fill : 'none';
+    const sw = obj.strokeWidth;
+    let dasharray = '';
+    if (obj.strokeStyle === 'dash') dasharray = '6 4';
+    else if (obj.strokeStyle === 'dot') dasharray = '1 4';
+    else if (obj.strokeStyle === 'dashdot') dasharray = '6 3 1 3';
+
+    const applyStroke = (el) => {
+      el.setAttribute('fill', fillAttr);
+      el.setAttribute('stroke', strokeAttr);
+      el.setAttribute('stroke-width', sw);
+      if (dasharray) el.setAttribute('stroke-dasharray', dasharray);
+    };
+
+    if (obj.type === 'rect') {
+      const r = document.createElementNS(SVG_NS, 'rect');
+      r.setAttribute('x', 0); r.setAttribute('y', 0);
+      r.setAttribute('width', obj.w); r.setAttribute('height', obj.h);
+      r.setAttribute('rx', obj.rx || 0);
+      applyStroke(r);
+      return r;
+    }
+    if (obj.type === 'ellipse' || obj.type === 'circle') {
+      const e = document.createElementNS(SVG_NS, 'ellipse');
+      e.setAttribute('cx', obj.w / 2); e.setAttribute('cy', obj.h / 2);
+      e.setAttribute('rx', obj.w / 2); e.setAttribute('ry', obj.h / 2);
+      applyStroke(e);
+      return e;
+    }
+    if (obj.type === 'line') {
+      const l = document.createElementNS(SVG_NS, 'line');
+      l.setAttribute('x1', 0); l.setAttribute('y1', obj.h / 2);
+      l.setAttribute('x2', obj.w); l.setAttribute('y2', obj.h / 2);
+      applyStroke(l);
+      l.setAttribute('fill', 'none');
+      return l;
+    }
+    if (obj.type === 'text') {
+      // text-only：使用透明矩形作為點擊命中區域，讓選取與雙擊編輯可正常運作
+      const hit = document.createElementNS(SVG_NS, 'rect');
+      hit.setAttribute('x', 0); hit.setAttribute('y', 0);
+      hit.setAttribute('width', obj.w); hit.setAttribute('height', obj.h);
+      hit.setAttribute('fill', 'transparent');
+      hit.setAttribute('stroke', 'transparent');
+      hit.setAttribute('pointer-events', 'all');
+      return hit;
+    }
+    if (obj.type === 'image') {
+      const img = document.createElementNS(SVG_NS, 'image');
+      img.setAttribute('x', 0); img.setAttribute('y', 0);
+      img.setAttribute('width', obj.w); img.setAttribute('height', obj.h);
+      img.setAttribute('href', obj.imgHref || '');
+      img.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', obj.imgHref || '');
+      return img;
+    }
+    if (obj.type === 'shape' && obj.shapeSvg) {
+      // 形狀庫 / 匯入的複合 SVG：以縮放方式繪製到 0..w / 0..h
+      const wrap = document.createElementNS(SVG_NS, 'g');
+      const inner = document.createElementNS(SVG_NS, 'g');
+      const vb = obj.shapeViewBox || { x: 0, y: 0, w: 100, h: 60 };
+      const sx = obj.w / vb.w;
+      const sy = obj.h / vb.h;
+      inner.setAttribute('transform', `scale(${sx} ${sy}) translate(${-vb.x} ${-vb.y})`);
+      const tmp = document.createElementNS(SVG_NS, 'g');
+      tmp.innerHTML = obj.shapeSvg;
+      if (!obj.preserveStyle) {
+        tmp.querySelectorAll('*').forEach((el) => {
+          if (el.hasAttribute('fill') && el.getAttribute('fill') !== 'none') el.setAttribute('fill', fillAttr);
+          if (el.hasAttribute('stroke')) el.setAttribute('stroke', strokeAttr);
+          if (el.hasAttribute('stroke-width')) el.setAttribute('stroke-width', sw / Math.max(0.01, Math.min(sx, sy)));
+          if (dasharray) el.setAttribute('stroke-dasharray', dasharray);
+        });
+      }
+      while (tmp.firstChild) inner.appendChild(tmp.firstChild);
+      wrap.appendChild(inner);
+      return wrap;
+    }
+    return null;
+  }
+
+  function buildTextNode(obj) {
+    // Ghost 物件：視覺由 compound shape 的 foreignObject 提供，自身不渲染文字
+    if (obj.ghostFor) return null;
+
+    // foreignObject 模式：保留給未來需求；目前 draw.io 匯入改走 ghost 架構
+    if (obj.useForeignObject) {
+      const fo = document.createElementNS(SVG_NS, 'foreignObject');
+      fo.setAttribute('x', 0);
+      fo.setAttribute('y', 0);
+      fo.setAttribute('width', obj.w);
+      fo.setAttribute('height', obj.h);
+      fo.setAttribute('overflow', 'hidden');
+      fo.setAttribute('pointer-events', 'none');
+      fo.setAttribute('style', 'overflow:hidden');
+      const div = document.createElementNS(XHTML_NS, 'div');
+      div.setAttribute('xmlns', XHTML_NS);
+      const justifyMap = { left: 'flex-start', right: 'flex-end', center: 'center' };
+      const alignMap   = { top: 'flex-start', bottom: 'flex-end', middle: 'center' };
+      div.setAttribute('style', [
+        'width:100%',
+        'height:100%',
+        'box-sizing:border-box',
+        'display:flex',
+        `align-items:${alignMap[obj.textVAlign] || 'center'}`,
+        `justify-content:${justifyMap[obj.textAlign] || 'center'}`,
+        `font-family:${obj.fontFamily}`,
+        `font-size:${obj.fontSize}px`,
+        `font-weight:${obj.fontWeight}`,
+        `font-style:${obj.fontStyle}`,
+        `color:${obj.textColor}`,
+        'line-height:1.2',
+        `text-align:${obj.textAlign}`,
+        'white-space:pre-wrap',
+        'word-break:break-all',         // 連續中文字串也強制斷字
+        'overflow-wrap:anywhere',
+        'overflow:hidden',
+        'padding:1px 2px',
+      ].join(';'));
+      div.textContent = String(obj.text || '');
+      fo.appendChild(div);
+      return fo;
+    }
+
+    // 標準 SVG <text> 模式
+    const txt = document.createElementNS(SVG_NS, 'text');
+    let tx, ty, anchor, baseline;
+    switch (obj.textAlign) {
+      case 'left':   anchor = 'start';  tx = 6; break;
+      case 'right':  anchor = 'end';    tx = obj.w - 6; break;
+      default:       anchor = 'middle'; tx = obj.w / 2;
+    }
+    switch (obj.textVAlign) {
+      case 'top':    baseline = 'hanging';      ty = 6; break;
+      case 'bottom': baseline = 'alphabetic';   ty = obj.h - 8; break;
+      default:       baseline = 'middle';       ty = obj.h / 2;
+    }
+    txt.setAttribute('x', tx);
+    txt.setAttribute('y', ty);
+    txt.setAttribute('text-anchor', anchor);
+    txt.setAttribute('dominant-baseline', baseline);
+    txt.setAttribute('font-family', obj.fontFamily);
+    txt.setAttribute('font-size', obj.fontSize);
+    txt.setAttribute('font-weight', obj.fontWeight);
+    txt.setAttribute('font-style', obj.fontStyle);
+    if (obj.textDecoration !== 'none') txt.setAttribute('text-decoration', obj.textDecoration);
+    txt.setAttribute('fill', obj.textColor);
+    txt.setAttribute('pointer-events', 'none');
+
+    const lines = String(obj.text).split('\n');
+    lines.forEach((line, i) => {
+      const ts = document.createElementNS(SVG_NS, 'tspan');
+      ts.setAttribute('x', tx);
+      if (i === 0) ts.setAttribute('dy', '0');
+      else ts.setAttribute('dy', obj.fontSize * 1.25);
+      ts.textContent = line;
+      txt.appendChild(ts);
+    });
+    return txt;
+  }
+
+  // ====== Overlay (Selection box + handles + smart guides + group rect) ======
+  function renderOverlay() {
+    overlay.innerHTML = '';
+    // 群組外框
+    const groupsShown = new Set();
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      if (o && o.groupId && !groupsShown.has(o.groupId)) {
+        groupsShown.add(o.groupId);
+        const bb = getGroupBBox(o.groupId);
+        if (bb) {
+          const gr = document.createElementNS(SVG_NS, 'rect');
+          gr.setAttribute('class', 'group-rect');
+          gr.setAttribute('x', bb.x - 4); gr.setAttribute('y', bb.y - 4);
+          gr.setAttribute('width', bb.w + 8); gr.setAttribute('height', bb.h + 8);
+          overlay.appendChild(gr);
+        }
+      }
+    });
+    // 智慧對齊輔助線
+    state.smartGuides.forEach((g) => {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('class', 'smart-guide');
+      line.setAttribute('x1', g.x1); line.setAttribute('y1', g.y1);
+      line.setAttribute('x2', g.x2); line.setAttribute('y2', g.y2);
+      overlay.appendChild(line);
+    });
+    if (state.selected.size === 0) return;
+    const ids = Array.from(state.selected);
+    ids.forEach((id) => {
+      const obj = findObj(id);
+      if (!obj) return;
+      const box = document.createElementNS(SVG_NS, 'rect');
+      box.setAttribute('class', 'selection-rect');
+      box.setAttribute('x', obj.x);
+      box.setAttribute('y', obj.y);
+      box.setAttribute('width', obj.w);
+      box.setAttribute('height', obj.h);
+      box.setAttribute('transform', `rotate(${obj.rotation} ${obj.x + obj.w/2} ${obj.y + obj.h/2})`);
+      overlay.appendChild(box);
+
+      // 8 個縮放點 + 1 個旋轉點
+      const positions = [
+        ['nw', obj.x, obj.y],
+        ['n',  obj.x + obj.w / 2, obj.y],
+        ['ne', obj.x + obj.w, obj.y],
+        ['e',  obj.x + obj.w, obj.y + obj.h / 2],
+        ['se', obj.x + obj.w, obj.y + obj.h],
+        ['s',  obj.x + obj.w / 2, obj.y + obj.h],
+        ['sw', obj.x, obj.y + obj.h],
+        ['w',  obj.x, obj.y + obj.h / 2],
+      ];
+      positions.forEach(([dir, hx, hy]) => {
+        const handle = document.createElementNS(SVG_NS, 'rect');
+        handle.setAttribute('class', `handle h-${dir}`);
+        handle.setAttribute('x', hx - 4);
+        handle.setAttribute('y', hy - 4);
+        handle.setAttribute('width', 8);
+        handle.setAttribute('height', 8);
+        handle.setAttribute('data-handle', dir);
+        handle.setAttribute('data-id', obj.id);
+        handle.setAttribute('transform', `rotate(${obj.rotation} ${obj.x + obj.w/2} ${obj.y + obj.h/2})`);
+        overlay.appendChild(handle);
+      });
+      // Rotation handle
+      const rh = document.createElementNS(SVG_NS, 'circle');
+      rh.setAttribute('class', 'handle h-rotate');
+      rh.setAttribute('cx', obj.x + obj.w / 2);
+      rh.setAttribute('cy', obj.y - 20);
+      rh.setAttribute('r', 5);
+      rh.setAttribute('data-handle', 'rotate');
+      rh.setAttribute('data-id', obj.id);
+      rh.setAttribute('transform', `rotate(${obj.rotation} ${obj.x + obj.w/2} ${obj.y + obj.h/2})`);
+      overlay.appendChild(rh);
+    });
+  }
+
+  function findObj(id) { return state.objects.find((o) => o.id === id); }
+
+  // ====== 更新 compound shape 內第 N 個 foreignObject 的文字內容 ======
+  // 用於 ghost 文字物件與 compound shape 雙向綁定
+  //
+  // 重要：必須使用 DOMParser 在 SVG 命名空間下解析，否則 HTML parser 會把
+  // <linearGradient> 等大小寫敏感的 SVG 元素全部小寫化為 <lineargradient>，
+  // 序列化後 SVG 找不到漸層定義 → 整個 compound 的填色都消失。
+  function updateCompoundForeignText(compoundId, foreignIndex, newText) {
+    const compound = findObj(compoundId);
+    if (!compound || !compound.shapeSvg) return false;
+
+    // 用 <svg> 包裹後以 XML 模式解析
+    const wrapped = `<svg xmlns="${SVG_NS}" xmlns:xlink="http://www.w3.org/1999/xlink">${compound.shapeSvg}</svg>`;
+    let doc;
+    try {
+      doc = new DOMParser().parseFromString(wrapped, 'image/svg+xml');
+    } catch (e) {
+      console.warn('SVG parse failed', e);
+      return false;
+    }
+    const root = doc.documentElement;
+    if (!root || root.querySelector('parsererror')) {
+      console.warn('SVG parser error', root && root.textContent);
+      return false;
+    }
+
+    const foList = root.querySelectorAll('foreignObject');
+    const fo = foList[foreignIndex];
+    if (!fo) return false;
+
+    // 用 TreeWalker 找出所有非空 text node，第一個替換為新文字、其餘清空
+    // 保留原 HTML 結構（font、color、text-align 等樣式）
+    const textNodes = [];
+    const walker = doc.createTreeWalker(fo, NodeFilter.SHOW_TEXT, null, false);
+    let n;
+    while ((n = walker.nextNode())) {
+      if (n.textContent.replace(/\s+/g, '').length > 0) textNodes.push(n);
+    }
+    if (textNodes.length === 0) {
+      fo.textContent = newText;
+    } else {
+      textNodes[0].textContent = newText;
+      for (let i = 1; i < textNodes.length; i++) textNodes[i].textContent = '';
+    }
+
+    // 用 XMLSerializer 序列化，保留大小寫與命名空間；去掉外層 <svg> 包裹
+    const serializer = new XMLSerializer();
+    let html = '';
+    for (const child of Array.from(root.childNodes)) {
+      html += serializer.serializeToString(child);
+    }
+    compound.shapeSvg = html;
+    return true;
+  }
+
+  // ====== 自動切換右側屬性面板分頁 ======
+  function autoSwitchPropTab(obj) {
+    if (!obj) return;
+    // 文字物件 → 文字 tab；其餘不打擾使用者目前選擇
+    if (obj.type === 'text' || (obj.text && obj.text.length > 0 && obj.type === 'shape' && !obj.preserveStyle)) {
+      setActivePropTab('text');
+    }
+  }
+  function setActivePropTab(name) {
+    $('.prop-tabs .tab').forEach((t) => t.classList.toggle('active', t.dataset.prop === name));
+    $('.prop-pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === name));
+  }
+
+  // ====== 將指定物件平滑捲動至畫布視窗中央 ======
+  function centerOnObject(obj) {
+    if (!obj) return;
+    const stageRect = stage.getBoundingClientRect();
+    const hostRect = canvasHost.getBoundingClientRect();
+    // 物件中心在 SVG 座標
+    const cxSvg = obj.x + obj.w / 2;
+    const cySvg = obj.y + obj.h / 2;
+    // 對應的畫面像素位置
+    const screenX = stageRect.left + cxSvg * state.zoom;
+    const screenY = stageRect.top + cySvg * state.zoom;
+    // 與 canvasHost 視覺中心的位移
+    const dx = screenX - (hostRect.left + hostRect.width / 2);
+    const dy = screenY - (hostRect.top + hostRect.height / 2);
+    canvasHost.scrollBy({ left: dx, top: dy, behavior: 'smooth' });
+    // 物件閃爍效果
+    flashObject(obj.id);
+  }
+
+  // 物件閃爍提示（透過暫時加上 highlight class）
+  function flashObject(id) {
+    setTimeout(() => {
+      const el = layerRoot.querySelector(`[data-id='${id}']`);
+      if (!el) return;
+      el.classList.add('flash-highlight');
+      setTimeout(() => el.classList.remove('flash-highlight'), 800);
+    }, 280);
+  }
+
+  // ====== 智慧對齊計算 ======
+  function computeSmartSnap(movingIds, dx, dy, threshold) {
+    threshold = threshold || 5;
+    // 計算移動中物件的合併 bbox（套用 dx, dy 之後）
+    const moving = movingIds.map(findObj).filter(Boolean);
+    if (moving.length === 0) return { dx, dy, guides: [] };
+    let bx1 = Infinity, by1 = Infinity, bx2 = -Infinity, by2 = -Infinity;
+    moving.forEach((o) => {
+      const ox = o.x + dx, oy = o.y + dy;
+      bx1 = Math.min(bx1, ox);
+      by1 = Math.min(by1, oy);
+      bx2 = Math.max(bx2, ox + o.w);
+      by2 = Math.max(by2, oy + o.h);
+    });
+    const mLeft = bx1, mRight = bx2, mCX = (bx1 + bx2) / 2;
+    const mTop = by1, mBot = by2, mCY = (by1 + by2) / 2;
+
+    // 候選目標：其他所有物件
+    const movingSet = new Set(movingIds);
+    const guides = [];
+    let snapDX = 0, snapDY = 0;
+    let bestDX = threshold + 1, bestDY = threshold + 1;
+    state.objects.forEach((o) => {
+      if (movingSet.has(o.id)) return;
+      const tLeft = o.x, tRight = o.x + o.w, tCX = o.x + o.w / 2;
+      const tTop = o.y, tBot = o.y + o.h, tCY = o.y + o.h / 2;
+      // 水平對齊（X 方向）
+      [
+        [mLeft,  tLeft,  tLeft],
+        [mLeft,  tRight, tRight],
+        [mRight, tLeft,  tLeft],
+        [mRight, tRight, tRight],
+        [mCX,    tCX,    tCX],
+      ].forEach(([m, t, lineX]) => {
+        const d = t - m;
+        if (Math.abs(d) <= threshold && Math.abs(d) < bestDX) {
+          bestDX = Math.abs(d);
+          snapDX = d;
+        }
+        if (Math.abs(d) <= threshold) {
+          const yA = Math.min(mTop, tTop) - 12;
+          const yB = Math.max(mBot, tBot) + 12;
+          guides.push({ x1: lineX, y1: yA, x2: lineX, y2: yB });
+        }
+      });
+      // 垂直對齊（Y 方向）
+      [
+        [mTop, tTop, tTop],
+        [mTop, tBot, tBot],
+        [mBot, tTop, tTop],
+        [mBot, tBot, tBot],
+        [mCY,  tCY,  tCY],
+      ].forEach(([m, t, lineY]) => {
+        const d = t - m;
+        if (Math.abs(d) <= threshold && Math.abs(d) < bestDY) {
+          bestDY = Math.abs(d);
+          snapDY = d;
+        }
+        if (Math.abs(d) <= threshold) {
+          const xA = Math.min(mLeft, tLeft) - 12;
+          const xB = Math.max(mRight, tRight) + 12;
+          guides.push({ x1: xA, y1: lineY, x2: xB, y2: lineY });
+        }
+      });
+    });
+    return { dx: dx + snapDX, dy: dy + snapDY, guides };
+  }
+
+  // ====== Layer & History list ======
+  function renderLayers() {
+    if (state.objects.length === 0) {
+      layerList.innerHTML = '<div class="empty">尚無物件</div>';
+      return;
+    }
+    layerList.innerHTML = '';
+    // 由上到下顯示（陣列尾為最上層）
+    for (let i = state.objects.length - 1; i >= 0; i--) {
+      const obj = state.objects[i];
+      const row = document.createElement('div');
+      row.className = 'row';
+      if (state.selected.has(obj.id)) row.classList.add('selected');
+      row.dataset.id = obj.id;
+      const visIcon = obj.opacity === 0 ? '◌' : '●';
+      const typeBg = obj.ghostFor
+        ? 'transparent'
+        : (obj.fill === 'transparent' ? 'var(--surface-2)' : obj.fill);
+      const typeBorder = obj.ghostFor
+        ? 'var(--secondary)'
+        : 'var(--border-strong)';
+      const namePrefix = obj.ghostFor ? '<span style="color:var(--secondary);font-size:10px;">T</span> ' : '';
+      row.innerHTML = `
+        <span class="vis" title="顯示/隱藏" data-action="vis">${visIcon}</span>
+        <span class="type-ico" style="background:${typeBg};border:1px solid ${typeBorder};"></span>
+        <span class="name">${namePrefix}${obj.name}${obj.text ? '：' + obj.text.slice(0, 14) : ''}</span>
+        <span class="lock" title="鎖定/解鎖" data-action="lock">${obj.locked ? '🔒' : '🔓'}</span>
+      `;
+      row.addEventListener('click', (e) => {
+        const action = e.target.dataset.action;
+        if (action === 'lock') {
+          obj.locked = !obj.locked;
+          renderAll();
+          pushHistory('toggle-lock', obj.name);
+        } else if (action === 'vis') {
+          obj.opacity = obj.opacity === 0 ? 1 : 0;
+          renderAll();
+          pushHistory('顯示/隱藏', obj.name);
+        } else {
+          // Shift 多選；否則單選並置中。圖層點擊不擴展群組以利精準選取 ghost 物件
+          if (e.shiftKey) {
+            if (state.selected.has(obj.id)) state.selected.delete(obj.id);
+            else state.selected.add(obj.id);
+          } else {
+            state.selected = new Set([obj.id]);
+          }
+          renderAll();
+          centerOnObject(obj);
+          autoSwitchPropTab(obj);
+        }
+      });
+      layerList.appendChild(row);
+    }
+  }
+  function renderHistory() {
+    if (state.history.length === 0) {
+      historyList.innerHTML = '<div class="empty">尚無紀錄</div>';
+      return;
+    }
+    historyList.innerHTML = '';
+    state.history.forEach((h, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      if (i === state.historyIndex) row.classList.add('selected');
+      const time = new Date(h.ts).toLocaleTimeString('zh-TW', { hour12: false });
+      row.innerHTML = `<span class="name">${time}　${h.action}${h.meta ? ' · ' + h.meta : ''}</span>`;
+      row.addEventListener('click', () => {
+        state.historyIndex = i;
+        state.objects = h.snapshot.map(deepClone);
+        state.selected.clear();
+        renderAll();
+      });
+      historyList.appendChild(row);
+    });
+    historyList.scrollTop = historyList.scrollHeight;
+  }
+
+  // ====== Add / Remove / Modify ======
+  function addObject(obj, actionLabel) {
+    state.objects.push(obj);
+    state.selected = new Set([obj.id]);
+    renderAll();
+    pushHistory(actionLabel || '新增', obj.name);
+  }
+  function deleteSelected() {
+    if (state.selected.size === 0) return;
+    state.objects = state.objects.filter((o) => !state.selected.has(o.id));
+    state.selected.clear();
+    renderAll();
+    pushHistory('刪除', '');
+  }
+  function duplicateSelected() {
+    const newIds = new Set();
+    Array.from(state.selected).forEach((id) => {
+      const src = findObj(id);
+      if (!src) return;
+      const clone = deepClone(src);
+      clone.id = uid(src.type);
+      clone.name = clone.id;
+      clone.x += 20;
+      clone.y += 20;
+      state.objects.push(clone);
+      newIds.add(clone.id);
+    });
+    state.selected = newIds;
+    renderAll();
+    pushHistory('複製', '');
+  }
+  function modifyObject(id, patch, actionLabel) {
+    const o = findObj(id);
+    if (!o || o.locked) return;
+    Object.assign(o, patch);
+    renderAll();
+    if (actionLabel) pushHistory(actionLabel, o.name);
+  }
+
+  // ====== Coordinate Helpers ======
+  function clientToSvg(clientX, clientY) {
+    const pt = stage.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const ctm = stage.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    const inv = ctm.inverse();
+    const r = pt.matrixTransform(inv);
+    return { x: r.x, y: r.y };
+  }
+
+  // ====== Hit-test & Selection ======
+  function hitTest(target) {
+    let el = target;
+    while (el && el !== stage) {
+      if (el.dataset && el.dataset.handle) {
+        return { kind: 'handle', dir: el.dataset.handle, id: el.dataset.id };
+      }
+      if (el.dataset && el.dataset.id) {
+        return { kind: 'object', id: el.dataset.id };
+      }
+      el = el.parentNode;
+    }
+    return { kind: 'empty' };
+  }
+
+  // ====== Pointer Interaction ======
+  let drag = null;
+  stage.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    stage.setPointerCapture(e.pointerId);
+    const hit = hitTest(e.target);
+    const pt = clientToSvg(e.clientX, e.clientY);
+
+    if (state.tool === 'select') {
+      if (hit.kind === 'handle') {
+        const obj = findObj(hit.id);
+        if (!obj || obj.locked) return;
+        drag = { mode: hit.dir === 'rotate' ? 'rotate' : 'resize', dir: hit.dir, id: hit.id, startPt: pt, orig: deepClone(obj) };
+      } else if (hit.kind === 'object') {
+        if (!e.shiftKey && !state.selected.has(hit.id)) state.selected = new Set();
+        state.selected.add(hit.id);
+        expandSelectionByGroups();
+        renderAll();
+        autoSwitchPropTab(findObj(hit.id));
+        const objs = Array.from(state.selected).map(findObj).filter(Boolean);
+        if (objs.some((o) => o.locked)) return;
+        drag = { mode: 'move', ids: Array.from(state.selected), startPt: pt, origs: objs.map(deepClone) };
+      } else {
+        // 空白：開始框選
+        if (!e.shiftKey) state.selected.clear();
+        renderAll();
+        drag = { mode: 'marquee', startPt: pt, currentPt: pt, additive: e.shiftKey, initialSel: new Set(state.selected) };
+      }
+    } else if (state.tool === 'rect') {
+      drag = { mode: 'create', type: 'rect', startPt: pt };
+    } else if (state.tool === 'ellipse') {
+      drag = { mode: 'create', type: 'ellipse', startPt: pt };
+    } else if (state.tool === 'line') {
+      drag = { mode: 'create', type: 'line', startPt: pt };
+    } else if (state.tool === 'text') {
+      const obj = createObject('text', { x: pt.x, y: pt.y - 12, w: 160, h: 28, text: '雙擊以編輯文字', fill: 'transparent', stroke: 'transparent' });
+      obj.name = uid('text');
+      addObject(obj, '新增文字');
+      setTool('select');
+    }
+  });
+
+  stage.addEventListener('pointermove', (e) => {
+    const pt = clientToSvg(e.clientX, e.clientY);
+    statusCoord.textContent = `X: ${pt.x.toFixed(0)}, Y: ${pt.y.toFixed(0)}`;
+    if (!drag) return;
+
+    if (drag.mode === 'move') {
+      let dx = pt.x - drag.startPt.x;
+      let dy = pt.y - drag.startPt.y;
+      // 智慧對齊（按 Alt 暫停）
+      if (!e.altKey) {
+        const snapResult = computeSmartSnap(drag.ids, dx, dy, 6);
+        dx = snapResult.dx;
+        dy = snapResult.dy;
+        state.smartGuides = snapResult.guides;
+      } else {
+        state.smartGuides = [];
+      }
+      if (state.snapToGrid) {
+        dx = snap(dx);
+        dy = snap(dy);
+      }
+      drag.ids.forEach((id, i) => {
+        const o = findObj(id);
+        if (!o || o.locked) return;
+        o.x = drag.origs[i].x + dx;
+        o.y = drag.origs[i].y + dy;
+      });
+      renderAll();
+    } else if (drag.mode === 'resize') {
+      const o = findObj(drag.id);
+      if (!o) return;
+      const orig = drag.orig;
+      const dx = pt.x - drag.startPt.x;
+      const dy = pt.y - drag.startPt.y;
+      let nx = orig.x, ny = orig.y, nw = orig.w, nh = orig.h;
+      if (drag.dir.includes('e')) nw = Math.max(8, orig.w + dx);
+      if (drag.dir.includes('s')) nh = Math.max(8, orig.h + dy);
+      if (drag.dir.includes('w')) { nw = Math.max(8, orig.w - dx); nx = orig.x + (orig.w - nw); }
+      if (drag.dir.includes('n')) { nh = Math.max(8, orig.h - dy); ny = orig.y + (orig.h - nh); }
+      // Shift 鍵或 ratio-lock 勾選 → 維持長寬比
+      const ratioLock = $('#ratio-lock').checked || e.shiftKey;
+      if (ratioLock && drag.dir.length === 2) {
+        const ratio = orig.w / orig.h;
+        if (nw / nh > ratio) nw = nh * ratio; else nh = nw / ratio;
+        if (drag.dir.includes('w')) nx = orig.x + (orig.w - nw);
+        if (drag.dir.includes('n')) ny = orig.y + (orig.h - nh);
+      }
+      o.x = nx; o.y = ny; o.w = nw; o.h = nh;
+      renderAll();
+    } else if (drag.mode === 'rotate') {
+      const o = findObj(drag.id);
+      if (!o) return;
+      const cx = o.x + o.w / 2;
+      const cy = o.y + o.h / 2;
+      const angle = Math.atan2(pt.y - cy, pt.x - cx) * 180 / Math.PI + 90;
+      o.rotation = Math.round(angle);
+      renderAll();
+    } else if (drag.mode === 'create') {
+      const x = Math.min(drag.startPt.x, pt.x);
+      const y = Math.min(drag.startPt.y, pt.y);
+      const w = Math.abs(pt.x - drag.startPt.x);
+      const h = Math.abs(pt.y - drag.startPt.y);
+      overlay.innerHTML = '';
+      const preview = document.createElementNS(SVG_NS, 'rect');
+      preview.setAttribute('class', 'selection-rect');
+      preview.setAttribute('x', x); preview.setAttribute('y', y);
+      preview.setAttribute('width', w); preview.setAttribute('height', h);
+      overlay.appendChild(preview);
+    } else if (drag.mode === 'marquee') {
+      drag.currentPt = pt;
+      const x = Math.min(drag.startPt.x, pt.x);
+      const y = Math.min(drag.startPt.y, pt.y);
+      const w = Math.abs(pt.x - drag.startPt.x);
+      const h = Math.abs(pt.y - drag.startPt.y);
+      // 計算覆蓋的物件
+      const hits = state.objects.filter((o) => {
+        return o.x + o.w >= x && o.x <= x + w && o.y + o.h >= y && o.y <= y + h;
+      });
+      const ids = new Set(drag.additive ? drag.initialSel : []);
+      hits.forEach((o) => ids.add(o.id));
+      state.selected = ids;
+      // 擴展同群組
+      expandSelectionByGroups();
+      // 重繪 overlay + marquee
+      renderOverlay();
+      const marquee = document.createElementNS(SVG_NS, 'rect');
+      marquee.setAttribute('class', 'marquee-rect');
+      marquee.setAttribute('x', x); marquee.setAttribute('y', y);
+      marquee.setAttribute('width', w); marquee.setAttribute('height', h);
+      overlay.appendChild(marquee);
+    }
+  });
+
+  stage.addEventListener('pointerup', (e) => {
+    if (!drag) return;
+    const pt = clientToSvg(e.clientX, e.clientY);
+    if (drag.mode === 'create') {
+      const x = Math.min(drag.startPt.x, pt.x);
+      const y = Math.min(drag.startPt.y, pt.y);
+      const w = Math.max(20, Math.abs(pt.x - drag.startPt.x));
+      const h = Math.max(20, Math.abs(pt.y - drag.startPt.y));
+      const obj = createObject(drag.type, { x, y, w, h });
+      obj.name = uid(drag.type);
+      addObject(obj, '新增 ' + drag.type);
+      setTool('select');
+    } else if (drag.mode === 'move' || drag.mode === 'resize' || drag.mode === 'rotate') {
+      pushHistory(drag.mode === 'move' ? '移動' : drag.mode === 'resize' ? '縮放' : '旋轉', '');
+    } else if (drag.mode === 'marquee') {
+      if (state.selected.size > 0) {
+        statusSel.textContent = `已選取 ${state.selected.size} 個物件`;
+      }
+    }
+    drag = null;
+    state.smartGuides = [];
+    renderAll();
+  });
+
+  // 雙擊物件 → 內嵌文字編輯
+  stage.addEventListener('dblclick', (e) => {
+    if (state.tool === 'hand') return;
+    const hit = hitTest(e.target);
+    if (hit.kind !== 'object') return;
+    const obj = findObj(hit.id);
+    if (!obj || obj.locked) return;
+    e.preventDefault();
+    openInlineTextEditor(obj);
+  });
+
+  function openInlineTextEditor(obj) {
+    // 計算螢幕座標：fixed 定位以 viewport 為基準，getScreenCTM 已含縮放
+    const ctm = stage.getScreenCTM();
+    if (!ctm) return;
+    const tl = stage.createSVGPoint(); tl.x = obj.x; tl.y = obj.y;
+    const br = stage.createSVGPoint(); br.x = obj.x + obj.w; br.y = obj.y + obj.h;
+    const a = tl.matrixTransform(ctm);
+    const b = br.matrixTransform(ctm);
+    const scaledFontSize = Math.max(10, obj.fontSize * state.zoom);
+    const useFO = !!obj.useForeignObject; // 與 buildTextNode 一致的對齊邏輯
+    const editor = document.createElement('div');
+    editor.setAttribute('contenteditable', 'true');
+    editor.spellcheck = false;
+    editor.className = 'inline-text-editor';
+    editor.style.cssText = `
+      position: fixed;
+      left: ${a.x}px;
+      top: ${a.y}px;
+      width: ${Math.max(80, b.x - a.x)}px;
+      min-height: ${Math.max(24, b.y - a.y)}px;
+      padding: 4px 6px;
+      font-family: ${obj.fontFamily};
+      font-size: ${scaledFontSize}px;
+      font-weight: ${obj.fontWeight};
+      font-style: ${obj.fontStyle};
+      color: ${obj.textColor};
+      text-align: ${obj.textAlign};
+      background: var(--surface);
+      border: 1.5px solid var(--primary);
+      border-radius: 4px;
+      box-shadow: var(--shadow-md);
+      outline: none;
+      z-index: 90;
+      line-height: 1.25;
+      overflow: hidden;
+      white-space: pre-wrap;
+      word-break: break-word;
+    `;
+    editor.textContent = obj.text || '';
+    document.body.appendChild(editor);
+
+    // 延遲 focus + 全選，避免被當前的 pointerup 搶走焦點
+    setTimeout(() => {
+      editor.focus();
+      try {
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch (err) {}
+    }, 0);
+
+    let committed = false;
+    const commit = () => {
+      if (committed) return;
+      committed = true;
+      const next = editor.innerText.replace(/ /g, ' ');
+      if (editor.parentNode) editor.parentNode.removeChild(editor);
+      if (next !== obj.text) {
+        // Ghost 物件：先寫 compound 再更新自身、單次渲染
+        if (obj.ghostFor) {
+          obj.text = next;
+          if (obj.opacity === 0) obj.opacity = 1;
+          updateCompoundForeignText(obj.ghostFor.compoundId, obj.ghostFor.foreignIndex, next);
+          renderAll();
+          pushHistory('編輯文字', obj.name);
+        } else {
+          const patch = { text: next };
+          if (obj.opacity === 0) patch.opacity = 1;
+          modifyObject(obj.id, patch, '編輯文字');
+        }
+      }
+    };
+    const cancel = () => {
+      if (committed) return;
+      committed = true;
+      if (editor.parentNode) editor.parentNode.removeChild(editor);
+    };
+    editor.addEventListener('blur', commit);
+    editor.addEventListener('keydown', (ev) => {
+      ev.stopPropagation(); // 阻擋畫布的全域快捷鍵
+      if (ev.key === 'Escape') { ev.preventDefault(); cancel(); return; }
+      // 單獨 Enter 確認；Shift+Enter 或 IME 組字中允許換行
+      if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) {
+        ev.preventDefault();
+        editor.blur();
+      }
+    });
+    editor.addEventListener('keyup', (ev) => ev.stopPropagation());
+  }
+
+  // ====== Wheel zoom（Ctrl+滾輪 = 縮放；單獨滾輪 = 上下捲動，Shift+滾輪 = 左右捲動）======
+  canvasHost.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP;
+      setZoom(state.zoom * factor);
+    } else if (e.shiftKey && e.deltaX === 0) {
+      // Shift+滾輪 → 水平捲動
+      e.preventDefault();
+      canvasHost.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+
+  // Space + 拖曳 → 平移畫布
+  let spaceDown = false;
+  let panState = null;
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !spaceDown) {
+      const tgt = e.target;
+      if (tgt.matches && tgt.matches('input, textarea, [contenteditable]')) return;
+      e.preventDefault();
+      spaceDown = true;
+      canvasHost.classList.add('panning');
+    }
+  });
+  document.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') {
+      spaceDown = false;
+      canvasHost.classList.remove('panning', 'active');
+    }
+  });
+  canvasHost.addEventListener('pointerdown', (e) => {
+    if (spaceDown || e.button === 1 || state.tool === 'hand') {
+      e.preventDefault();
+      canvasHost.classList.add('active');
+      panState = { x: e.clientX, y: e.clientY, sl: canvasHost.scrollLeft, st: canvasHost.scrollTop };
+      canvasHost.setPointerCapture(e.pointerId);
+    }
+  });
+  canvasHost.addEventListener('pointermove', (e) => {
+    if (!panState) return;
+    canvasHost.scrollLeft = panState.sl - (e.clientX - panState.x);
+    canvasHost.scrollTop = panState.st - (e.clientY - panState.y);
+  });
+  canvasHost.addEventListener('pointerup', () => {
+    if (panState) { canvasHost.classList.remove('active'); panState = null; }
+  });
+
+  function setZoom(z) {
+    state.zoom = clamp(z, ZOOM_MIN, ZOOM_MAX);
+    stage.style.width = (1200 * state.zoom) + 'px';
+    stage.style.height = (800 * state.zoom) + 'px';
+    $('#zoom-value').textContent = Math.round(state.zoom * 100) + '%';
+  }
+
+  // ====== Tool Selection ======
+  function setTool(t) {
+    state.tool = t;
+    $('.tool[data-tool]').forEach((b) => b.setAttribute('data-active', b.dataset.tool === t ? 'true' : 'false'));
+    // 手型工具下：游標切為手掌、SVG 設為 pointer-events: none 以避免誤觸物件
+    if (t === 'hand') {
+      canvasHost.classList.add('panning');
+      stage.style.pointerEvents = 'none';
+    } else {
+      canvasHost.classList.remove('panning', 'active');
+      stage.style.pointerEvents = '';
+    }
+    statusInfo.textContent = '工具：' + ({ select: '選擇', hand: '手型（拖曳畫布）', text: '文字', rect: '矩形', ellipse: '橢圓', line: '直線' }[t] || t);
+  }
+  $('.tool[data-tool]').forEach((b) => b.addEventListener('click', () => setTool(b.dataset.tool)));
+
+  $('#btn-zoom-in').onclick = () => setZoom(state.zoom * ZOOM_STEP);
+  $('#btn-zoom-out').onclick = () => setZoom(state.zoom / ZOOM_STEP);
+  $('#btn-zoom-100').onclick = () => setZoom(1);
+  $('#btn-zoom-fit').onclick = () => {
+    const w = canvasHost.clientWidth - 48;
+    const h = canvasHost.clientHeight - 48;
+    setZoom(Math.min(w / 1200, h / 800));
+  };
+
+  // ====== Tabs ======
+  $('.panel-tabs .tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const group = tab.parentElement;
+      group.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      const pane = tab.dataset.prop;
+      if (pane) {
+        $('.prop-pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === pane));
+      }
+    });
+  });
+  // 底部圖層 / 歷史紀錄分頁
+  $('.bot-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      $('.bot-tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      const pane = tab.dataset.bottab;
+      $('.bot-pane').forEach((p) => p.classList.toggle('active', p.dataset.botpane === pane));
+      $('#panel-bottom').classList.remove('collapsed'); // 點分頁自動展開
+    });
+  });
+  $('#bot-toggle').onclick = () => {
+    $('#panel-bottom').classList.toggle('collapsed');
+  };
+
+  // ====== Panel collapse (mobile) ======
+  $('#btn-collapse-left').onclick = () => $('#panel-left').classList.remove('open');
+  $('#btn-collapse-right').onclick = () => $('#panel-right').classList.remove('open');
+
+  // ====== 形狀庫渲染 ======
+  function renderShapeLibrary(filter) {
+    const host = $('#shape-categories');
+    host.innerHTML = '';
+    const f = (filter || '').trim().toLowerCase();
+    window.__SHAPES__.forEach((cat, idx) => {
+      const items = cat.items.filter((it) => !f || it.name.toLowerCase().includes(f) || it.id.toLowerCase().includes(f));
+      if (items.length === 0) return;
+      const d = document.createElement('details');
+      d.className = 'shape-group';
+      if (idx < 3 || f) d.open = true;
+      d.innerHTML = `<summary>${cat.cat}</summary><div class="shape-grid"></div>`;
+      const grid = d.querySelector('.shape-grid');
+      items.forEach((shape) => {
+        const cell = document.createElement('div');
+        cell.className = 'shape-item';
+        cell.title = shape.name;
+        cell.dataset.shapeId = shape.id;
+        cell.draggable = true;
+        cell.innerHTML = `<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet">${shape.svg}</svg>`;
+        cell.addEventListener('click', () => addShapeAt(shape, 400, 300));
+        cell.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/x-shape', JSON.stringify({ id: shape.id }));
+        });
+        grid.appendChild(cell);
+      });
+      host.appendChild(d);
+    });
+  }
+  function addShapeAt(shape, x, y) {
+    const obj = createObject('shape', { x, y, w: 160, h: 96, shapeId: shape.id, shapeSvg: shape.svg });
+    obj.name = uid(shape.id);
+    if (shape.id.startsWith('flow-') || shape.id === 'text-only') obj.text = '';
+    addObject(obj, '新增 ' + shape.name);
+  }
+
+  $('#shape-search').addEventListener('input', (e) => renderShapeLibrary(e.target.value));
+
+  // 形狀拖曳至畫布
+  stage.addEventListener('dragover', (e) => { e.preventDefault(); });
+  stage.addEventListener('drop', (e) => {
+    const raw = e.dataTransfer.getData('text/x-shape');
+    if (!raw) return;
+    e.preventDefault();
+    const data = JSON.parse(raw);
+    const found = window.__SHAPES__.flatMap((c) => c.items).find((s) => s.id === data.id);
+    if (!found) return;
+    const pt = clientToSvg(e.clientX, e.clientY);
+    addShapeAt(found, pt.x - 80, pt.y - 48);
+  });
+
+  // ====== Preset 色卡 ======
+  function renderPresets() {
+    const grid = $('#preset-grid');
+    grid.innerHTML = '';
+    window.__PRESETS__.forEach((p, i) => {
+      const c = document.createElement('div');
+      c.className = 'preset-cell';
+      c.style.background = p.fill;
+      c.style.borderColor = p.stroke;
+      c.title = `填滿 ${p.fill}`;
+      c.addEventListener('click', () => {
+        if (state.selected.size === 0) return;
+        state.selected.forEach((id) => modifyObject(id, { fill: p.fill, stroke: p.stroke }));
+        pushHistory('套用樣式預設', `#${i + 1}`);
+      });
+      grid.appendChild(c);
+    });
+  }
+
+  // ====== 屬性面板綁定 ======
+  function syncPropertyPanel() {
+    const first = state.selected.size > 0 ? findObj(Array.from(state.selected)[0]) : null;
+    if (!first) {
+      statusSel.textContent = '未選取物件';
+      if (textContentInput) {
+        textContentInput.value = '';
+        textContentInput.disabled = true;
+      }
+      if (textContentHint) {
+        textContentHint.textContent = '請先在畫布或圖層面板中選取物件。';
+        textContentHint.classList.remove('warn');
+      }
+      return;
+    }
+    statusSel.textContent = `已選取：${first.name}（${first.type}）`;
+
+    // 文字內容輸入區同步
+    if (textContentInput) {
+      // 避免使用者正在輸入時被覆蓋
+      if (document.activeElement !== textContentInput) {
+        textContentInput.value = first.text || '';
+      }
+      textContentInput.disabled = false;
+    }
+    if (textContentHint) {
+      if (first.type === 'text' || first.text !== undefined) {
+        textContentHint.textContent = `編輯中：${first.name}（按 Tab 離開即套用）`;
+        textContentHint.classList.remove('warn');
+      } else {
+        textContentHint.textContent = '此物件目前無文字屬性，輸入內容會以文字標籤覆蓋於物件上。';
+        textContentHint.classList.add('warn');
+      }
+    }
+
+    // 物件樣式
+    $('#fill-enable').checked = first.fillEnabled;
+    if (first.fill && first.fill !== 'transparent') $('#fill-color').value = first.fill;
+    $('#stroke-enable').checked = first.strokeEnabled;
+    if (first.stroke && first.stroke !== 'transparent') $('#stroke-color').value = first.stroke;
+    $('#stroke-width').value = first.strokeWidth;
+    $('#stroke-style').value = first.strokeStyle;
+    $('#opacity').value = Math.round(first.opacity * 100);
+    $('#effect-sketch').checked = !!first.sketch;
+    $('#effect-shadow').checked = !!first.shadow;
+
+    // 文字
+    $('#font-family').value = first.fontFamily;
+    $('#text-size').value = first.fontSize;
+    $('#text-fill').value = first.textColor;
+    $('#text-opacity').value = Math.round(first.opacity * 100);
+    $('.btn-bar [data-align]').forEach((b) => b.classList.toggle('active', b.dataset.align === first.textAlign));
+    $('.btn-bar [data-valign]').forEach((b) => b.classList.toggle('active', b.dataset.valign === first.textVAlign));
+    $('#text-bold').classList.toggle('active', first.fontWeight === 'bold');
+    $('#text-italic').classList.toggle('active', first.fontStyle === 'italic');
+    $('#text-underline').classList.toggle('active', first.textDecoration === 'underline');
+
+    // 調整
+    $('#size-w').value = Math.round(first.w);
+    $('#size-h').value = Math.round(first.h);
+    $('#pos-x').value = Math.round(first.x);
+    $('#pos-y').value = Math.round(first.y);
+    $('#rotate').value = Math.round(first.rotation);
+  }
+
+  function bindControl(sel, key, parser) {
+    const el = $(sel);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      if (state.selected.size === 0) return;
+      const v = parser ? parser(el) : el.value;
+      Array.from(state.selected).forEach((id) => modifyObject(id, { [key]: v }));
+    });
+    el.addEventListener('change', () => {
+      if (state.selected.size === 0) return;
+      pushHistory('修改屬性', key);
+    });
+  }
+
+  // 文字內容區即時綁定（input：即時渲染；change：寫入歷史紀錄）
+  if (textContentInput) {
+    let lastCommitted = '';
+    textContentInput.addEventListener('focus', () => {
+      lastCommitted = textContentInput.value;
+    });
+    // 即時更新 ghost.text 與其他屬性，但 compound shapeSvg 重序列化採 debounce
+    // 避免大型 SVG（80KB+）在每個按鍵都全量重解析造成輸入卡頓
+    let textInputDebounce = null;
+    textContentInput.addEventListener('input', () => {
+      if (state.selected.size === 0) return;
+      const v = textContentInput.value;
+      const ghostsToSync = [];
+      state.selected.forEach((id) => {
+        const o = findObj(id);
+        if (!o || o.locked) return;
+        o.text = v;
+        if (o.opacity === 0) o.opacity = 1;
+        if (o.ghostFor) ghostsToSync.push(o.ghostFor);
+      });
+      renderAll(); // 先即時更新 layer list、textarea hint 等 UI
+      if (ghostsToSync.length > 0) {
+        clearTimeout(textInputDebounce);
+        textInputDebounce = setTimeout(() => {
+          ghostsToSync.forEach((ref) => updateCompoundForeignText(ref.compoundId, ref.foreignIndex, v));
+          renderAll();
+        }, 80);
+      }
+    });
+    textContentInput.addEventListener('change', () => {
+      if (textContentInput.value !== lastCommitted) {
+        pushHistory('編輯文字', '');
+        lastCommitted = textContentInput.value;
+      }
+    });
+    // Tab 鍵離開、Esc 取消
+    textContentInput.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Escape') { textContentInput.blur(); }
+    });
+    textContentInput.addEventListener('keyup', (e) => e.stopPropagation());
+  }
+
+  bindControl('#fill-color', 'fill');
+  bindControl('#stroke-color', 'stroke');
+  bindControl('#stroke-width', 'strokeWidth', (el) => parseFloat(el.value) || 0);
+  bindControl('#stroke-style', 'strokeStyle');
+  bindControl('#opacity', 'opacity', (el) => clamp(parseFloat(el.value) / 100, 0, 1));
+  bindControl('#text-opacity', 'opacity', (el) => clamp(parseFloat(el.value) / 100, 0, 1));
+  bindControl('#font-family', 'fontFamily');
+  bindControl('#text-size', 'fontSize', (el) => parseFloat(el.value) || 12);
+  bindControl('#text-fill', 'textColor');
+  bindControl('#size-w', 'w', (el) => Math.max(8, parseFloat(el.value) || 0));
+  bindControl('#size-h', 'h', (el) => Math.max(8, parseFloat(el.value) || 0));
+  bindControl('#pos-x', 'x', (el) => parseFloat(el.value) || 0);
+  bindControl('#pos-y', 'y', (el) => parseFloat(el.value) || 0);
+  bindControl('#rotate', 'rotation', (el) => parseFloat(el.value) || 0);
+
+  $('#fill-enable').addEventListener('change', (e) => {
+    state.selected.forEach((id) => modifyObject(id, { fillEnabled: e.target.checked }));
+    pushHistory('切換填滿', '');
+  });
+  $('#stroke-enable').addEventListener('change', (e) => {
+    state.selected.forEach((id) => modifyObject(id, { strokeEnabled: e.target.checked }));
+    pushHistory('切換邊線', '');
+  });
+  $('#effect-shadow').addEventListener('change', (e) => {
+    state.selected.forEach((id) => modifyObject(id, { shadow: e.target.checked }));
+    pushHistory('切換陰影', '');
+  });
+  $('#effect-sketch').addEventListener('change', (e) => {
+    state.selected.forEach((id) => modifyObject(id, { sketch: e.target.checked }));
+  });
+
+  // 文字樣式按鈕
+  $('#text-bold').onclick = () => state.selected.forEach((id) => {
+    const o = findObj(id);
+    modifyObject(id, { fontWeight: o.fontWeight === 'bold' ? 'normal' : 'bold' }, '切換粗體');
+  });
+  $('#text-italic').onclick = () => state.selected.forEach((id) => {
+    const o = findObj(id);
+    modifyObject(id, { fontStyle: o.fontStyle === 'italic' ? 'normal' : 'italic' }, '切換斜體');
+  });
+  $('#text-underline').onclick = () => state.selected.forEach((id) => {
+    const o = findObj(id);
+    modifyObject(id, { textDecoration: o.textDecoration === 'underline' ? 'none' : 'underline' }, '切換底線');
+  });
+  $('#text-strike').onclick = () => state.selected.forEach((id) => {
+    const o = findObj(id);
+    modifyObject(id, { textDecoration: o.textDecoration === 'line-through' ? 'none' : 'line-through' }, '切換刪除線');
+  });
+
+  $('.btn-bar [data-align]').forEach((b) => b.addEventListener('click', () => {
+    state.selected.forEach((id) => modifyObject(id, { textAlign: b.dataset.align }, '水平對齊'));
+    syncPropertyPanel();
+  }));
+  $('.btn-bar [data-valign]').forEach((b) => b.addEventListener('click', () => {
+    state.selected.forEach((id) => modifyObject(id, { textVAlign: b.dataset.valign }, '垂直對齊'));
+    syncPropertyPanel();
+  }));
+
+  // 調整面板按鈕
+  $('#layer-top').onclick = () => moveLayer('top');
+  $('#layer-bottom').onclick = () => moveLayer('bottom');
+  $('#layer-up').onclick = () => moveLayer('up');
+  $('#layer-down').onclick = () => moveLayer('down');
+  function moveLayer(action) {
+    if (state.selected.size === 0) return;
+    const sel = new Set(state.selected);
+    const selObjs = state.objects.filter((o) => sel.has(o.id));
+    const others = state.objects.filter((o) => !sel.has(o.id));
+    if (action === 'top') state.objects = [...others, ...selObjs];
+    else if (action === 'bottom') state.objects = [...selObjs, ...others];
+    else if (action === 'up' || action === 'down') {
+      const arr = state.objects.slice();
+      for (let i = action === 'up' ? arr.length - 1 : 0;
+           action === 'up' ? i >= 0 : i < arr.length;
+           action === 'up' ? i-- : i++) {
+        if (!sel.has(arr[i].id)) continue;
+        const j = action === 'up' ? i + 1 : i - 1;
+        if (j < 0 || j >= arr.length || sel.has(arr[j].id)) continue;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      state.objects = arr;
+    }
+    renderAll();
+    pushHistory('調整圖層', action);
+  }
+
+  $('#flip-h').onclick = () => {
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      modifyObject(id, { flipH: !o.flipH }, '水平翻轉');
+    });
+  };
+  $('#flip-v').onclick = () => {
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      modifyObject(id, { flipV: !o.flipV }, '垂直翻轉');
+    });
+  };
+  $('#btn-rotate-90').onclick = () => {
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      modifyObject(id, { rotation: (o.rotation + 90) % 360 }, '旋轉 90°');
+    });
+  };
+  $('#snap-grid').onclick = () => {
+    state.snapToGrid = !state.snapToGrid;
+    $('#snap-grid').classList.toggle('active', state.snapToGrid);
+    canvasHost.parentElement.classList.toggle('show-grid', state.snapToGrid);
+    statusInfo.textContent = '網格對齊：' + (state.snapToGrid ? '開啟' : '關閉');
+  };
+  $('#btn-duplicate').onclick = duplicateSelected;
+  $('#btn-lock').onclick = () => {
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      modifyObject(id, { locked: !o.locked }, '鎖定/解鎖');
+    });
+  };
+  $('#btn-group').onclick = () => doGroup();
+  function doGroup() {
+    if (state.selected.size < 2) {
+      statusInfo.textContent = '請至少選取 2 個物件再建立群組';
+      return;
+    }
+    state.groupCounter += 1;
+    const gid = 'g-' + String(state.groupCounter).padStart(2, '0');
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      if (o) o.groupId = gid;
+    });
+    renderAll();
+    pushHistory('建立群組', `${gid}（${state.selected.size} 物件）`);
+    statusInfo.textContent = `已建立群組 ${gid}`;
+  }
+  function doUngroup() {
+    const removedGroups = new Set();
+    let count = 0;
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      if (o && o.groupId) {
+        removedGroups.add(o.groupId);
+      }
+    });
+    if (removedGroups.size === 0) {
+      statusInfo.textContent = '選取的物件不在群組中';
+      return;
+    }
+    state.objects.forEach((o) => {
+      if (o.groupId && removedGroups.has(o.groupId)) {
+        o.groupId = null;
+        count += 1;
+      }
+    });
+    renderAll();
+    pushHistory('解散群組', `${count} 個物件`);
+    statusInfo.textContent = `已解散 ${removedGroups.size} 個群組`;
+  }
+  $('#btn-explore').onclick = () => {
+    statusInfo.textContent = '已切換至 Explore 模式（瀏覽）';
+  };
+
+  $('#btn-copy-style').onclick = () => {
+    if (state.selected.size === 0) return;
+    const src = findObj(Array.from(state.selected)[0]);
+    state.clipboard = {
+      fill: src.fill, fillEnabled: src.fillEnabled,
+      stroke: src.stroke, strokeEnabled: src.strokeEnabled,
+      strokeWidth: src.strokeWidth, strokeStyle: src.strokeStyle,
+      opacity: src.opacity, shadow: src.shadow,
+      fontFamily: src.fontFamily, fontSize: src.fontSize,
+      textColor: src.textColor, textAlign: src.textAlign,
+    };
+    statusInfo.textContent = '樣式已複製';
+  };
+
+  // ====== History buttons & hotkeys ======
+  $('#btn-undo').onclick = undo;
+  $('#btn-redo').onclick = redo;
+
+  document.addEventListener('keydown', (e) => {
+    const tgt = e.target;
+    if (tgt.matches && (tgt.matches('input, textarea, select'))) return;
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
+      if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) { e.preventDefault(); redo(); return; }
+      if (e.key === 'd') { e.preventDefault(); duplicateSelected(); return; }
+      if (e.key === 's') { e.preventDefault(); exportSvg(); return; }
+      if (e.key === 'g' && !e.shiftKey) { e.preventDefault(); doGroup(); return; }
+      if (e.key === 'g' && e.shiftKey) { e.preventDefault(); doUngroup(); return; }
+      if (e.key === 'a') { e.preventDefault(); state.selected = new Set(state.objects.map((o) => o.id)); renderAll(); return; }
+    }
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteSelected(); return; }
+    // 方向鍵微調：單鍵 1px，Shift 10px
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key) && state.selected.size > 0) {
+      e.preventDefault();
+      const step = e.shiftKey ? 10 : 1;
+      const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
+      const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
+      state.selected.forEach((id) => {
+        const o = findObj(id);
+        if (!o || o.locked) return;
+        o.x += dx; o.y += dy;
+      });
+      renderAll();
+      return;
+    }
+    if (e.key === 'v' || e.key === 'V') setTool('select');
+    else if (e.key === 'h' || e.key === 'H') setTool('hand');
+    else if (e.key === 't' || e.key === 'T') setTool('text');
+    else if (e.key === 'r' || e.key === 'R') setTool('rect');
+    else if (e.key === 'o' || e.key === 'O') setTool('ellipse');
+    else if (e.key === 'l' || e.key === 'L') setTool('line');
+    else if (e.key === 'Escape') { state.selected.clear(); renderAll(); }
+  });
+
+  // ====== Theme（持久化 + 系統偏好）======
+  function applyTheme(t) {
+    document.body.dataset.theme = t;
+    $('#theme-label').textContent = t === 'light' ? '暗色' : '亮色';
+    try { localStorage.setItem('svgeditor-theme', t); } catch (e) {}
+  }
+  // 啟動時同步初始按鈕文字
+  applyTheme(document.body.dataset.theme || (document.documentElement.dataset.bootTheme || 'light'));
+  $('#btn-theme').onclick = () => {
+    applyTheme(document.body.dataset.theme === 'light' ? 'dark' : 'light');
+  };
+
+  // ====== Modal ======
+  $('#btn-help').onclick = () => $('#modal-help').classList.add('open');
+  $('#btn-modal-close').onclick = () => $('#modal-help').classList.remove('open');
+  $('#modal-help .modal-backdrop').onclick = () => $('#modal-help').classList.remove('open');
+
+  // ====== File I/O ======
+  const fileInput = $('#file-input');
+  $('#btn-open').onclick = () => { fileInput.accept = '.svg,image/svg+xml,.png,image/png,.jpg,.jpeg,image/jpeg'; fileInput.click(); };
+  fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files || []);
+    files.forEach((f, idx) => importFile(f, idx, files.length));
+    fileInput.value = '';
+  });
+
+  function importFile(file, idx, total) {
+    const reader = new FileReader();
+    if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) {
+      reader.onload = (ev) => importSvgString(String(ev.target.result), file.name, idx, total);
+      reader.readAsText(file);
+    } else if (file.type === 'image/png' || file.name.toLowerCase().endsWith('.png') ||
+               file.type === 'image/jpeg' || /\.(jpe?g)$/i.test(file.name)) {
+      reader.onload = (ev) => {
+        const href = String(ev.target.result);
+        // 透過 Image 探測自然尺寸以自動縮放
+        const probe = new Image();
+        probe.onload = () => {
+          const nw = probe.naturalWidth || 320;
+          const nh = probe.naturalHeight || 240;
+          const margin = 40;
+          const scale = Math.min(
+            (CANVAS_W - margin * 2) / nw,
+            (CANVAS_H - margin * 2) / nh,
+            1
+          );
+          const fitW = nw * scale;
+          const fitH = nh * scale;
+          const obj = createObject('image', {
+            x: (CANVAS_W - fitW) / 2 + (idx || 0) * 16,
+            y: (CANVAS_H - fitH) / 2 + (idx || 0) * 16,
+            w: fitW, h: fitH, imgHref: href,
+          });
+          obj.fillEnabled = false;
+          obj.strokeEnabled = false;
+          obj.name = uid('img');
+          addObject(obj, '匯入圖片');
+          statusInfo.textContent = `已匯入：${file.name}（${nw}×${nh} → ${Math.round(scale * 100)}%）`;
+        };
+        probe.src = href;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function importSvgString(svgStr, fileName, idx) {
+    try {
+      const doc = new DOMParser().parseFromString(svgStr, 'image/svg+xml');
+      const root = doc.documentElement;
+      if (root.nodeName !== 'svg') {
+        statusInfo.textContent = '無法解析 SVG 檔案';
+        return;
+      }
+      // 取得原始尺寸
+      let vbX = 0, vbY = 0;
+      let baseW = parseFloat(root.getAttribute('width')) || 0;
+      let baseH = parseFloat(root.getAttribute('height')) || 0;
+      const vb = root.getAttribute('viewBox');
+      if (vb) {
+        const p = vb.split(/[\s,]+/).map(parseFloat);
+        if (p.length === 4) { vbX = p[0]; vbY = p[1]; baseW = p[2]; baseH = p[3]; }
+      }
+      if (!baseW) baseW = 800;
+      if (!baseH) baseH = 600;
+
+      // 自動縮放至畫布（保留 5% 邊距）
+      const margin = 40;
+      const scale = Math.min(
+        (CANVAS_W - margin * 2) / baseW,
+        (CANVAS_H - margin * 2) / baseH,
+        1
+      );
+      const fitW = baseW * scale;
+      const fitH = baseH * scale;
+      const ox = (CANVAS_W - fitW) / 2 + (idx || 0) * 16;
+      const oy = (CANVAS_H - fitH) / 2 + (idx || 0) * 16;
+
+      // 偵測 draw.io / mxGraph 風格（含 foreignObject）
+      const foreignList = root.querySelectorAll('foreignObject');
+      const hasForeign = foreignList.length > 0;
+
+      let addedCount = 0;
+      if (hasForeign) {
+        // 一、複合 shape：保留原始 SVG 完整內容（含 foreignObject）
+        //    視覺由瀏覽器原生渲染，無條件還原 draw.io 排版
+        const compound = createObject('shape', {
+          x: ox, y: oy, w: fitW, h: fitH,
+          shapeId: 'imported-svg',
+          shapeSvg: root.innerHTML,
+          shapeViewBox: { x: vbX, y: vbY, w: baseW, h: baseH },
+          preserveStyle: true,
+        });
+        compound.fillEnabled = false;
+        compound.strokeEnabled = false;
+        compound.name = uid('svg');
+        state.objects.push(compound);
+        addedCount = 1;
+
+        // 二、為每一個 foreignObject 建立對應的 Ghost 文字物件
+        //    - 視覺：無（已由 compound 提供）
+        //    - 功能：提供 hit-test 區域 + 雙向綁定編輯
+        let foreignCounter = 0;
+        foreignList.forEach((fo) => {
+          const text = (fo.textContent || '').replace(/\s+/g, ' ').trim();
+          if (!text) return;
+          // 取得 parent g 的 transform: translate(x,y)
+          let tx = 0, ty = 0;
+          let parent = fo.parentNode;
+          while (parent && parent !== root) {
+            const t = parent.getAttribute && parent.getAttribute('transform');
+            if (t) {
+              const m = /translate\(\s*([-\d.]+)[ ,]+([-\d.]+)\s*\)/.exec(t);
+              if (m) { tx += parseFloat(m[1]); ty += parseFloat(m[2]); break; }
+            }
+            parent = parent.parentNode;
+          }
+          const wf = parseFloat(fo.getAttribute('width')) || 80;
+          const hf = parseFloat(fo.getAttribute('height')) || 20;
+          // 嘗試讀取內部 div 的字型 / 顏色
+          let fontFamily = 'Tahoma, sans-serif';
+          let fontSize = 12;
+          let textColor = '#1F2937';
+          const inner = fo.querySelector('div, span, p');
+          if (inner) {
+            const style = inner.getAttribute('style') || '';
+            const ff = /font-family:\s*([^;"]+)/i.exec(style);
+            const fs = /font-size:\s*([\d.]+)px/i.exec(style);
+            const co = /color:\s*(rgb\([^)]+\)|#[0-9a-f]{3,8})/i.exec(style);
+            if (ff) fontFamily = ff[1].trim() + ', sans-serif';
+            if (fs) fontSize = parseFloat(fs[1]);
+            if (co) textColor = co[1];
+          }
+
+          // Ghost 物件用 hit-test bbox，依原始 foreignObject 比例縮放即可
+          const finalW = Math.max(8, wf * scale);
+          const finalH = Math.max(8, hf * scale);
+
+          const obj = createObject('text', {
+            x: (tx - vbX) * scale + ox,
+            y: (ty - vbY) * scale + oy,
+            w: finalW,
+            h: finalH,
+            text,
+            ghostFor: { compoundId: compound.id, foreignIndex: foreignCounter },
+          });
+          foreignCounter += 1;
+          obj.fontFamily = fontFamily;
+          obj.fontSize = Math.max(6, fontSize * scale);
+          obj.textColor = textColor;
+          obj.fillEnabled = false;
+          obj.strokeEnabled = false;
+          obj.textAlign = 'center';
+          obj.textVAlign = 'middle';
+          obj.name = uid('text');
+          state.objects.push(obj);
+          addedCount += 1;
+        });
+        statusInfo.textContent = `已匯入 draw.io 格式：${fileName}（含 ${foreignList.length} 個文字標籤，可於右側「文字」分頁直接編輯）`;
+      } else {
+        // 一般 SVG：逐元素解析
+        const elements = root.querySelectorAll('rect, circle, ellipse, line, polygon, polyline, path, text');
+        elements.forEach((el) => {
+          const obj = parseSvgElement(el, ox, oy, scale, vbX, vbY);
+          if (obj) {
+            obj.name = uid(obj.type);
+            state.objects.push(obj);
+            addedCount += 1;
+          }
+        });
+        if (addedCount === 0) {
+          const obj = createObject('shape', {
+            x: ox, y: oy, w: fitW, h: fitH,
+            shapeId: 'imported', shapeSvg: root.innerHTML,
+            shapeViewBox: { x: vbX, y: vbY, w: baseW, h: baseH },
+            preserveStyle: true,
+          });
+          obj.fillEnabled = false; obj.strokeEnabled = false;
+          obj.name = uid('svg');
+          state.objects.push(obj);
+          addedCount = 1;
+        }
+        statusInfo.textContent = `已匯入：${fileName}（${addedCount} 個物件，縮放 ${Math.round(scale * 100)}%）`;
+      }
+
+      renderAll();
+      pushHistory('匯入 SVG', fileName);
+    } catch (err) {
+      statusInfo.textContent = 'SVG 解析失敗：' + err.message;
+      console.error(err);
+    }
+  }
+
+  function parseSvgElement(el, ox, oy, scale, vbX, vbY) {
+    scale = scale || 1; vbX = vbX || 0; vbY = vbY || 0;
+    const tag = el.nodeName.toLowerCase();
+    const fill = el.getAttribute('fill') || '#FFFFFF';
+    const stroke = el.getAttribute('stroke') || '#333333';
+    const strokeWidth = (parseFloat(el.getAttribute('stroke-width')) || 1) * scale;
+    const common = { fill: fill === 'none' ? '#FFFFFF' : fill, fillEnabled: fill !== 'none', stroke, strokeEnabled: stroke !== 'none', strokeWidth };
+    const toX = (v) => (v - vbX) * scale + ox;
+    const toY = (v) => (v - vbY) * scale + oy;
+    const toS = (v) => v * scale;
+    if (tag === 'rect') {
+      const x = parseFloat(el.getAttribute('x')) || 0;
+      const y = parseFloat(el.getAttribute('y')) || 0;
+      const w = parseFloat(el.getAttribute('width')) || 0;
+      const h = parseFloat(el.getAttribute('height')) || 0;
+      const obj = createObject('rect', { x: toX(x), y: toY(y), w: toS(w), h: toS(h) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'circle') {
+      const cx = parseFloat(el.getAttribute('cx')) || 0;
+      const cy = parseFloat(el.getAttribute('cy')) || 0;
+      const r = parseFloat(el.getAttribute('r')) || 0;
+      const obj = createObject('ellipse', { x: toX(cx - r), y: toY(cy - r), w: toS(r * 2), h: toS(r * 2) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'ellipse') {
+      const cx = parseFloat(el.getAttribute('cx')) || 0;
+      const cy = parseFloat(el.getAttribute('cy')) || 0;
+      const rx = parseFloat(el.getAttribute('rx')) || 0;
+      const ry = parseFloat(el.getAttribute('ry')) || 0;
+      const obj = createObject('ellipse', { x: toX(cx - rx), y: toY(cy - ry), w: toS(rx * 2), h: toS(ry * 2) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'line') {
+      const x1 = parseFloat(el.getAttribute('x1')) || 0;
+      const y1 = parseFloat(el.getAttribute('y1')) || 0;
+      const x2 = parseFloat(el.getAttribute('x2')) || 0;
+      const y2 = parseFloat(el.getAttribute('y2')) || 0;
+      const x = Math.min(x1, x2), y = Math.min(y1, y2);
+      const obj = createObject('line', { x: toX(x), y: toY(y), w: Math.max(1, toS(Math.abs(x2 - x1))), h: Math.max(1, toS(Math.abs(y2 - y1))) });
+      Object.assign(obj, common);
+      return obj;
+    }
+    if (tag === 'text') {
+      const x = parseFloat(el.getAttribute('x')) || 0;
+      const y = parseFloat(el.getAttribute('y')) || 0;
+      const fs = (parseFloat(el.getAttribute('font-size')) || 16) * scale;
+      const obj = createObject('text', { x: toX(x) - 60, y: toY(y) - fs, w: 120, h: fs * 1.6, text: el.textContent || '' });
+      obj.fontFamily = el.getAttribute('font-family') || obj.fontFamily;
+      obj.fontSize = fs;
+      obj.textColor = el.getAttribute('fill') || obj.textColor;
+      obj.fillEnabled = false;
+      obj.strokeEnabled = false;
+      return obj;
+    }
+    if (tag === 'polygon' || tag === 'polyline' || tag === 'path') {
+      const wrapper = el.outerHTML;
+      const bbox = approxBBox(el);
+      const obj = createObject('shape', {
+        x: toX(bbox.x), y: toY(bbox.y),
+        w: toS(bbox.w), h: toS(bbox.h),
+        shapeId: tag, shapeSvg: wrapper,
+        shapeViewBox: { x: bbox.x, y: bbox.y, w: bbox.w, h: bbox.h },
+        preserveStyle: true,
+      });
+      Object.assign(obj, common);
+      return obj;
+    }
+    return null;
+  }
+
+  function approxBBox(el) {
+    try {
+      stage.appendChild(el.cloneNode(true));
+      const last = stage.lastChild;
+      const b = last.getBBox();
+      stage.removeChild(last);
+      return { x: b.x, y: b.y, w: Math.max(20, b.width), h: Math.max(20, b.height) };
+    } catch (e) {
+      return { x: 0, y: 0, w: 100, h: 60 };
+    }
+  }
+
+  // 拖曳檔案至視窗
+  ['dragenter', 'dragover'].forEach((evt) => {
+    document.addEventListener(evt, (e) => {
+      if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes('Files')) return;
+      e.preventDefault();
+      dropOverlay.classList.add('show');
+    });
+  });
+  ['dragleave', 'drop'].forEach((evt) => {
+    document.addEventListener(evt, (e) => {
+      if (evt === 'dragleave' && e.relatedTarget) return;
+      dropOverlay.classList.remove('show');
+    });
+  });
+  document.addEventListener('drop', (e) => {
+    if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach((f, i) => importFile(f, i, files.length));
+  });
+
+  // ====== 匯出 ======
+  function buildExportSvg() {
+    const w = 1200, h = 800;
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('xmlns', SVG_NS);
+    svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    svg.setAttribute('width', w); svg.setAttribute('height', h);
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    const bg = document.createElementNS(SVG_NS, 'rect');
+    bg.setAttribute('width', w); bg.setAttribute('height', h); bg.setAttribute('fill', '#ffffff');
+    svg.appendChild(bg);
+    state.objects.forEach((o) => {
+      const el = renderObject(o);
+      if (el) svg.appendChild(el);
+    });
+    return svg;
+  }
+  function exportSvg() {
+    const svg = buildExportSvg();
+    const str = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([str], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `design-${Date.now()}.svg`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    statusInfo.textContent = '已匯出 SVG';
+  }
+  function exportPng() {
+    const svg = buildExportSvg();
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200; canvas.height = 800;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 1200, 800);
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `design-${Date.now()}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        statusInfo.textContent = '已匯出 PNG';
+      }, 'image/png');
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(str)));
+  }
+  $('#btn-export-svg').onclick = exportSvg;
+  $('#btn-export-png').onclick = exportPng;
+  $('#btn-new').onclick = () => {
+    if (state.objects.length > 0 && !confirm('確定要新建畫布？目前內容將清空。')) return;
+    state.objects = []; state.selected.clear(); state.history = []; state.historyIndex = -1; state.autoCounter = 0;
+    renderAll();
+    pushHistory('新建畫布', '');
+  };
+
+  // 一鍵清除：保留歷史紀錄，可 Ctrl+Z 還原
+  $('#btn-clear').onclick = () => {
+    if (state.objects.length === 0) {
+      statusInfo.textContent = '畫布已是空的';
+      return;
+    }
+    if (!confirm(`確定要清除畫布上的 ${state.objects.length} 個物件嗎？\n（可使用 Ctrl+Z 還原）`)) return;
+    const count = state.objects.length;
+    state.objects = [];
+    state.selected.clear();
+    renderAll();
+    pushHistory('清除畫布', `${count} 個物件`);
+    statusInfo.textContent = `已清除 ${count} 個物件`;
+  };
+
+  // ====== 初始化示範內容 ======
+  function seedDemo() {
+    const make = (props) => Object.assign(createObject(props.type, props), props);
+    const start = make({ type: 'shape', shapeId: 'flow-terminator', shapeSvg: window.__SHAPES__[2].items[2].svg, x: 480, y: 80, w: 220, h: 80, fill: '#D6E4F5', stroke: '#4A90E2', text: '開始流程', textColor: '#1F2937', fontSize: 20 });
+    start.name = 'item-01';
+    const step1 = make({ type: 'shape', shapeId: 'flow-process', shapeSvg: window.__SHAPES__[2].items[0].svg, x: 480, y: 220, w: 220, h: 80, fill: '#FFFFFF', stroke: '#333', text: '讀取 SVG 檔案', fontSize: 18 });
+    step1.name = 'item-02';
+    const decision = make({ type: 'shape', shapeId: 'flow-decision', shapeSvg: window.__SHAPES__[2].items[1].svg, x: 460, y: 350, w: 260, h: 130, fill: '#FFF4C9', stroke: '#E0A700', text: '是否包含文字圖層？', fontSize: 16 });
+    decision.name = 'item-03';
+    const yes = make({ type: 'shape', shapeId: 'flow-process', shapeSvg: window.__SHAPES__[2].items[0].svg, x: 240, y: 530, w: 220, h: 80, fill: '#D9EFE0', stroke: '#5AC8A5', text: '進入文字編輯模式', fontSize: 18 });
+    yes.name = 'item-04';
+    const no = make({ type: 'shape', shapeId: 'flow-process', shapeSvg: window.__SHAPES__[2].items[0].svg, x: 720, y: 530, w: 220, h: 80, fill: '#FFE5D0', stroke: '#FFB74D', text: '套用向量樣式', fontSize: 18 });
+    no.name = 'item-05';
+    const end = make({ type: 'shape', shapeId: 'flow-terminator', shapeSvg: window.__SHAPES__[2].items[2].svg, x: 480, y: 660, w: 220, h: 80, fill: '#FFD7E0', stroke: '#F06292', text: '匯出 / 完成', fontSize: 20 });
+    end.name = 'item-06';
+
+    // 連接線
+    const line = (x1, y1, x2, y2) => {
+      const o = createObject('line', { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1) || 2, h: Math.abs(y2 - y1) || 2, stroke: '#4B5563' });
+      o.fillEnabled = false; o.strokeWidth = 1.5;
+      return o;
+    };
+    const arrow = (x1, y1, x2, y2, label) => {
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+      const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
+      const w = len, h = 24;
+      const o = createObject('shape', {
+        x: cx - w / 2, y: cy - h / 2, w, h,
+        shapeId: 'connector',
+        shapeSvg: `<line x1="0" y1="30" x2="92" y2="30" stroke="#4B5563" stroke-width="2"/><polyline points="84,22 96,30 84,38" fill="none" stroke="#4B5563" stroke-width="2"/>`,
+        fill: 'transparent', stroke: '#4B5563', text: label || '',
+      });
+      o.rotation = Math.round(angle);
+      o.fontSize = 12; o.textColor = '#4B5563';
+      return o;
+    };
+    state.objects = [
+      arrow(590, 160, 590, 220),
+      arrow(590, 300, 590, 350),
+      arrow(490, 415, 350, 530, '是'),
+      arrow(700, 415, 830, 530, '否'),
+      arrow(350, 610, 590, 660),
+      arrow(830, 610, 590, 660),
+      start, step1, decision, yes, no, end,
+    ];
+    state.autoCounter = 6;
+    renderAll();
+    pushHistory('範例流程圖載入', '');
+  }
+
+  // ====== Boot ======
+  renderShapeLibrary();
+  renderPresets();
+  setZoom(0.8);
+  // 空白畫布，無預設範例
+  pushHistory('初始化', '');
+  renderAll();
+})();
+
+</script>
+</body>
+</html>
