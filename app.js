@@ -447,6 +447,53 @@
 
   function findObj(id) { return state.objects.find((o) => o.id === id); }
 
+  // ====== 取得 compound shape 的所有 ghost 文字物件原始狀態 ======
+  // 用於 compound 移動 / 縮放時讓 ghost 同步變形
+  function captureGhostsForCompounds(compoundIds) {
+    const set = new Set(compoundIds);
+    const result = [];
+    state.objects.forEach((o) => {
+      if (o.ghostFor && set.has(o.ghostFor.compoundId)) {
+        result.push({
+          id: o.id,
+          compoundId: o.ghostFor.compoundId,
+          x: o.x, y: o.y, w: o.w, h: o.h,
+          fontSize: o.fontSize,
+        });
+      }
+    });
+    return result;
+  }
+  // 將 dx, dy 套用至所有 ghost（用於 move）
+  function applyGhostTranslate(ghostOrigs, dx, dy) {
+    ghostOrigs.forEach((g) => {
+      const o = findObj(g.id);
+      if (!o) return;
+      o.x = g.x + dx;
+      o.y = g.y + dy;
+    });
+  }
+  // 將縮放套用至所有 ghost（用於 resize）
+  // origCompound: 縮放前的 compound 物件（含 x, y, w, h）
+  // newCompound: 縮放後的 compound 物件
+  function applyGhostScale(ghostOrigs, origCompound, newCompound) {
+    if (!origCompound.w || !origCompound.h) return;
+    const sx = newCompound.w / origCompound.w;
+    const sy = newCompound.h / origCompound.h;
+    ghostOrigs.forEach((g) => {
+      if (g.compoundId !== origCompound.id) return;
+      const o = findObj(g.id);
+      if (!o) return;
+      const relX = g.x - origCompound.x;
+      const relY = g.y - origCompound.y;
+      o.x = newCompound.x + relX * sx;
+      o.y = newCompound.y + relY * sy;
+      o.w = g.w * sx;
+      o.h = g.h * sy;
+      o.fontSize = Math.max(4, g.fontSize * Math.min(sx, sy));
+    });
+  }
+
   // ====== 更新 compound shape 內第 N 個 foreignObject 的文字內容 ======
   // 用於 ghost 文字物件與 compound shape 雙向綁定
   //
@@ -767,6 +814,10 @@
         const obj = findObj(hit.id);
         if (!obj || obj.locked) return;
         drag = { mode: hit.dir === 'rotate' ? 'rotate' : 'resize', dir: hit.dir, id: hit.id, startPt: pt, orig: deepClone(obj) };
+        // compound shape 縮放時記錄關聯 ghost 的原始狀態
+        if (obj.type === 'shape' && (obj.shapeId === 'imported-svg' || obj.shapeId === 'imported')) {
+          drag.ghostOrigs = captureGhostsForCompounds([obj.id]);
+        }
       } else if (hit.kind === 'object') {
         if (!e.shiftKey && !state.selected.has(hit.id)) state.selected = new Set();
         state.selected.add(hit.id);
@@ -776,6 +827,13 @@
         const objs = Array.from(state.selected).map(findObj).filter(Boolean);
         if (objs.some((o) => o.locked)) return;
         drag = { mode: 'move', ids: Array.from(state.selected), startPt: pt, origs: objs.map(deepClone) };
+        // compound shape 移動時記錄關聯 ghost 的原始狀態
+        const compoundIds = objs
+          .filter((o) => o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported'))
+          .map((o) => o.id);
+        if (compoundIds.length > 0) {
+          drag.ghostOrigs = captureGhostsForCompounds(compoundIds);
+        }
       } else {
         // 空白：開始框選
         if (!e.shiftKey) state.selected.clear();
@@ -823,6 +881,10 @@
         o.x = drag.origs[i].x + dx;
         o.y = drag.origs[i].y + dy;
       });
+      // compound 移動時讓 ghost 同步位移
+      if (drag.ghostOrigs && drag.ghostOrigs.length > 0) {
+        applyGhostTranslate(drag.ghostOrigs, dx, dy);
+      }
       renderAll();
     } else if (drag.mode === 'resize') {
       const o = findObj(drag.id);
@@ -844,6 +906,10 @@
         if (drag.dir.includes('n')) ny = orig.y + (orig.h - nh);
       }
       o.x = nx; o.y = ny; o.w = nw; o.h = nh;
+      // compound 縮放時 ghost 同步等比變形
+      if (drag.ghostOrigs && drag.ghostOrigs.length > 0) {
+        applyGhostScale(drag.ghostOrigs, drag.orig, o);
+      }
       renderAll();
     } else if (drag.mode === 'rotate') {
       const o = findObj(drag.id);

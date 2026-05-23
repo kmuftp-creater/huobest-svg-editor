@@ -7,7 +7,16 @@
 
 ---
 
-## v0.1.2（當前）
+## v0.1.3（當前）
+### 修正
+- **畫布放大後左側內容被吃掉、拖曳也看不到**：root cause 是 `.stage-wrap` 使用 `justify-content: center` + `align-items: center`，當子元素（stage）尺寸超過父容器時，flex 置中對齊會使 **start 端不可達**（捲動條卡在 0 但內容已被往右推出可視範圍）。改用 `safe center` 關鍵字：放得下時置中，放不下時自動降級為 start 對齊，確保左 / 上邊始終可捲動到達。
+- **匯入 SVG 後縮放，文字標籤不跟隨變形**：compound shape 縮放時，其關聯的 ghost 文字物件位置與尺寸停留在原座標 → 視覺上與 compound 內部 foreignObject 錯位。新增 `applyGhostTranslate` 與 `applyGhostScale` 兩個輔助函式：
+  - 拖曳開始時 `captureGhostsForCompounds` 記錄所有 ghost 的原始 x/y/w/h/fontSize
+  - move 時對 ghost 同步套用相同 dx, dy
+  - resize 時計算 compound 的縮放比 sx, sy，對每個 ghost 的相對位置 × sx、相對寬高 × sy、字級 × min(sx, sy)
+  - 字級下限 4 px，避免縮太小變空白
+
+## v0.1.2
 ### 修正（打包工具）
 - **單檔版本所有按鈕無反應**：root cause 是 `build.js` 用 `String.prototype.replace(regex, str)` 內聯 app.js，replace 的第二參數為字串時，會把 `$$` 解讀為「字面 `$`」、把 `$&` 解讀為「整段匹配」。app.js 內有 14 處 `$$`（querySelectorAll 短記法），全被破壞為 `$`，導致：
   - `const $$ = ...` 變成 `const $ = ...`（覆寫了原本的 `$`）
