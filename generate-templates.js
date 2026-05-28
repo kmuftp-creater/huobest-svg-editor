@@ -100,19 +100,15 @@ function extractSvg(content) {
 
 function build() {
   const files = fs.readdirSync(SRC_DIR).filter((f) => f.endsWith('.svg')).sort();
-  const templates = files.map((filename) => {
+  const templates = files.map((filename, index) => {
     const fullPath = path.join(SRC_DIR, filename);
     const content = fs.readFileSync(fullPath, 'utf8');
     const meta = META[filename] || { name: filename.replace(/\.svg$/, '').slice(0, 30), category: '其他' };
 
     const parsed = extractSvg(content);
-    // 範本 id：英數開頭，從檔名衍生
-    const id = 'svg-' + filename
-      .replace(/\.svg$/, '')
-      .replace(/[^A-Za-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .toLowerCase()
-      .slice(0, 40);
+    // 範本 id：以 index 確保唯一，附上英數摘要 hint（檔名多為中文時 hint 可能為空）
+    const hint = (filename.match(/[A-Za-z0-9]+/g) || []).join('-').toLowerCase().replace(/svg/g, '').replace(/^-+|-+$/g, '');
+    const id = `tpl-${String(index).padStart(2, '0')}${hint ? '-' + hint.slice(0, 24) : ''}`;
 
     // Class 範圍化
     const scopedInner = scopeClasses(parsed.inner, id);

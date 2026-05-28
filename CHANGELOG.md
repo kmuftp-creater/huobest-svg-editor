@@ -7,7 +7,36 @@
 
 ---
 
-## v0.6.1（當前）
+## v0.7.0（當前）
+### 新功能：完整自訂範本管理（localStorage 持久化）
+依使用者確認「儲存範本」目前僅下載 JSON 不算完整功能，本版重新實作為**真正可管理的自訂範本系統**：
+
+**儲存範本**
+- 頂部「儲存範本」按鈕 → 輸入名稱 → 寫入 `localStorage`（key: `svgeditor-custom-templates`）
+- 同名範本自動覆蓋（保留原 id 與建立時間，新增 updatedAt 戳記）
+- 自動產生縮圖（從目前 state.objects 渲染壓縮 SVG 預覽）
+
+**範本面板分區**
+- 自訂範本顯示在最上方（含「自訂範本 (N)」分區標題）
+- 內建範本顯示在下方（含「內建範本 (N)」分區標題）
+- 自訂範本 hover 時顯示三個管理按鈕：
+  - ✎ 改名
+  - ⇩ 匯出 JSON 備份（離線保存 / 分享）
+  - × 刪除（含確認對話框）
+
+**載入流程**
+- 點自訂範本縮圖 → 套用至畫布（重新指派 ID 避免衝突，同步修正 connector/ghost 引用）
+- 也可從「開啟」按鈕匯入舊版 JSON 備份檔
+
+### 修正
+- **SVG 範本 ID 衝突**：之前 13 個 SVG 範本中 8 個 id 都是 'svg-svg'（檔名為中文時剝除非英數後只剩 'svg' 後綴）。改為以 index 為主、英數摘要為 hint：`tpl-{index}-{hint?}`，13 個範本全部唯一。
+- **依使用者要求下架「聊天溝通教學」範本**：新 id `tpl-12` 已加入 OBSOLETE 清單；過濾邏輯移到 SVG 範本載入之後，確保下架生效。
+
+### 範本總數
+- 內建：6（簡單範本）+ 12（專業 SVG，扣除聊天教學）= **18 個**
+- 自訂：依使用者儲存數量（無上限，受 localStorage 容量約 5 MB 限制）
+
+## v0.6.1
 ### 修正
 - **拆解按鈕對 SVG 範本無反應**：root cause 是 `doDecompose` 只認 `shapeId === 'imported-svg' / 'imported'`，但 v0.6.0 新增的專業 SVG 範本用 `shapeId === 'svg-template'`，被過濾掉導致按鈕無反應。**修正**：加入 `svg-template` 至辨識清單。
 - **拆解後 CSS class 樣式遺失（顏色 / 字型變預設）**：SVG 範本透過 `<defs><style>` 定義樣式（`.title { fill: #333 }`），拆解後個別元素失去 `<style>` 上下文，CSS 不再生效。**修正**：拆解時將 compound.shapeSvg 暫時掛到隱藏的 DOM SVG 內，用 `window.getComputedStyle(el)` 讀取每個元素的計算 fill / stroke / fontSize / fontFamily / fontWeight / textAnchor，套用為 inline 屬性至拆解後的物件，再移除隱藏節點。

@@ -3034,35 +3034,140 @@
   $('#btn-export-svg').onclick = exportSvg;
   $('#btn-export-png').onclick = exportPng;
 
-  // ====== 儲存目前畫布為自訂範本（JSON 格式）======
-  // 方案 A：所見即所得，使用者在編輯器內設計完成後可儲存為範本檔，
-  //         之後拖入編輯器即還原為畫布內容
+  // ====== 自訂範本管理（localStorage 持久化）======
+  const CUSTOM_TPL_KEY = 'svgeditor-custom-templates';
+  function loadCustomTemplates() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_TPL_KEY);
+      if (!raw) return [];
+      const data = JSON.parse(raw);
+      return Array.isArray(data) ? data : [];
+    } catch (e) { return []; }
+  }
+  function saveCustomTemplates(list) {
+    try {
+      localStorage.setItem(CUSTOM_TPL_KEY, JSON.stringify(list));
+      return true;
+    } catch (e) {
+      statusInfo.textContent = '儲存失敗（瀏覽器儲存空間已滿）：' + e.message;
+      return false;
+    }
+  }
+
+  // 產生目前畫布的縮圖 SVG 字串（簡化版，僅供範本面板預覽）
+  function buildThumbSvg() {
+    const svg = buildExportSvg(); // 既有匯出函式
+    // 取出內層 innerHTML 作為 thumb 內容
+    return svg.innerHTML;
+  }
+
+  // 「儲存範本」：加到自訂範本（localStorage），出現在範本列表
   $('#btn-save-template').onclick = () => {
     if (state.objects.length === 0) {
       statusInfo.textContent = '畫布為空，沒有可儲存的內容';
       return;
     }
-    const name = prompt('請輸入範本名稱：', '我的範本-' + new Date().toISOString().slice(0, 10));
+    const existing = loadCustomTemplates();
+    const defaultName = '我的範本 ' + new Date().toLocaleString('zh-TW', { hour12: false }).replace(/[\/:]/g, '-');
+    const name = prompt(`請輸入範本名稱：\n（已存在的範本：${existing.length} 個，輸入同名會覆蓋）`, defaultName);
     if (!name) return;
-    const data = {
+
+    const newTpl = {
       __type: 'huobest-svg-editor-template',
-      version: 'v0.6.0',
+      id: 'custom-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       name,
+      category: '自訂',
       createdAt: new Date().toISOString(),
       canvasWidth: CANVAS_W,
       canvasHeight: CANVAS_H,
+      thumb: buildThumbSvg(),
+      thumbViewBox: `0 0 ${CANVAS_W} ${CANVAS_H}`,
       objects: state.objects.map(deepClone),
     };
-    const json = JSON.stringify(data, null, 2);
+
+    // 同名則覆蓋（保留 id 與 createdAt）
+    const sameNameIdx = existing.findIndex((t) => t.name === name);
+    if (sameNameIdx >= 0) {
+      newTpl.id = existing[sameNameIdx].id;
+      newTpl.createdAt = existing[sameNameIdx].createdAt;
+      newTpl.updatedAt = new Date().toISOString();
+      existing[sameNameIdx] = newTpl;
+    } else {
+      existing.push(newTpl);
+    }
+    if (!saveCustomTemplates(existing)) return;
+
+    renderTemplates(); // 立即刷新範本面板
+    statusInfo.textContent = `已${sameNameIdx >= 0 ? '覆蓋' : '儲存'}範本「${name}」（${state.objects.length} 個物件，目前共 ${existing.length} 個自訂範本）`;
+  };
+
+  // 刪除自訂範本
+  function deleteCustomTemplate(id) {
+    const existing = loadCustomTemplates();
+    const idx = existing.findIndex((t) => t.id === id);
+    if (idx < 0) return;
+    const name = existing[idx].name;
+    if (!confirm(`確定刪除自訂範本「${name}」嗎？`)) return;
+    existing.splice(idx, 1);
+    saveCustomTemplates(existing);
+    renderTemplates();
+    statusInfo.textContent = `已刪除自訂範本「${name}」`;
+  }
+
+  // 改名自訂範本
+  function renameCustomTemplate(id) {
+    const existing = loadCustomTemplates();
+    const tpl = existing.find((t) => t.id === id);
+    if (!tpl) return;
+    const newName = prompt('請輸入新名稱：', tpl.name);
+    if (!newName || newName === tpl.name) return;
+    tpl.name = newName;
+    tpl.updatedAt = new Date().toISOString();
+    saveCustomTemplates(existing);
+    renderTemplates();
+    statusInfo.textContent = `已改名為「${newName}」`;
+  }
+
+  // 套用自訂範本
+  function applyCustomTemplate(tpl) {
+    if (state.objects.length > 0) {
+      if (!confirm(`即將載入「${tpl.name}」，目前畫布上的 ${state.objects.length} 個物件將被清除。\n（可使用 Ctrl+Z 還原）\n\n確定要套用嗎？`)) return;
+    }
+    state.objects = tpl.objects.map(deepClone);
+    state.selected.clear();
+    // 重新指派 id 避免與既有衝突
+    const idMap = {};
+    state.objects.forEach((o) => {
+      const oldId = o.id;
+      o.id = uid(o.type || 'item');
+      idMap[oldId] = o.id;
+    });
+    state.objects.forEach((o) => {
+      if (o.fromId && idMap[o.fromId]) o.fromId = idMap[o.fromId];
+      if (o.toId && idMap[o.toId]) o.toId = idMap[o.toId];
+      if (o.ghostFor && o.ghostFor.compoundId && idMap[o.ghostFor.compoundId]) {
+        o.ghostFor.compoundId = idMap[o.ghostFor.compoundId];
+      }
+    });
+    renderAll();
+    pushHistory('套用自訂範本', tpl.name);
+    statusInfo.textContent = `已套用範本「${tpl.name}」（${tpl.objects.length} 個物件）`;
+  }
+
+  // 匯出自訂範本為 JSON 檔（備份用）
+  function exportCustomTemplate(id) {
+    const tpl = loadCustomTemplates().find((t) => t.id === id);
+    if (!tpl) return;
+    const json = JSON.stringify(tpl, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${name}.json`;
+    a.download = `${tpl.name}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    statusInfo.textContent = `已儲存為 ${name}.json（${state.objects.length} 個物件）`;
-  };
+    statusInfo.textContent = `已匯出「${tpl.name}.json」`;
+  }
   $('#btn-new').onclick = () => {
     if (state.objects.length > 0 && !confirm('確定要新建畫布？目前內容將清空。')) return;
     state.objects = []; state.selected.clear(); state.history = []; state.historyIndex = -1; state.autoCounter = 0;
@@ -3140,24 +3245,71 @@
   function renderTemplates() {
     const host = $('#template-grid');
     if (!host) return;
-    const list = (window.__TEMPLATES__ || []);
+    const builtIn = (window.__TEMPLATES__ || []);
+    const custom = (typeof loadCustomTemplates === 'function') ? loadCustomTemplates() : [];
     host.innerHTML = '';
-    list.forEach((tpl) => {
-      const item = document.createElement('div');
-      item.className = 'template-item';
-      item.dataset.tplId = tpl.id;
-      item.title = `套用範本：${tpl.name}`;
-      const vb = tpl.thumbViewBox || '0 0 100 60';
-      item.innerHTML = `
-        <div class="thumb"><svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${tpl.thumb}</svg></div>
-        <div class="meta">
-          <span class="name">${tpl.name}</span>
-          <span class="cat">${tpl.category}</span>
-        </div>
-      `;
-      item.addEventListener('click', () => applyTemplate(tpl));
-      host.appendChild(item);
-    });
+
+    // 自訂範本（如果有）顯示在最上方
+    if (custom.length > 0) {
+      const header = document.createElement('div');
+      header.className = 'template-section';
+      header.textContent = `自訂範本（${custom.length}）`;
+      host.appendChild(header);
+      custom.forEach((tpl) => {
+        const item = document.createElement('div');
+        item.className = 'template-item custom-template';
+        item.dataset.tplId = tpl.id;
+        const vb = tpl.thumbViewBox || `0 0 ${CANVAS_W} ${CANVAS_H}`;
+        item.innerHTML = `
+          <div class="thumb"><svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${tpl.thumb || ''}</svg></div>
+          <div class="meta">
+            <span class="name">${escapeHtml(tpl.name)}</span>
+            <span class="cat">${tpl.category || '自訂'}</span>
+          </div>
+          <div class="actions">
+            <button class="ac-btn" data-action="rename" title="改名">✎</button>
+            <button class="ac-btn" data-action="export" title="匯出 JSON 備份">⇩</button>
+            <button class="ac-btn danger" data-action="delete" title="刪除">×</button>
+          </div>
+        `;
+        item.addEventListener('click', (e) => {
+          const action = e.target.dataset.action;
+          if (action === 'delete') { deleteCustomTemplate(tpl.id); return; }
+          if (action === 'rename') { renameCustomTemplate(tpl.id); return; }
+          if (action === 'export') { exportCustomTemplate(tpl.id); return; }
+          applyCustomTemplate(tpl);
+        });
+        host.appendChild(item);
+      });
+    }
+
+    // 內建範本
+    if (builtIn.length > 0) {
+      const header = document.createElement('div');
+      header.className = 'template-section';
+      header.textContent = `內建範本（${builtIn.length}）`;
+      host.appendChild(header);
+      builtIn.forEach((tpl) => {
+        const item = document.createElement('div');
+        item.className = 'template-item';
+        item.dataset.tplId = tpl.id;
+        item.title = `套用範本：${tpl.name}`;
+        const vb = tpl.thumbViewBox || '0 0 100 60';
+        item.innerHTML = `
+          <div class="thumb"><svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${tpl.thumb}</svg></div>
+          <div class="meta">
+            <span class="name">${escapeHtml(tpl.name)}</span>
+            <span class="cat">${tpl.category}</span>
+          </div>
+        `;
+        item.addEventListener('click', () => applyTemplate(tpl));
+        host.appendChild(item);
+      });
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
   function applyTemplate(tpl) {

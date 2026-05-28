@@ -1062,6 +1062,7 @@ const _OBSOLETE_TEMPLATE_IDS = new Set([
   'personal-plan',    // 連線品質不佳，暫時下架
   'mind-map',         // 已被「AI 工具分類 / PMP 十大領域 / 高雄景點」取代
   'concept-5w1h',     // 連線品質不佳，暫時下架
+  'tpl-12',           // 聊天溝通教學（依使用者要求移除）
 ]);
 for (let i = TEMPLATES.length - 1; i >= 0; i--) {
   if (_OBSOLETE_TEMPLATE_IDS.has(TEMPLATES[i].id)) {
@@ -1107,6 +1108,13 @@ if (typeof window !== 'undefined' && Array.isArray(window.__TEMPLATE_SVGS__)) {
       build: () => buildFromSvg(svgTpl),
     });
   });
+}
+
+// 再次過濾下架的範本（含 SVG 範本）
+for (let i = TEMPLATES.length - 1; i >= 0; i--) {
+  if (_OBSOLETE_TEMPLATE_IDS.has(TEMPLATES[i].id)) {
+    TEMPLATES.splice(i, 1);
+  }
 }
 
 if (typeof window !== 'undefined') {
