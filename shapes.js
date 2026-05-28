@@ -91,16 +91,38 @@ const SHAPES = [
   ]},
 ];
 
-/* 樣式預設色卡（呼應 image.png 中的色塊） */
+/* 樣式預設色卡（柔和配色 8 欄 × 3 列 = 24 色）
+   每筆含 fill（填滿）與 stroke（描邊，略深於 fill）以維持視覺一致 */
 const PRESET_STYLES = [
-  { fill: '#FFFFFF', stroke: '#222831' },
-  { fill: '#ECEEF1', stroke: '#333333' },
-  { fill: '#D6E4F5', stroke: '#4A90E2' },
-  { fill: '#D9EFE0', stroke: '#5AC8A5' },
-  { fill: '#FFE5D0', stroke: '#FFB74D' },
-  { fill: '#FFF4C9', stroke: '#E0A700' },
-  { fill: '#FFD7E0', stroke: '#F06292' },
-  { fill: '#E6D9FA', stroke: '#9B6EF3' },
+  // 第 1 列 — 中性 / 米色系（亮 → 暗）
+  { fill: '#FFFFFF', stroke: '#222831' },  // 純白
+  { fill: '#F5F5F5', stroke: '#9CA3AF' },  // 淺灰
+  { fill: '#E5E5E5', stroke: '#6B7280' },  // 灰
+  { fill: '#FAF6F0', stroke: '#B8A88A' },  // 奶油白
+  { fill: '#F5EBE0', stroke: '#C9B190' },  // 米色
+  { fill: '#EFE0CD', stroke: '#B89870' },  // 杏色
+  { fill: '#D9CAB3', stroke: '#9B7A50' },  // 沙色
+  { fill: '#C9B79E', stroke: '#8B6A45' },  // 淺褐
+
+  // 第 2 列 — 暖系（粉 / 桃 / 黃）
+  { fill: '#FFE5E5', stroke: '#F8A8A8' },  // 淺粉
+  { fill: '#FFD0D0', stroke: '#F08080' },  // 玫瑰粉
+  { fill: '#FFC8B8', stroke: '#E07060' },  // 蜜桃
+  { fill: '#FFE5D0', stroke: '#FFB74D' },  // 淺橘
+  { fill: '#FFD8B8', stroke: '#F0A060' },  // 杏橘
+  { fill: '#FFF4C9', stroke: '#E0A700' },  // 奶油黃
+  { fill: '#FFEFA8', stroke: '#D49000' },  // 檸檬黃
+  { fill: '#FFE090', stroke: '#C08000' },  // 蜜黃
+
+  // 第 3 列 — 冷系（綠 / 藍 / 紫）
+  { fill: '#D9EFE0', stroke: '#5AC8A5' },  // 薄荷
+  { fill: '#C5E0D0', stroke: '#4FAA8F' },  // 草綠
+  { fill: '#B8D8C8', stroke: '#3D8E70' },  // 青綠
+  { fill: '#D6E4F5', stroke: '#4A90E2' },  // 粉藍
+  { fill: '#C5D9F1', stroke: '#3A7BC8' },  // 天空藍
+  { fill: '#B8C8E8', stroke: '#5A78B0' },  // 薰衣草藍
+  { fill: '#E6D9FA', stroke: '#9B6EF3' },  // 薰衣草
+  { fill: '#DCC9F0', stroke: '#7B4DC0' },  // 淺紫
 ];
 
 if (typeof window !== 'undefined') {

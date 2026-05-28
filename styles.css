@@ -611,18 +611,25 @@ body[data-theme='dark'] .theme-ico {
 /* Preset 樣式格 */
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
   margin-bottom: 14px;
 }
 .preset-cell {
-  height: 36px;
+  height: 22px;
   border-radius: 4px;
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: transform 0.1s;
+  position: relative;
+  transition: transform 0.12s ease, border-color 0.12s ease, z-index 0s 0.12s;
 }
-.preset-cell:hover { transform: scale(1.04); border-color: var(--primary); }
+.preset-cell:hover {
+  transform: scale(1.45);
+  border-color: var(--primary);
+  z-index: 10;
+  transition-delay: 0s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
 
 /* Padding grid */
 .padding-grid {
