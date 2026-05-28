@@ -109,8 +109,44 @@
       // Ghost 文字物件：視覺由所屬 compound shape 的 foreignObject 提供，自身只負責 hit-test 與編輯介面
       // 結構：{ compoundId: string, foreignIndex: number }
       ghostFor: props.ghostFor || null,
+      // 連接線專屬：fromId / toId 指向兩端物件 id；x/y/w/h 由渲染時動態計算覆寫
+      fromId: props.fromId || null,
+      toId: props.toId || null,
+      connectorStyle: props.connectorStyle || 'straight', // straight | elbow
+      arrowEnd: props.arrowEnd !== false, // 預設有箭頭
     };
     return base;
+  }
+
+  // ====== 連接線錨點計算 ======
+  // 給定一個矩形 box 與目標點 target，回傳 box 邊界上「最接近 target」的點
+  function getAnchorPoint(box, target) {
+    const cx = box.x + box.w / 2;
+    const cy = box.y + box.h / 2;
+    const dx = target.x - cx;
+    const dy = target.y - cy;
+    if (box.w <= 0 || box.h <= 0) return { x: cx, y: cy };
+    // 判斷主方向：水平 vs 垂直
+    const ratioX = Math.abs(dx) / (box.w / 2);
+    const ratioY = Math.abs(dy) / (box.h / 2);
+    if (ratioX > ratioY) {
+      // 從左 / 右邊出
+      return { x: dx > 0 ? box.x + box.w : box.x, y: cy };
+    }
+    // 從上 / 下邊出
+    return { x: cx, y: dy > 0 ? box.y + box.h : box.y };
+  }
+
+  // 計算 connector 的渲染參數（端點座標、bbox）
+  function computeConnectorGeometry(obj) {
+    const from = obj.fromId ? findObj(obj.fromId) : null;
+    const to = obj.toId ? findObj(obj.toId) : null;
+    if (!from || !to) return null;
+    const fromCenter = { x: from.x + from.w / 2, y: from.y + from.h / 2 };
+    const toCenter = { x: to.x + to.w / 2, y: to.y + to.h / 2 };
+    const fromAnchor = getAnchorPoint(from, toCenter);
+    const toAnchor = getAnchorPoint(to, fromCenter);
+    return { from: fromAnchor, to: toAnchor };
   }
 
   // ====== 群組輔助 ======
@@ -181,6 +217,10 @@
   }
 
   function renderObject(obj) {
+    // 連接線特殊處理：依兩端物件動態計算座標
+    if (obj.type === 'connector') {
+      return renderConnector(obj);
+    }
     const g = document.createElementNS(SVG_NS, 'g');
     g.setAttribute('data-id', obj.id);
     const cx = obj.x + obj.w / 2;
@@ -202,6 +242,115 @@
       const txt = buildTextNode(obj);
       if (txt) g.appendChild(txt);
     }
+
+    return g;
+  }
+
+  // ====== 渲染連接線 ======
+  // 連接線不使用一般的 g + transform 系統，而是直接畫 line / polyline + 箭頭
+  // 位置完全由 fromId / toId 兩端物件決定，物件移動時下次 renderAll 自動更新
+  function renderConnector(obj) {
+    const geo = computeConnectorGeometry(obj);
+    if (!geo) return null;
+    const g = document.createElementNS(SVG_NS, 'g');
+    g.setAttribute('data-id', obj.id);
+    g.setAttribute('opacity', obj.opacity);
+
+    // 同步更新 obj.x/y/w/h 以利選取框與圖層列表（bbox）
+    obj.x = Math.min(geo.from.x, geo.to.x);
+    obj.y = Math.min(geo.from.y, geo.to.y);
+    obj.w = Math.max(2, Math.abs(geo.to.x - geo.from.x));
+    obj.h = Math.max(2, Math.abs(geo.to.y - geo.from.y));
+
+    const stroke = obj.stroke || '#6B7280';
+    const sw = obj.strokeWidth || 1.5;
+    const dasharray = obj.strokeStyle === 'dash' ? '6 4' : (obj.strokeStyle === 'dot' ? '1 4' : '');
+
+    // 主線
+    if (obj.connectorStyle === 'elbow') {
+      // 折線：中點轉折
+      const midX = (geo.from.x + geo.to.x) / 2;
+      const points = `${geo.from.x},${geo.from.y} ${midX},${geo.from.y} ${midX},${geo.to.y} ${geo.to.x},${geo.to.y}`;
+      const poly = document.createElementNS(SVG_NS, 'polyline');
+      poly.setAttribute('points', points);
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', stroke);
+      poly.setAttribute('stroke-width', sw);
+      if (dasharray) poly.setAttribute('stroke-dasharray', dasharray);
+      g.appendChild(poly);
+    } else {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('x1', geo.from.x);
+      line.setAttribute('y1', geo.from.y);
+      line.setAttribute('x2', geo.to.x);
+      line.setAttribute('y2', geo.to.y);
+      line.setAttribute('stroke', stroke);
+      line.setAttribute('stroke-width', sw);
+      if (dasharray) line.setAttribute('stroke-dasharray', dasharray);
+      g.appendChild(line);
+    }
+
+    // 箭頭（終點）
+    if (obj.arrowEnd) {
+      const dx = geo.to.x - geo.from.x;
+      const dy = geo.to.y - geo.from.y;
+      const angle = Math.atan2(dy, dx);
+      const arrowLen = 10;
+      const arrowAngle = Math.PI / 7;
+      const ax1 = geo.to.x - arrowLen * Math.cos(angle - arrowAngle);
+      const ay1 = geo.to.y - arrowLen * Math.sin(angle - arrowAngle);
+      const ax2 = geo.to.x - arrowLen * Math.cos(angle + arrowAngle);
+      const ay2 = geo.to.y - arrowLen * Math.sin(angle + arrowAngle);
+      const arrow = document.createElementNS(SVG_NS, 'polyline');
+      arrow.setAttribute('points', `${ax1},${ay1} ${geo.to.x},${geo.to.y} ${ax2},${ay2}`);
+      arrow.setAttribute('fill', 'none');
+      arrow.setAttribute('stroke', stroke);
+      arrow.setAttribute('stroke-width', sw);
+      arrow.setAttribute('stroke-linecap', 'round');
+      arrow.setAttribute('stroke-linejoin', 'round');
+      g.appendChild(arrow);
+    }
+
+    // 線上文字標籤（若有 text）
+    if (obj.text) {
+      const midX = (geo.from.x + geo.to.x) / 2;
+      const midY = (geo.from.y + geo.to.y) / 2;
+      const txt = document.createElementNS(SVG_NS, 'text');
+      txt.setAttribute('x', midX);
+      txt.setAttribute('y', midY - 6);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('dominant-baseline', 'middle');
+      txt.setAttribute('font-family', obj.fontFamily || "'Noto Sans TC', sans-serif");
+      txt.setAttribute('font-size', obj.fontSize || 12);
+      txt.setAttribute('fill', obj.textColor || stroke);
+      txt.setAttribute('pointer-events', 'none');
+      // 文字背景（避免線壓過去）
+      const bg = document.createElementNS(SVG_NS, 'rect');
+      const padX = 4, padY = 2;
+      txt.textContent = obj.text;
+      // 暫時加入測量
+      g.appendChild(txt);
+      try {
+        const bb = txt.getBBox();
+        bg.setAttribute('x', bb.x - padX);
+        bg.setAttribute('y', bb.y - padY);
+        bg.setAttribute('width', bb.width + padX * 2);
+        bg.setAttribute('height', bb.height + padY * 2);
+        bg.setAttribute('fill', 'var(--canvas-bg, #fff)');
+        bg.setAttribute('rx', 3);
+        g.insertBefore(bg, txt);
+      } catch (e) {}
+    }
+
+    // 透明粗線當 hit 區域，方便選取
+    const hit = document.createElementNS(SVG_NS, 'line');
+    hit.setAttribute('x1', geo.from.x);
+    hit.setAttribute('y1', geo.from.y);
+    hit.setAttribute('x2', geo.to.x);
+    hit.setAttribute('y2', geo.to.y);
+    hit.setAttribute('stroke', 'transparent');
+    hit.setAttribute('stroke-width', 12);
+    g.insertBefore(hit, g.firstChild);
 
     return g;
   }
@@ -408,11 +557,13 @@
       box.setAttribute('height', obj.h);
       box.setAttribute('transform', `rotate(${obj.rotation} ${obj.x + obj.w/2} ${obj.y + obj.h/2})`);
       if (obj.ghostFor) box.classList.add('ghost-select');
+      if (obj.type === 'connector') box.classList.add('connector-select');
       overlay.appendChild(box);
 
-      // Ghost 物件：不渲染縮放與旋轉控點（避免誤以為可以縮放）
-      // 編輯文字請於右側「文字」分頁；縮放整張匯入請點 compound（非文字區）
-      if (obj.ghostFor) return;
+      // Ghost 物件 或 連接線：不渲染縮放與旋轉控點
+      // - Ghost：請於右側「文字」分頁編輯內容
+      // - Connector：尺寸由兩端物件決定，無法獨立縮放
+      if (obj.ghostFor || obj.type === 'connector') return;
 
       // 8 個縮放點 + 1 個旋轉點
       const positions = [
@@ -772,10 +923,19 @@
   }
   function deleteSelected() {
     if (state.selected.size === 0) return;
-    state.objects = state.objects.filter((o) => !state.selected.has(o.id));
+    const toDelete = new Set(state.selected);
+    // 連帶刪除：任何 connector 若其 fromId 或 toId 指向被刪物件，也一併移除
+    state.objects.forEach((o) => {
+      if (o.type === 'connector' && (toDelete.has(o.fromId) || toDelete.has(o.toId))) {
+        toDelete.add(o.id);
+      }
+    });
+    const before = state.objects.length;
+    state.objects = state.objects.filter((o) => !toDelete.has(o.id));
+    const cleanedCount = before - state.objects.length;
     state.selected.clear();
     renderAll();
-    pushHistory('刪除', '');
+    pushHistory('刪除', `${cleanedCount} 個物件（含相關連線）`);
   }
   function duplicateSelected() {
     const newIds = new Set();
@@ -1180,6 +1340,171 @@
     statusInfo.textContent = '工具：' + ({ select: '選擇', hand: '手型（拖曳畫布）', text: '文字', rect: '矩形', ellipse: '橢圓', line: '直線' }[t] || t);
   }
   $$('.tool[data-tool]').forEach((b) => b.addEventListener('click', () => setTool(b.dataset.tool)));
+
+  // ====== 節點操作（自動連接線）======
+  // 建立一個「節點」物件（圓角矩形 + 預設樣式）
+  function makeNodeObject(x, y, label, colorPair) {
+    const [fill, stroke] = colorPair || ['#BBDEFB', '#1E88E5'];
+    const obj = createObject('rect', {
+      x, y, w: 160, h: 60,
+      fill, stroke,
+    });
+    obj.rx = 8;
+    obj.text = label || '新節點';
+    obj.fontSize = 15;
+    obj.textColor = '#1F2937';
+    obj.textAlign = 'center';
+    obj.textVAlign = 'middle';
+    obj.fontFamily = "'Noto Sans TC', sans-serif";
+    obj.name = uid('node');
+    return obj;
+  }
+  // 建立連接線物件
+  function makeConnectorObject(fromId, toId, label) {
+    const obj = createObject('connector', {
+      x: 0, y: 0, w: 100, h: 100, // bbox 會在渲染時動態覆寫
+      fromId, toId,
+      stroke: '#6B7280',
+      fillEnabled: false,
+    });
+    obj.strokeEnabled = true;
+    obj.strokeWidth = 1.8;
+    obj.text = label || '';
+    obj.fontSize = 12;
+    obj.textColor = '#6B7280';
+    obj.name = uid('conn');
+    return obj;
+  }
+
+  // 取得選取的單一非連接線物件（節點操作的前提）
+  function getSelectedNode() {
+    if (state.selected.size !== 1) return null;
+    const o = findObj(Array.from(state.selected)[0]);
+    if (!o || o.type === 'connector') return null;
+    return o;
+  }
+
+  // 找出物件的「父節點」：透過 connector 反查
+  function findParentNode(node) {
+    const conn = state.objects.find((o) => o.type === 'connector' && o.toId === node.id);
+    if (!conn) return null;
+    return findObj(conn.fromId);
+  }
+
+  // 找出物件的所有「子節點」
+  function findChildNodes(node) {
+    return state.objects
+      .filter((o) => o.type === 'connector' && o.fromId === node.id)
+      .map((c) => findObj(c.toId))
+      .filter(Boolean);
+  }
+
+  // 下級節點（Tab）：在選取節點右側建立子節點 + 連線
+  function addChildNode() {
+    const parent = getSelectedNode();
+    if (!parent) {
+      statusInfo.textContent = '請先選取一個物件，才能新增下級節點';
+      return;
+    }
+    // 子節點位置：父節點右側，與已有子節點錯開
+    const siblings = findChildNodes(parent);
+    const offsetY = siblings.length * 80;
+    const child = makeNodeObject(
+      parent.x + parent.w + 80,
+      parent.y + offsetY,
+      '新節點',
+      ['#C8E6C9', '#43A047']
+    );
+    const conn = makeConnectorObject(parent.id, child.id);
+    state.objects.push(child, conn);
+    state.selected = new Set([child.id]);
+    renderAll();
+    pushHistory('新增下級節點', child.name);
+    // 自動進入文字編輯
+    setTimeout(() => openInlineTextEditor(child), 80);
+  }
+
+  // 同級節點（Enter）：在選取節點下方建立兄弟 + 連到同一個父
+  function addSiblingNode() {
+    const cur = getSelectedNode();
+    if (!cur) {
+      statusInfo.textContent = '請先選取一個物件，才能新增同級節點';
+      return;
+    }
+    const parent = findParentNode(cur);
+    const sib = makeNodeObject(
+      cur.x,
+      cur.y + cur.h + 24,
+      '新節點',
+      parent ? ['#C8E6C9', '#43A047'] : ['#BBDEFB', '#1E88E5']
+    );
+    state.objects.push(sib);
+    if (parent) {
+      const conn = makeConnectorObject(parent.id, sib.id);
+      state.objects.push(conn);
+    }
+    state.selected = new Set([sib.id]);
+    renderAll();
+    pushHistory('新增同級節點', sib.name);
+    setTimeout(() => openInlineTextEditor(sib), 80);
+  }
+
+  // 上級節點（Shift+Tab）：建立新節點作為當前節點的父
+  function addParentNode() {
+    const cur = getSelectedNode();
+    if (!cur) {
+      statusInfo.textContent = '請先選取一個物件，才能新增上級節點';
+      return;
+    }
+    // 若已有父節點，提示無法操作
+    const existingParent = findParentNode(cur);
+    if (existingParent) {
+      statusInfo.textContent = `${cur.name} 已有父節點 ${existingParent.name}`;
+      return;
+    }
+    // 在 cur 左側建立新父節點
+    const par = makeNodeObject(
+      Math.max(20, cur.x - cur.w - 80),
+      cur.y,
+      '新父節點',
+      ['#FFE0B2', '#F57C00']
+    );
+    state.objects.push(par);
+    const conn = makeConnectorObject(par.id, cur.id);
+    state.objects.push(conn);
+    state.selected = new Set([par.id]);
+    renderAll();
+    pushHistory('新增上級節點', par.name);
+    setTimeout(() => openInlineTextEditor(par), 80);
+  }
+
+  // 關係線（F4）：兩個選取物件之間建立連接線
+  function addRelation() {
+    if (state.selected.size !== 2) {
+      statusInfo.textContent = '請先選取兩個物件以建立關係線';
+      return;
+    }
+    const ids = Array.from(state.selected);
+    // 避免重複建立
+    const exists = state.objects.some((o) => o.type === 'connector' &&
+      ((o.fromId === ids[0] && o.toId === ids[1]) || (o.fromId === ids[1] && o.toId === ids[0])));
+    if (exists) {
+      statusInfo.textContent = '這兩個物件之間已有連接線';
+      return;
+    }
+    const conn = makeConnectorObject(ids[0], ids[1], '關係');
+    conn.strokeStyle = 'dash'; // 關係線以虛線表示
+    state.objects.push(conn);
+    renderAll();
+    pushHistory('新增關係線', '');
+    statusInfo.textContent = `已建立關係線：${ids[0]} → ${ids[1]}`;
+  }
+
+  // 按鈕綁定
+  $('#btn-child-node').onclick = addChildNode;
+  $('#btn-sibling-node').onclick = addSiblingNode;
+  $('#btn-parent-node').onclick = addParentNode;
+  $('#btn-relation').onclick = addRelation;
 
   $('#btn-zoom-in').onclick = () => setZoom(state.zoom * ZOOM_STEP);
   $('#btn-zoom-out').onclick = () => setZoom(state.zoom / ZOOM_STEP);
@@ -1970,6 +2295,20 @@
       if (e.key === 'g' && !e.shiftKey) { e.preventDefault(); doGroup(); return; }
       if (e.key === 'g' && e.shiftKey) { e.preventDefault(); doUngroup(); return; }
       if (e.key === 'a') { e.preventDefault(); state.selected = new Set(state.objects.map((o) => o.id)); renderAll(); return; }
+    }
+    // 節點操作快捷鍵
+    if (e.key === 'Tab' && !e.shiftKey) {
+      if (state.selected.size > 0) { e.preventDefault(); addChildNode(); return; }
+    }
+    if (e.key === 'Tab' && e.shiftKey) {
+      if (state.selected.size > 0) { e.preventDefault(); addParentNode(); return; }
+    }
+    if (e.key === 'Enter' && state.selected.size === 1) {
+      // 僅在選取單一物件時觸發（避免干擾其他 Enter 操作）
+      e.preventDefault(); addSiblingNode(); return;
+    }
+    if (e.key === 'F4') {
+      e.preventDefault(); addRelation(); return;
     }
     if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteSelected(); return; }
     // 方向鍵微調：單鍵 1px，Shift 10px

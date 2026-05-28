@@ -388,7 +388,14 @@ body[data-theme='dark'] .theme-ico {
   justify-content: space-between;
   gap: 16px;
 }
-.tools { display: flex; gap: 4px; }
+.tools { display: flex; gap: 4px; align-items: center; }
+.tool-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 6px;
+  display: inline-block;
+}
 .tool {
   width: 32px;
   height: 32px;
@@ -863,6 +870,11 @@ body[data-theme='dark'] .theme-ico {
   stroke: var(--secondary);
   stroke-dasharray: 3 3;
   stroke-width: 1.2;
+}
+.selection-rect.connector-select {
+  stroke: var(--info);
+  stroke-dasharray: 2 2;
+  stroke-width: 1;
 }
 .marquee-rect {
   fill: var(--primary);
