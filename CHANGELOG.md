@@ -7,7 +7,13 @@
 
 ---
 
-## v0.6.0（當前）
+## v0.6.1（當前）
+### 修正
+- **拆解按鈕對 SVG 範本無反應**：root cause 是 `doDecompose` 只認 `shapeId === 'imported-svg' / 'imported'`，但 v0.6.0 新增的專業 SVG 範本用 `shapeId === 'svg-template'`，被過濾掉導致按鈕無反應。**修正**：加入 `svg-template` 至辨識清單。
+- **拆解後 CSS class 樣式遺失（顏色 / 字型變預設）**：SVG 範本透過 `<defs><style>` 定義樣式（`.title { fill: #333 }`），拆解後個別元素失去 `<style>` 上下文，CSS 不再生效。**修正**：拆解時將 compound.shapeSvg 暫時掛到隱藏的 DOM SVG 內，用 `window.getComputedStyle(el)` 讀取每個元素的計算 fill / stroke / fontSize / fontFamily / fontWeight / textAnchor，套用為 inline 屬性至拆解後的物件，再移除隱藏節點。
+- 計算 strokeWidth 時依 compound 縮放比例同步換算
+
+## v0.6.0
 ### 重大改進：範本系統重構
 依使用者回饋「自寫範本品質不穩定」的事實，本版採取兩條互補策略徹底解決：
 

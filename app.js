@@ -2253,7 +2253,8 @@
   $('#btn-decompose').onclick = () => doDecompose();
   function doDecompose() {
     const selectedObjs = Array.from(state.selected).map(findObj).filter(Boolean);
-    const targets = selectedObjs.filter((o) => o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported'));
+    const isDecomposable = (o) => o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported' || o.shapeId === 'svg-template');
+    const targets = selectedObjs.filter(isDecomposable);
 
     // 若選取的是 ghost，自動找到其所屬 compound
     if (targets.length === 0) {
@@ -2271,9 +2272,7 @@
     if (targets.length === 0) {
       if (!confirm('未選取匯入的 compound shape。\n要嘗試拆解畫布上所有的匯入物件嗎？')) return;
       state.objects.forEach((o) => {
-        if (o.type === 'shape' && (o.shapeId === 'imported-svg' || o.shapeId === 'imported')) {
-          targets.push(o);
-        }
+        if (isDecomposable(o)) targets.push(o);
       });
       if (targets.length === 0) {
         statusInfo.textContent = '畫布上沒有可拆解的匯入物件';
@@ -2300,20 +2299,56 @@
     const ox = compound.x;
     const oy = compound.y;
 
-    // 解析 compound.shapeSvg（SVG 命名空間）
-    const wrapped = `<svg xmlns="${SVG_NS}" xmlns:xlink="http://www.w3.org/1999/xlink">${compound.shapeSvg}</svg>`;
-    const doc = new DOMParser().parseFromString(wrapped, 'image/svg+xml');
-    const root = doc.documentElement;
-    if (!root) return [];
+    // 為了讀取 CSS 套用後的計算樣式（class 變 inline 屬性），
+    // 把 compound.shapeSvg 暫時掛到 DOM 的隱藏 SVG 內
+    const hiddenHost = document.createElement('div');
+    hiddenHost.style.cssText = 'position:fixed;left:-99999px;top:0;visibility:hidden;pointer-events:none;';
+    hiddenHost.innerHTML = `<svg xmlns="${SVG_NS}" xmlns:xlink="http://www.w3.org/1999/xlink" width="${vb.w}" height="${vb.h}" viewBox="0 0 ${vb.w} ${vb.h}">${compound.shapeSvg}</svg>`;
+    document.body.appendChild(hiddenHost);
+    const root = hiddenHost.querySelector('svg');
+    if (!root) { document.body.removeChild(hiddenHost); return []; }
+
+    // 從計算樣式讀取最終 fill / stroke
+    const readComputed = (el) => {
+      try {
+        const cs = window.getComputedStyle(el);
+        return {
+          fill: cs.fill,
+          stroke: cs.stroke,
+          strokeWidth: parseFloat(cs.strokeWidth) || 1,
+          fontFamily: cs.fontFamily,
+          fontSize: parseFloat(cs.fontSize) || 16,
+          fontWeight: cs.fontWeight,
+          fontStyle: cs.fontStyle,
+          textAnchor: cs.textAnchor,
+        };
+      } catch (e) {
+        return {};
+      }
+    };
 
     const newObjs = [];
     // 一、處理形狀元素
     root.querySelectorAll('rect, circle, ellipse, line, polygon, polyline, path').forEach((el) => {
       const obj = decomposeElementToObject(el, ox, oy, sx, sy, vb);
-      if (obj) {
-        obj.name = uid(obj.type);
-        newObjs.push(obj);
+      if (!obj) return;
+      // 把 CSS class 套用後的計算樣式轉為 inline 屬性
+      const cs = readComputed(el);
+      if (cs.fill && cs.fill !== 'none' && cs.fill !== 'rgb(0, 0, 0)') {
+        obj.fill = cs.fill;
+        obj.fillEnabled = true;
+      } else if (cs.fill === 'none') {
+        obj.fillEnabled = false;
       }
+      if (cs.stroke && cs.stroke !== 'none') {
+        obj.stroke = cs.stroke;
+        obj.strokeEnabled = true;
+        obj.strokeWidth = cs.strokeWidth * Math.min(sx, sy);
+      } else if (cs.stroke === 'none') {
+        obj.strokeEnabled = false;
+      }
+      obj.name = uid(obj.type);
+      newObjs.push(obj);
     });
     // 二、處理 foreignObject 文字（替代原 ghost）
     root.querySelectorAll('foreignObject').forEach((fo) => {
@@ -2375,28 +2410,14 @@
       const text = (el.textContent || '').trim();
       if (!text) return;
 
-      // 收集位置與樣式（包含父層 g 的繼承）
+      // 從計算樣式取得完整樣式（包含 class 套用的 CSS）
+      const cs = readComputed(el);
+
+      // 收集位置（含父層 g 累積 transform）
       let x = parseFloat(el.getAttribute('x')) || 0;
       let y = parseFloat(el.getAttribute('y')) || 0;
-      let fontFamily = el.getAttribute('font-family') || '';
-      let fontSize = parseFloat(el.getAttribute('font-size')) || 0;
-      let fontWeight = el.getAttribute('font-weight') || '';
-      let fontStyle = el.getAttribute('font-style') || '';
-      let fill = el.getAttribute('fill') || '';
-      let textAnchor = el.getAttribute('text-anchor') || '';
-
       let p = el.parentNode;
       while (p && p !== root && p.getAttribute) {
-        if (!fontFamily) fontFamily = p.getAttribute('font-family') || '';
-        if (!fontSize) {
-          const fsAttr = p.getAttribute('font-size');
-          if (fsAttr) fontSize = parseFloat(fsAttr) || 0;
-        }
-        if (!fontWeight) fontWeight = p.getAttribute('font-weight') || '';
-        if (!fontStyle) fontStyle = p.getAttribute('font-style') || '';
-        if (!fill) fill = p.getAttribute('fill') || '';
-        if (!textAnchor) textAnchor = p.getAttribute('text-anchor') || '';
-        // 累積父層的 translate transform
         const tr = p.getAttribute('transform');
         if (tr) {
           const m = /translate\(\s*([-\d.]+)[ ,]+([-\d.]+)\s*\)/.exec(tr);
@@ -2405,10 +2426,13 @@
         p = p.parentNode;
       }
 
-      // 預設值
-      if (!fontFamily) fontFamily = 'Tahoma, sans-serif';
-      if (!fontSize) fontSize = 16;
-      if (!fill) fill = '#000000';
+      // 從計算樣式取值（fallback 至屬性 / 預設）
+      let fontFamily = cs.fontFamily || el.getAttribute('font-family') || 'Tahoma, sans-serif';
+      let fontSize = cs.fontSize || parseFloat(el.getAttribute('font-size')) || 16;
+      let fontWeight = cs.fontWeight && cs.fontWeight !== '400' ? cs.fontWeight : (el.getAttribute('font-weight') || '');
+      let fontStyle = cs.fontStyle || el.getAttribute('font-style') || '';
+      let fill = cs.fill && cs.fill !== 'rgb(0, 0, 0)' ? cs.fill : (el.getAttribute('fill') || '#000000');
+      let textAnchor = cs.textAnchor || el.getAttribute('text-anchor') || '';
 
       // text-anchor → 我的 textAlign 映射 + bbox 左上計算
       // SVG <text> 的 x, y 是「baseline 錨點」，需轉換成 bbox 左上
@@ -2452,6 +2476,9 @@
     state.objects = state.objects.filter((o) => o.id !== compound.id && !ghostIds.has(o.id));
     // 把新物件插在原 compound 位置（保留圖層次序）
     state.objects.splice(compoundIdx, 0, ...newObjs);
+
+    // 清理隱藏的測量用 SVG host
+    if (hiddenHost && hiddenHost.parentNode) hiddenHost.parentNode.removeChild(hiddenHost);
     return newObjs;
   }
 
