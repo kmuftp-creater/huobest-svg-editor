@@ -1,0 +1,255 @@
+<svg width="1400" height="660" viewBox="0 0 1400 660" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg {
+        fill: #ffffff;
+      }
+
+      .line {
+        stroke: #2f2f2f;
+        stroke-width: 2;
+        fill: none;
+        stroke-linecap: square;
+      }
+
+      .manager-box {
+        fill: #222222;
+        stroke: #222222;
+        stroke-width: 2;
+      }
+
+      .dept-box {
+        stroke-width: 2;
+      }
+
+      .dept-a {
+        fill: #FFE4E6;
+        stroke: #FB7185;
+      }
+
+      .dept-b {
+        fill: #FFEDD5;
+        stroke: #FB923C;
+      }
+
+      .dept-c {
+        fill: #DCFCE7;
+        stroke: #22C55E;
+      }
+
+      .dept-d {
+        fill: #DBEAFE;
+        stroke: #3B82F6;
+      }
+
+      .dept-e {
+        fill: #F3E8FF;
+        stroke: #A855F7;
+      }
+
+      .member-tag {
+        fill: #ffffff;
+        stroke: #d7d7d7;
+        stroke-width: 1.5;
+      }
+
+      .manager-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 18px;
+        font-weight: 800;
+        fill: #ffffff;
+      }
+
+      .dept-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 17px;
+        font-weight: 800;
+        fill: #111111;
+      }
+
+      .member-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        fill: #333333;
+      }
+
+      .small-label {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        fill: #666666;
+      }
+
+      .title {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 30px;
+        font-weight: 900;
+        fill: #222222;
+      }
+
+      .subtitle {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        fill: #777777;
+      }
+    </style>
+
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="660" class="bg"/>
+
+  <!-- Title -->
+  <text x="700" y="45" text-anchor="middle" class="title">部門成員結構圖</text>
+  <text x="700" y="73" text-anchor="middle" class="subtitle">Department Member Structure｜彩色部門標籤版</text>
+
+  <!-- Manager -->
+  <rect x="630" y="100" width="140" height="52" rx="10" class="manager-box" filter="url(#softShadow)"/>
+  <text x="700" y="133" text-anchor="middle" class="manager-text">總經理</text>
+
+  <!-- Main vertical line -->
+  <line x1="700" y1="152" x2="700" y2="195" class="line"/>
+
+  <!-- Main horizontal department line -->
+  <line x1="150" y1="195" x2="1250" y2="195" class="line"/>
+
+  <!-- ================= Department A ================= -->
+  <line x1="150" y1="195" x2="150" y2="230" class="line"/>
+  <rect x="90" y="230" width="120" height="48" rx="12" class="dept-box dept-a" filter="url(#softShadow)"/>
+  <text x="150" y="260" text-anchor="middle" class="dept-text">部門 A</text>
+
+  <line x1="150" y1="278" x2="150" y2="550" class="line"/>
+
+  <line x1="150" y1="315" x2="190" y2="315" class="line"/>
+  <rect x="190" y="295" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="250" y="321" text-anchor="middle" class="member-text">成員 1</text>
+
+  <line x1="150" y1="365" x2="190" y2="365" class="line"/>
+  <rect x="190" y="345" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="250" y="371" text-anchor="middle" class="member-text">成員 2</text>
+
+  <line x1="150" y1="415" x2="190" y2="415" class="line"/>
+  <rect x="190" y="395" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="250" y="421" text-anchor="middle" class="member-text">成員 3</text>
+
+  <line x1="150" y1="465" x2="190" y2="465" class="line"/>
+  <rect x="190" y="445" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="250" y="471" text-anchor="middle" class="member-text">成員 4</text>
+
+  <line x1="150" y1="515" x2="190" y2="515" class="line"/>
+  <rect x="190" y="495" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="250" y="521" text-anchor="middle" class="member-text">成員 5</text>
+
+  <!-- ================= Department B ================= -->
+  <line x1="425" y1="195" x2="425" y2="230" class="line"/>
+  <rect x="365" y="230" width="120" height="48" rx="12" class="dept-box dept-b" filter="url(#softShadow)"/>
+  <text x="425" y="260" text-anchor="middle" class="dept-text">部門 B</text>
+
+  <line x1="425" y1="278" x2="425" y2="550" class="line"/>
+
+  <line x1="425" y1="315" x2="465" y2="315" class="line"/>
+  <rect x="465" y="295" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="525" y="321" text-anchor="middle" class="member-text">成員 1</text>
+
+  <line x1="425" y1="365" x2="465" y2="365" class="line"/>
+  <rect x="465" y="345" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="525" y="371" text-anchor="middle" class="member-text">成員 2</text>
+
+  <line x1="425" y1="415" x2="465" y2="415" class="line"/>
+  <rect x="465" y="395" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="525" y="421" text-anchor="middle" class="member-text">成員 3</text>
+
+  <line x1="425" y1="465" x2="465" y2="465" class="line"/>
+  <rect x="465" y="445" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="525" y="471" text-anchor="middle" class="member-text">成員 4</text>
+
+  <line x1="425" y1="515" x2="465" y2="515" class="line"/>
+  <rect x="465" y="495" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="525" y="521" text-anchor="middle" class="member-text">成員 5</text>
+
+  <!-- ================= Department C ================= -->
+  <line x1="700" y1="195" x2="700" y2="230" class="line"/>
+  <rect x="640" y="230" width="120" height="48" rx="12" class="dept-box dept-c" filter="url(#softShadow)"/>
+  <text x="700" y="260" text-anchor="middle" class="dept-text">部門 C</text>
+
+  <line x1="700" y1="278" x2="700" y2="550" class="line"/>
+
+  <line x1="700" y1="315" x2="740" y2="315" class="line"/>
+  <rect x="740" y="295" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="800" y="321" text-anchor="middle" class="member-text">成員 1</text>
+
+  <line x1="700" y1="365" x2="740" y2="365" class="line"/>
+  <rect x="740" y="345" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="800" y="371" text-anchor="middle" class="member-text">成員 2</text>
+
+  <line x1="700" y1="415" x2="740" y2="415" class="line"/>
+  <rect x="740" y="395" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="800" y="421" text-anchor="middle" class="member-text">成員 3</text>
+
+  <line x1="700" y1="465" x2="740" y2="465" class="line"/>
+  <rect x="740" y="445" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="800" y="471" text-anchor="middle" class="member-text">成員 4</text>
+
+  <line x1="700" y1="515" x2="740" y2="515" class="line"/>
+  <rect x="740" y="495" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="800" y="521" text-anchor="middle" class="member-text">成員 5</text>
+
+  <!-- ================= Department D ================= -->
+  <line x1="975" y1="195" x2="975" y2="230" class="line"/>
+  <rect x="915" y="230" width="120" height="48" rx="12" class="dept-box dept-d" filter="url(#softShadow)"/>
+  <text x="975" y="260" text-anchor="middle" class="dept-text">部門 D</text>
+
+  <line x1="975" y1="278" x2="975" y2="550" class="line"/>
+
+  <line x1="975" y1="315" x2="1015" y2="315" class="line"/>
+  <rect x="1015" y="295" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="1075" y="321" text-anchor="middle" class="member-text">成員 1</text>
+
+  <line x1="975" y1="365" x2="1015" y2="365" class="line"/>
+  <rect x="1015" y="345" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="1075" y="371" text-anchor="middle" class="member-text">成員 2</text>
+
+  <line x1="975" y1="415" x2="1015" y2="415" class="line"/>
+  <rect x="1015" y="395" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="1075" y="421" text-anchor="middle" class="member-text">成員 3</text>
+
+  <line x1="975" y1="465" x2="1015" y2="465" class="line"/>
+  <rect x="1015" y="445" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="1075" y="471" text-anchor="middle" class="member-text">成員 4</text>
+
+  <line x1="975" y1="515" x2="1015" y2="515" class="line"/>
+  <rect x="1015" y="495" width="120" height="40" rx="8" class="member-tag"/>
+  <text x="1075" y="521" text-anchor="middle" class="member-text">成員 5</text>
+
+  <!-- ================= Department E ================= -->
+  <line x1="1250" y1="195" x2="1250" y2="230" class="line"/>
+  <rect x="1190" y="230" width="120" height="48" rx="12" class="dept-box dept-e" filter="url(#softShadow)"/>
+  <text x="1250" y="260" text-anchor="middle" class="dept-text">部門 E</text>
+
+  <line x1="1250" y1="278" x2="550" class="line" opacity="0"/>
+  <line x1="1250" y1="278" x2="1250" y2="550" class="line"/>
+
+  <line x1="1250" y1="315" x2="1290" y2="315" class="line"/>
+  <rect x="1290" y="295" width="95" height="40" rx="8" class="member-tag"/>
+  <text x="1337.5" y="321" text-anchor="middle" class="member-text">成員 1</text>
+
+  <line x1="1250" y1="365" x2="1290" y2="365" class="line"/>
+  <rect x="1290" y="345" width="95" height="40" rx="8" class="member-tag"/>
+  <text x="1337.5" y="371" text-anchor="middle" class="member-text">成員 2</text>
+
+  <line x1="1250" y1="415" x2="1290" y2="415" class="line"/>
+  <rect x="1290" y="395" width="95" height="40" rx="8" class="member-tag"/>
+  <text x="1337.5" y="421" text-anchor="middle" class="member-text">成員 3</text>
+
+  <line x1="1250" y1="465" x2="1290" y2="465" class="line"/>
+  <rect x="1290" y="445" width="95" height="40" rx="8" class="member-tag"/>
+  <text x="1337.5" y="471" text-anchor="middle" class="member-text">成員 4</text>
+
+  <line x1="1250" y1="515" x2="1290" y2="515" class="line"/>
+  <rect x="1290" y="495" width="95" height="40" rx="8" class="member-tag"/>
+  <text x="1337.5" y="521" text-anchor="middle" class="member-text">成員 5</text>
+</svg>

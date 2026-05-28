@@ -1,0 +1,243 @@
+<svg width="1100" height="780" viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg {
+        fill: #EEF4FF;
+      }
+
+      .title-box {
+        fill: #4F6BED;
+      }
+
+      .title-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 30px;
+        font-weight: 900;
+        fill: #FFFFFF;
+      }
+
+      .line {
+        stroke: #1F2937;
+        stroke-width: 4;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .thin-line {
+        stroke: #1F2937;
+        stroke-width: 3;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .grandfather {
+        fill: #DBEAFE;
+        stroke: #2563EB;
+        stroke-width: 3;
+      }
+
+      .grandmother {
+        fill: #FCE7F3;
+        stroke: #DB2777;
+        stroke-width: 3;
+      }
+
+      .father {
+        fill: #DCFCE7;
+        stroke: #16A34A;
+        stroke-width: 3;
+      }
+
+      .mother {
+        fill: #FEF3C7;
+        stroke: #D97706;
+        stroke-width: 3;
+      }
+
+      .child-boy {
+        fill: #E0F2FE;
+        stroke: #0284C7;
+        stroke-width: 3;
+      }
+
+      .child-girl {
+        fill: #FDE2E8;
+        stroke: #E11D48;
+        stroke-width: 3;
+      }
+
+      .spouse-box {
+        fill: #FFFFFF;
+        stroke: #1F2937;
+        stroke-width: 2.5;
+      }
+
+      .name-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 25px;
+        font-weight: 900;
+        fill: #111827;
+      }
+
+      .sub-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        fill: #374151;
+      }
+
+      .small-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 19px;
+        font-weight: 900;
+        fill: #111827;
+      }
+
+      .label {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 800;
+        fill: #4B5563;
+      }
+
+      .legend-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        fill: #374151;
+      }
+
+      .avatar-head {
+        fill: rgba(255,255,255,0.75);
+        stroke: #FFFFFF;
+        stroke-width: 3;
+      }
+
+      .avatar-body {
+        fill: rgba(255,255,255,0.75);
+        stroke: #FFFFFF;
+        stroke-width: 3;
+      }
+    </style>
+
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="780" class="bg"/>
+
+  <!-- Decorative circles -->
+  <circle cx="90" cy="80" r="55" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="1010" cy="110" r="75" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="980" cy="690" r="90" fill="#FFFFFF" opacity="0.28"/>
+
+  <!-- Title -->
+  <rect x="335" y="35" width="430" height="70" rx="12" class="title-box" filter="url(#softShadow)"/>
+  <text x="550" y="80" text-anchor="middle" class="title-text">台灣家族稱謂族譜圖</text>
+
+  <!-- ================= 第一代：祖父母 ================= -->
+
+  <!-- Grandfather -->
+  <rect x="235" y="165" width="230" height="115" rx="18" class="grandfather" filter="url(#softShadow)"/>
+  <circle cx="350" cy="205" r="22" class="avatar-head"/>
+  <path d="M310 255 C320 225 380 225 390 255 Z" class="avatar-body"/>
+  <text x="350" y="245" text-anchor="middle" class="name-text">祖父</text>
+  <text x="350" y="270" text-anchor="middle" class="sub-text">阿公 / 爺爺</text>
+
+  <!-- Grandmother -->
+  <rect x="635" y="165" width="230" height="115" rx="18" class="grandmother" filter="url(#softShadow)"/>
+  <circle cx="750" cy="205" r="22" class="avatar-head"/>
+  <path d="M710 255 C720 225 780 225 790 255 Z" class="avatar-body"/>
+  <text x="750" y="245" text-anchor="middle" class="name-text">祖母</text>
+  <text x="750" y="270" text-anchor="middle" class="sub-text">阿嬤 / 奶奶</text>
+
+  <!-- Marriage line grandparents -->
+  <line x1="465" y1="222" x2="635" y2="222" class="line"/>
+  <text x="550" y="207" text-anchor="middle" class="label">夫妻</text>
+
+  <!-- Down line from grandparents -->
+  <line x1="550" y1="222" x2="550" y2="350" class="line"/>
+
+  <!-- ================= 第二代：父母 ================= -->
+
+  <!-- Parent horizontal connector -->
+  <line x1="350" y1="350" x2="750" y2="350" class="line"/>
+
+  <!-- Father -->
+  <rect x="235" y="380" width="230" height="115" rx="18" class="father" filter="url(#softShadow)"/>
+  <circle cx="350" cy="420" r="22" class="avatar-head"/>
+  <path d="M310 470 C320 440 380 440 390 470 Z" class="avatar-body"/>
+  <text x="350" y="460" text-anchor="middle" class="name-text">父親</text>
+  <text x="350" y="485" text-anchor="middle" class="sub-text">爸爸 / 阿爸</text>
+
+  <!-- Mother -->
+  <rect x="635" y="380" width="230" height="115" rx="18" class="mother" filter="url(#softShadow)"/>
+  <circle cx="750" cy="420" r="22" class="avatar-head"/>
+  <path d="M710 470 C720 440 780 440 790 470 Z" class="avatar-body"/>
+  <text x="750" y="460" text-anchor="middle" class="name-text">母親</text>
+  <text x="750" y="485" text-anchor="middle" class="sub-text">媽媽 / 阿母</text>
+
+  <!-- Drops to parents -->
+  <line x1="350" y1="350" x2="350" y2="380" class="thin-line"/>
+  <line x1="750" y1="350" x2="750" y2="380" class="thin-line"/>
+
+  <!-- Marriage line parents -->
+  <line x1="465" y1="437" x2="635" y2="437" class="line"/>
+  <text x="550" y="422" text-anchor="middle" class="label">夫妻</text>
+
+  <!-- Down line to children -->
+  <line x1="550" y1="437" x2="550" y2="560" class="line"/>
+
+  <!-- ================= 第三代：子女 ================= -->
+
+  <!-- Children horizontal connector -->
+  <line x1="220" y1="560" x2="880" y2="560" class="line"/>
+
+  <!-- Child 1 -->
+  <line x1="220" y1="560" x2="220" y2="595" class="thin-line"/>
+  <rect x="135" y="595" width="170" height="95" rx="16" class="child-boy" filter="url(#softShadow)"/>
+  <text x="220" y="635" text-anchor="middle" class="small-text">長子</text>
+  <text x="220" y="663" text-anchor="middle" class="sub-text">哥哥 / 兒子</text>
+
+  <!-- Child 2 -->
+  <line x1="440" y1="560" x2="440" y2="595" class="thin-line"/>
+  <rect x="355" y="595" width="170" height="95" rx="16" class="child-girl" filter="url(#softShadow)"/>
+  <text x="440" y="635" text-anchor="middle" class="small-text">長女</text>
+  <text x="440" y="663" text-anchor="middle" class="sub-text">姊姊 / 女兒</text>
+
+  <!-- Child 3 -->
+  <line x1="660" y1="560" x2="660" y2="595" class="thin-line"/>
+  <rect x="575" y="595" width="170" height="95" rx="16" class="child-boy" filter="url(#softShadow)"/>
+  <text x="660" y="635" text-anchor="middle" class="small-text">次子</text>
+  <text x="660" y="663" text-anchor="middle" class="sub-text">弟弟 / 兒子</text>
+
+  <!-- Child 4 -->
+  <line x1="880" y1="560" x2="880" y2="595" class="thin-line"/>
+  <rect x="795" y="595" width="170" height="95" rx="16" class="child-girl" filter="url(#softShadow)"/>
+  <text x="880" y="635" text-anchor="middle" class="small-text">次女</text>
+  <text x="880" y="663" text-anchor="middle" class="sub-text">妹妹 / 女兒</text>
+
+  <!-- ================= Legend ================= -->
+  <rect x="280" y="720" width="540" height="38" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+  <circle cx="315" cy="739" r="9" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="335" y="744" class="legend-text">祖父</text>
+
+  <circle cx="400" cy="739" r="9" fill="#FCE7F3" stroke="#DB2777" stroke-width="2"/>
+  <text x="420" y="744" class="legend-text">祖母</text>
+
+  <circle cx="485" cy="739" r="9" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+  <text x="505" y="744" class="legend-text">父親</text>
+
+  <circle cx="570" cy="739" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <text x="590" y="744" class="legend-text">母親</text>
+
+  <circle cx="655" cy="739" r="9" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+  <text x="675" y="744" class="legend-text">兒子</text>
+
+  <circle cx="740" cy="739" r="9" fill="#FDE2E8" stroke="#E11D48" stroke-width="2"/>
+  <text x="760" y="744" class="legend-text">女兒</text>
+</svg>

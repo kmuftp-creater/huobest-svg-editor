@@ -31,11 +31,12 @@ function build() {
   console.log('  霍家私塾 SVG 編輯器 - 單檔打包');
   console.log('===========================================\n');
 
-  // 1. 讀取五個來源檔
+  // 1. 讀取六個來源檔
   const sources = {
     html: path.join(ROOT, 'index.html'),
     css: path.join(ROOT, 'styles.css'),
     shapes: path.join(ROOT, 'shapes.js'),
+    templatesData: path.join(ROOT, 'templates-data.js'),
     templates: path.join(ROOT, 'templates.js'),
     app: path.join(ROOT, 'app.js'),
   };
@@ -50,6 +51,7 @@ function build() {
   const html = fs.readFileSync(sources.html, 'utf8');
   const css = fs.readFileSync(sources.css, 'utf8');
   const shapes = fs.readFileSync(sources.shapes, 'utf8');
+  const templatesData = fs.readFileSync(sources.templatesData, 'utf8');
   const templates = fs.readFileSync(sources.templates, 'utf8');
   const app = fs.readFileSync(sources.app, 'utf8');
 
@@ -64,6 +66,7 @@ function build() {
     'index.html': html.length,
     'styles.css': css.length,
     'shapes.js': shapes.length,
+    'templates-data.js': templatesData.length,
     'templates.js': templates.length,
     'app.js': app.length,
   };
@@ -104,6 +107,12 @@ function build() {
     () => `<script>\n/* === shapes.js === */\n${shapes}\n</script>`
   );
 
+  // 5.4 內聯 templates-data.js（必須先於 templates.js）
+  bundled = bundled.replace(
+    /<script src="templates-data\.js"><\/script>/,
+    () => `<script>\n/* === templates-data.js === */\n${templatesData}\n</script>`
+  );
+
   // 5.5 內聯 templates.js（順序：templates 必須先於 app）
   bundled = bundled.replace(
     /<script src="templates\.js"><\/script>/,
@@ -133,6 +142,7 @@ function build() {
   const checks = {
     '內聯 CSS': !bundled.includes('href="styles.css"') && bundled.includes('/* === styles.css === */'),
     '內聯 shapes.js': !bundled.includes('src="shapes.js"') && bundled.includes('/* === shapes.js === */'),
+    '內聯 templates-data.js': !bundled.includes('src="templates-data.js"') && bundled.includes('/* === templates-data.js === */'),
     '內聯 templates.js': !bundled.includes('src="templates.js"') && bundled.includes('/* === templates.js === */'),
     '內聯 app.js': !bundled.includes('src="app.js"') && bundled.includes('/* === app.js === */'),
   };

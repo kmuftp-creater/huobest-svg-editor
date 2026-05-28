@@ -1050,6 +1050,65 @@ const TEMPLATES = [
   },
 ];
 
+// ========================================
+// 過濾舊範本：移除已被專業 SVG 範本取代或品質不佳的項目
+// ========================================
+const _OBSOLETE_TEMPLATE_IDS = new Set([
+  'org-chart',        // 已被「專案成員結構」「部門成員結構」取代
+  'family-tree',      // 已被「台灣家族族譜」取代
+  'industry-tree',    // 連線品質不佳，無對應 SVG 暫時下架
+  'uml-class',        // 已被「課程平台 UML」取代
+  'swim-lane',        // 已被「客服流程泳道圖」取代
+  'personal-plan',    // 連線品質不佳，暫時下架
+  'mind-map',         // 已被「AI 工具分類 / PMP 十大領域 / 高雄景點」取代
+  'concept-5w1h',     // 連線品質不佳，暫時下架
+]);
+for (let i = TEMPLATES.length - 1; i >= 0; i--) {
+  if (_OBSOLETE_TEMPLATE_IDS.has(TEMPLATES[i].id)) {
+    TEMPLATES.splice(i, 1);
+  }
+}
+
+// ========================================
+// 將 templates-data.js 提供的專業 SVG 範本動態加入
+// ========================================
+function buildFromSvg(svgTpl) {
+  const baseW = svgTpl.width;
+  const baseH = svgTpl.height;
+  const margin = 40;
+  const scale = Math.min((1200 - margin * 2) / baseW, (800 - margin * 2) / baseH, 1);
+  const fitW = baseW * scale;
+  const fitH = baseH * scale;
+  return [{
+    type: 'shape',
+    x: Math.round((1200 - fitW) / 2),
+    y: Math.round((800 - fitH) / 2),
+    w: Math.round(fitW),
+    h: Math.round(fitH),
+    shapeId: 'svg-template',
+    shapeSvg: svgTpl.inner,
+    shapeViewBox: { x: 0, y: 0, w: baseW, h: baseH },
+    preserveStyle: true,
+    fill: 'transparent',
+    fillEnabled: false,
+    stroke: 'transparent',
+    strokeEnabled: false,
+  }];
+}
+
+if (typeof window !== 'undefined' && Array.isArray(window.__TEMPLATE_SVGS__)) {
+  window.__TEMPLATE_SVGS__.forEach((svgTpl) => {
+    TEMPLATES.push({
+      id: svgTpl.id,
+      name: svgTpl.name,
+      category: svgTpl.category,
+      thumb: svgTpl.inner,
+      thumbViewBox: `0 0 ${svgTpl.width} ${svgTpl.height}`,
+      build: () => buildFromSvg(svgTpl),
+    });
+  });
+}
+
 if (typeof window !== 'undefined') {
   window.__TEMPLATES__ = TEMPLATES;
 }

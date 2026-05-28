@@ -1,0 +1,230 @@
+<svg width="1300" height="720" viewBox="0 0 1300 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg {
+        fill: #F8FAFC;
+      }
+
+      .title {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 30px;
+        font-weight: 900;
+        fill: #0F172A;
+      }
+
+      .subtitle {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        fill: #64748B;
+      }
+
+      .problem-box {
+        fill: #334155;
+        stroke: #0F172A;
+        stroke-width: 3;
+      }
+
+      .problem-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 28px;
+        font-weight: 900;
+        fill: #FFFFFF;
+      }
+
+      .main-line {
+        stroke: #475569;
+        stroke-width: 5;
+        stroke-linecap: round;
+      }
+
+      .bone-line {
+        stroke-width: 4;
+        stroke-linecap: round;
+      }
+
+      .keyword-line {
+        stroke-width: 2.8;
+        stroke-linecap: round;
+      }
+
+      .cat-box {
+        stroke-width: 3;
+      }
+
+      .cat-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 22px;
+        font-weight: 900;
+        fill: #0F172A;
+      }
+
+      .cat-en {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 13px;
+        font-weight: 800;
+        fill: #334155;
+      }
+
+      .item-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 800;
+        fill: #1E293B;
+      }
+
+      .man { stroke: #2563EB; }
+      .man-box { fill: #DBEAFE; stroke: #2563EB; }
+
+      .machine { stroke: #16A34A; }
+      .machine-box { fill: #DCFCE7; stroke: #16A34A; }
+
+      .material { stroke: #F97316; }
+      .material-box { fill: #FFEDD5; stroke: #F97316; }
+
+      .method { stroke: #9333EA; }
+      .method-box { fill: #F3E8FF; stroke: #9333EA; }
+
+      .environment { stroke: #0891B2; }
+      .environment-box { fill: #CFFAFE; stroke: #0891B2; }
+
+      .measurement { stroke: #E11D48; }
+      .measurement-box { fill: #FFE4E6; stroke: #E11D48; }
+
+      .note {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        fill: #64748B;
+      }
+    </style>
+
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L11,4 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1300" height="720" class="bg"/>
+
+  <!-- Decorative background -->
+  <circle cx="90" cy="90" r="46" fill="#DBEAFE" opacity="0.35"/>
+  <circle cx="1180" cy="110" r="58" fill="#DCFCE7" opacity="0.35"/>
+  <circle cx="1150" cy="620" r="72" fill="#F3E8FF" opacity="0.30"/>
+  <circle cx="120" cy="620" r="52" fill="#FFE4E6" opacity="0.35"/>
+
+  <!-- Title -->
+  <text x="650" y="54" text-anchor="middle" class="title">6M 分析魚骨圖</text>
+  <text x="650" y="82" text-anchor="middle" class="subtitle">Man・Machine・Material・Method・Environment・Measurement</text>
+
+  <!-- Main problem box -->
+  <rect x="35" y="318" width="170" height="76" rx="28" class="problem-box" filter="url(#softShadow)"/>
+  <text x="120" y="364" text-anchor="middle" class="problem-text">問題</text>
+
+  <!-- Main spine -->
+  <line x1="205" y1="356" x2="1210" y2="356" class="main-line" marker-end="url(#arrow)"/>
+
+  <!-- Fish head / effect -->
+  <polygon points="1210,356 1262,322 1262,390" fill="#CBD5E1" stroke="#475569" stroke-width="4"/>
+  <text x="1240" y="361" text-anchor="middle" class="item-text">結果</text>
+
+  <!-- ================= Top 1: 人 Man ================= -->
+  <line x1="320" y1="356" x2="455" y2="160" class="bone-line man"/>
+  <rect x="390" y="102" width="150" height="64" rx="10" class="cat-box man-box" filter="url(#softShadow)"/>
+  <text x="465" y="132" text-anchor="middle" class="cat-text">人</text>
+  <text x="465" y="154" text-anchor="middle" class="cat-en">Man</text>
+
+  <line x1="385" y1="260" x2="520" y2="260" class="keyword-line man"/>
+  <text x="452" y="249" text-anchor="middle" class="item-text">教育訓練不足</text>
+
+  <line x1="425" y1="205" x2="560" y2="205" class="keyword-line man"/>
+  <text x="492" y="194" text-anchor="middle" class="item-text">經驗不足</text>
+
+  <line x1="350" y1="308" x2="485" y2="308" class="keyword-line man"/>
+  <text x="417" y="297" text-anchor="middle" class="item-text">人力配置不當</text>
+
+  <!-- ================= Bottom 1: 機 Machine ================= -->
+  <line x1="365" y1="356" x2="500" y2="555" class="bone-line machine"/>
+  <rect x="435" y="555" width="150" height="64" rx="10" class="cat-box machine-box" filter="url(#softShadow)"/>
+  <text x="510" y="585" text-anchor="middle" class="cat-text">機</text>
+  <text x="510" y="607" text-anchor="middle" class="cat-en">Machine</text>
+
+  <line x1="430" y1="450" x2="565" y2="450" class="keyword-line machine"/>
+  <text x="497" y="439" text-anchor="middle" class="item-text">設備老舊</text>
+
+  <line x1="465" y1="505" x2="600" y2="505" class="keyword-line machine"/>
+  <text x="532" y="494" text-anchor="middle" class="item-text">保養不足</text>
+
+  <line x1="505" y1="555" x2="640" y2="555" class="keyword-line machine"/>
+  <text x="572" y="544" text-anchor="middle" class="item-text">機台異常</text>
+
+  <!-- ================= Top 2: 料 Material ================= -->
+  <line x1="620" y1="356" x2="755" y2="160" class="bone-line material"/>
+  <rect x="690" y="102" width="150" height="64" rx="10" class="cat-box material-box" filter="url(#softShadow)"/>
+  <text x="765" y="132" text-anchor="middle" class="cat-text">料</text>
+  <text x="765" y="154" text-anchor="middle" class="cat-en">Material</text>
+
+  <line x1="685" y1="260" x2="820" y2="260" class="keyword-line material"/>
+  <text x="752" y="249" text-anchor="middle" class="item-text">原料品質不穩</text>
+
+  <line x1="725" y1="205" x2="860" y2="205" class="keyword-line material"/>
+  <text x="792" y="194" text-anchor="middle" class="item-text">批次差異</text>
+
+  <line x1="650" y1="308" x2="785" y2="308" class="keyword-line material"/>
+  <text x="717" y="297" text-anchor="middle" class="item-text">供應商變更</text>
+
+  <!-- ================= Bottom 2: 法 Method ================= -->
+  <line x1="665" y1="356" x2="800" y2="555" class="bone-line method"/>
+  <rect x="735" y="555" width="150" height="64" rx="10" class="cat-box method-box" filter="url(#softShadow)"/>
+  <text x="810" y="585" text-anchor="middle" class="cat-text">法</text>
+  <text x="810" y="607" text-anchor="middle" class="cat-en">Method</text>
+
+  <line x1="730" y1="450" x2="865" y2="450" class="keyword-line method"/>
+  <text x="797" y="439" text-anchor="middle" class="item-text">SOP 不清楚</text>
+
+  <line x1="765" y1="505" x2="900" y2="505" class="keyword-line method"/>
+  <text x="832" y="494" text-anchor="middle" class="item-text">流程未標準化</text>
+
+  <line x1="805" y1="555" x2="940" y2="555" class="keyword-line method"/>
+  <text x="872" y="544" text-anchor="middle" class="item-text">作業方法錯誤</text>
+
+  <!-- ================= Top 3: 環 Environment ================= -->
+  <line x1="915" y1="356" x2="1050" y2="160" class="bone-line environment"/>
+  <rect x="985" y="102" width="150" height="64" rx="10" class="cat-box environment-box" filter="url(#softShadow)"/>
+  <text x="1060" y="132" text-anchor="middle" class="cat-text">環</text>
+  <text x="1060" y="154" text-anchor="middle" class="cat-en">Environment</text>
+
+  <line x1="980" y1="260" x2="1115" y2="260" class="keyword-line environment"/>
+  <text x="1047" y="249" text-anchor="middle" class="item-text">溫濕度異常</text>
+
+  <line x1="1020" y1="205" x2="1155" y2="205" class="keyword-line environment"/>
+  <text x="1087" y="194" text-anchor="middle" class="item-text">環境髒污</text>
+
+  <line x1="945" y1="308" x2="1080" y2="308" class="keyword-line environment"/>
+  <text x="1012" y="297" text-anchor="middle" class="item-text">照明不足</text>
+
+  <!-- ================= Bottom 3: 測 Measurement ================= -->
+  <line x1="960" y1="356" x2="1095" y2="555" class="bone-line measurement"/>
+  <rect x="1030" y="555" width="150" height="64" rx="10" class="cat-box measurement-box" filter="url(#softShadow)"/>
+  <text x="1105" y="585" text-anchor="middle" class="cat-text">測</text>
+  <text x="1105" y="607" text-anchor="middle" class="cat-en">Measurement</text>
+
+  <line x1="1025" y1="450" x2="1160" y2="450" class="keyword-line measurement"/>
+  <text x="1092" y="439" text-anchor="middle" class="item-text">量測標準不一</text>
+
+  <line x1="1060" y1="505" x2="1195" y2="505" class="keyword-line measurement"/>
+  <text x="1127" y="494" text-anchor="middle" class="item-text">儀器未校正</text>
+
+  <line x1="1100" y1="555" x2="1235" y2="555" class="keyword-line measurement"/>
+  <text x="1167" y="544" text-anchor="middle" class="item-text">檢驗紀錄缺漏</text>
+
+  <!-- Bottom note -->
+  <rect x="390" y="655" width="520" height="38" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="650" y="680" text-anchor="middle" class="note">
+    6M 用於系統化找出問題根因：人、機、料、法、環、測
+  </text>
+</svg>

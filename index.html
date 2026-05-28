@@ -54,6 +54,7 @@
         <button class="btn-toolbar" id="btn-redo" title="重做 Ctrl+Y">重做</button>
         <button class="btn-toolbar danger" id="btn-clear" title="清除整個畫布">清除</button>
         <span class="divider" aria-hidden="true"></span>
+        <button class="btn-toolbar" id="btn-save-template" title="把目前畫布儲存為自訂範本（JSON 格式）">儲存範本</button>
         <button class="btn-toolbar primary" id="btn-export-svg">匯出 SVG</button>
         <button class="btn-toolbar primary" id="btn-export-png">匯出 PNG</button>
         <span class="divider" aria-hidden="true"></span>
@@ -621,12 +622,13 @@
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.5.1</span>
+    <span>系統版本 v0.6.0</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
 
   <script src="shapes.js"></script>
+  <script src="templates-data.js"></script>
   <script src="templates.js"></script>
   <script src="app.js"></script>
 </body>

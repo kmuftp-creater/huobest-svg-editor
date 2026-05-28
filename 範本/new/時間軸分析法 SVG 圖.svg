@@ -1,0 +1,119 @@
+<svg width="1200" height="500" viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .axis {
+        stroke: #222222;
+        stroke-width: 3;
+        stroke-linecap: round;
+      }
+
+      .event-line {
+        stroke: #69AEE8;
+        stroke-width: 3;
+        stroke-linecap: round;
+      }
+
+      .dot {
+        fill: #6BAFE4;
+      }
+
+      .year {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 22px;
+        font-weight: 600;
+        fill: #8E4C9A;
+      }
+
+      .event-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        fill: #F06B5F;
+      }
+
+      .title {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 30px;
+        font-weight: 800;
+        fill: #333333;
+      }
+
+      .subtitle {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        fill: #777777;
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="500" fill="#FFFFFF"/>
+
+  <!-- Optional title -->
+  <text x="600" y="45" text-anchor="middle" class="title">時間軸分析法</text>
+  <text x="600" y="72" text-anchor="middle" class="subtitle">用年份與事件，整理人生、品牌或專案的重要轉折</text>
+
+  <!-- Main horizontal timeline -->
+  <line x1="70" y1="250" x2="1130" y2="250" class="axis"/>
+
+  <!-- Year labels -->
+  <text x="105" y="228" text-anchor="middle" class="year">2014</text>
+  <text x="600" y="228" text-anchor="middle" class="year">2019</text>
+  <text x="1090" y="285" text-anchor="middle" class="year">2024</text>
+
+  <!-- Event 1: below -->
+  <line x1="105" y1="250" x2="105" y2="365" class="event-line"/>
+  <circle cx="105" cy="250" r="13" class="dot"/>
+  <text x="105" y="382" text-anchor="middle" class="event-text">輸入事件 1</text>
+
+  <!-- Event 2: above -->
+  <line x1="190" y1="250" x2="190" y2="125" class="event-line"/>
+  <circle cx="190" cy="250" r="13" class="dot"/>
+  <text x="190" y="110" text-anchor="middle" class="event-text">輸入事件 2</text>
+
+  <!-- Event 3: below -->
+  <line x1="265" y1="250" x2="265" y2="405" class="event-line"/>
+  <circle cx="265" cy="250" r="13" class="dot"/>
+  <text x="265" y="425" text-anchor="middle" class="event-text">輸入事件 3</text>
+
+  <!-- Event 4: below shorter -->
+  <line x1="315" y1="250" x2="315" y2="335" class="event-line"/>
+  <circle cx="315" cy="250" r="13" class="dot"/>
+  <text x="315" y="352" text-anchor="middle" class="event-text">輸入事件 4</text>
+
+  <!-- Event 5: above -->
+  <line x1="430" y1="250" x2="430" y2="165" class="event-line"/>
+  <circle cx="430" cy="250" r="13" class="dot"/>
+  <text x="430" y="150" text-anchor="middle" class="event-text">輸入事件 5</text>
+
+  <!-- Event 6: 2019 below -->
+  <line x1="600" y1="250" x2="600" y2="365" class="event-line"/>
+  <circle cx="600" cy="250" r="13" class="dot"/>
+  <text x="600" y="382" text-anchor="middle" class="event-text">輸入事件 6</text>
+
+  <!-- Event 7: above -->
+  <line x1="695" y1="250" x2="695" y2="110" class="event-line"/>
+  <circle cx="695" cy="250" r="13" class="dot"/>
+  <text x="695" y="95" text-anchor="middle" class="event-text">輸入事件 7</text>
+
+  <!-- Event 8: below -->
+  <line x1="760" y1="250" x2="760" y2="395" class="event-line"/>
+  <circle cx="760" cy="250" r="13" class="dot"/>
+  <text x="760" y="412" text-anchor="middle" class="event-text">輸入事件 8</text>
+
+  <!-- Event 9: above long -->
+  <line x1="865" y1="250" x2="865" y2="70" class="event-line"/>
+  <circle cx="865" cy="250" r="13" class="dot"/>
+  <text x="865" y="55" text-anchor="middle" class="event-text">輸入事件 9</text>
+
+  <!-- Event 10: below long -->
+  <line x1="1005" y1="250" x2="1005" y2="455" class="event-line"/>
+  <circle cx="1005" cy="250" r="13" class="dot"/>
+  <text x="1005" y="472" text-anchor="middle" class="event-text">輸入事件 10</text>
+
+  <!-- Event 11: above -->
+  <line x1="1090" y1="250" x2="1090" y2="150" class="event-line"/>
+  <circle cx="1090" cy="250" r="13" class="dot"/>
+  <text x="1090" y="135" text-anchor="middle" class="event-text">輸入事件 11</text>
+</svg>

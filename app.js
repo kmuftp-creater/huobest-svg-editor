@@ -2607,7 +2607,7 @@
 
   // ====== File I/O ======
   const fileInput = $('#file-input');
-  $('#btn-open').onclick = () => { fileInput.accept = '.svg,image/svg+xml,.png,image/png,.jpg,.jpeg,image/jpeg'; fileInput.click(); };
+  $('#btn-open').onclick = () => { fileInput.accept = '.svg,image/svg+xml,.png,image/png,.jpg,.jpeg,image/jpeg,.json,application/json'; fileInput.click(); };
   fileInput.addEventListener('change', (e) => {
     const files = Array.from(e.target.files || []);
     files.forEach((f, idx) => importFile(f, idx, files.length));
@@ -2616,6 +2616,12 @@
 
   function importFile(file, idx, total) {
     const reader = new FileReader();
+    // .json 範本檔
+    if (file.type === 'application/json' || file.name.toLowerCase().endsWith('.json')) {
+      reader.onload = (ev) => importJsonTemplate(String(ev.target.result), file.name);
+      reader.readAsText(file);
+      return;
+    }
     if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) {
       reader.onload = (ev) => importSvgString(String(ev.target.result), file.name, idx, total);
       reader.readAsText(file);
@@ -2651,6 +2657,48 @@
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  // 載入自訂範本 JSON：取代或合併到目前畫布
+  function importJsonTemplate(jsonStr, fileName) {
+    let data;
+    try {
+      data = JSON.parse(jsonStr);
+    } catch (e) {
+      statusInfo.textContent = `JSON 解析失敗：${e.message}`;
+      return;
+    }
+    if (data.__type !== 'huobest-svg-editor-template' || !Array.isArray(data.objects)) {
+      statusInfo.textContent = '不是有效的範本檔（缺少 __type 或 objects 欄位）';
+      return;
+    }
+    const merge = state.objects.length > 0 && confirm(
+      `載入範本「${data.name || fileName}」？\n\n` +
+      `[確定] = 取代目前畫布內容\n` +
+      `[取消] = 不執行（如需保留目前內容請先存檔）`
+    );
+    if (state.objects.length > 0 && !merge) return;
+    // 取代畫布內容
+    state.objects = data.objects.map(deepClone);
+    state.selected.clear();
+    // 重新指派 ID 避免衝突
+    const idMap = {};
+    state.objects.forEach((o) => {
+      const oldId = o.id;
+      o.id = uid(o.type || 'item');
+      idMap[oldId] = o.id;
+    });
+    // 修正 connector / ghost 的引用
+    state.objects.forEach((o) => {
+      if (o.fromId && idMap[o.fromId]) o.fromId = idMap[o.fromId];
+      if (o.toId && idMap[o.toId]) o.toId = idMap[o.toId];
+      if (o.ghostFor && o.ghostFor.compoundId && idMap[o.ghostFor.compoundId]) {
+        o.ghostFor.compoundId = idMap[o.ghostFor.compoundId];
+      }
+    });
+    renderAll();
+    pushHistory('載入範本', data.name || fileName);
+    statusInfo.textContent = `已載入範本「${data.name || fileName}」（${data.objects.length} 個物件）`;
   }
 
   function importSvgString(svgStr, fileName, idx) {
@@ -2958,6 +3006,36 @@
   }
   $('#btn-export-svg').onclick = exportSvg;
   $('#btn-export-png').onclick = exportPng;
+
+  // ====== 儲存目前畫布為自訂範本（JSON 格式）======
+  // 方案 A：所見即所得，使用者在編輯器內設計完成後可儲存為範本檔，
+  //         之後拖入編輯器即還原為畫布內容
+  $('#btn-save-template').onclick = () => {
+    if (state.objects.length === 0) {
+      statusInfo.textContent = '畫布為空，沒有可儲存的內容';
+      return;
+    }
+    const name = prompt('請輸入範本名稱：', '我的範本-' + new Date().toISOString().slice(0, 10));
+    if (!name) return;
+    const data = {
+      __type: 'huobest-svg-editor-template',
+      version: 'v0.6.0',
+      name,
+      createdAt: new Date().toISOString(),
+      canvasWidth: CANVAS_W,
+      canvasHeight: CANVAS_H,
+      objects: state.objects.map(deepClone),
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    statusInfo.textContent = `已儲存為 ${name}.json（${state.objects.length} 個物件）`;
+  };
   $('#btn-new').onclick = () => {
     if (state.objects.length > 0 && !confirm('確定要新建畫布？目前內容將清空。')) return;
     state.objects = []; state.selected.clear(); state.history = []; state.historyIndex = -1; state.autoCounter = 0;
@@ -3042,8 +3120,9 @@
       item.className = 'template-item';
       item.dataset.tplId = tpl.id;
       item.title = `套用範本：${tpl.name}`;
+      const vb = tpl.thumbViewBox || '0 0 100 60';
       item.innerHTML = `
-        <div class="thumb"><svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet">${tpl.thumb}</svg></div>
+        <div class="thumb"><svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet">${tpl.thumb}</svg></div>
         <div class="meta">
           <span class="name">${tpl.name}</span>
           <span class="cat">${tpl.category}</span>

@@ -1,0 +1,120 @@
+<svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFF1F2"/>
+      <stop offset="45%" stop-color="#FFE4D6"/>
+      <stop offset="100%" stop-color="#FFD6C2"/>
+    </linearGradient>
+
+    <linearGradient id="cardGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FFF7ED"/>
+    </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#FB7185" flood-opacity="0.18"/>
+    </filter>
+
+    <filter id="tinyShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#F97316" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="url(#bgGradient)"/>
+
+  <!-- Decorative blobs -->
+  <circle cx="120" cy="130" r="52" fill="#FDBA74" opacity="0.28"/>
+  <circle cx="985" cy="170" r="72" fill="#FDA4AF" opacity="0.3"/>
+  <circle cx="930" cy="900" r="95" fill="#FB7185" opacity="0.16"/>
+  <circle cx="115" cy="890" r="82" fill="#FED7AA" opacity="0.42"/>
+
+  <!-- Small hearts -->
+  <path d="M185 240 C185 226 203 220 213 232 C223 220 241 226 241 240 C241 260 213 276 213 276 C213 276 185 260 185 240Z" fill="#FB7185" opacity="0.5"/>
+  <path d="M865 285 C865 273 880 268 889 278 C898 268 913 273 913 285 C913 301 889 315 889 315 C889 315 865 301 865 285Z" fill="#F97316" opacity="0.45"/>
+  <path d="M790 785 C790 774 804 770 812 779 C820 770 834 774 834 785 C834 800 812 813 812 813 C812 813 790 800 790 785Z" fill="#FB7185" opacity="0.35"/>
+
+  <!-- Title card -->
+  <rect x="130" y="70" width="820" height="150" rx="42" fill="#FFFFFF" opacity="0.75" filter="url(#softShadow)"/>
+  <text x="540" y="135" text-anchor="middle" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="46" font-weight="800" fill="#9F1239">
+    約會聊天教學
+  </text>
+  <text x="540" y="182" text-anchor="middle" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="24" font-weight="600" fill="#EA580C">
+    從開場到收尾，讓對話自然升溫
+  </text>
+
+  <!-- Flow line -->
+  <path d="M540 260 C540 320 540 335 540 390 C540 450 540 465 540 520 C540 585 540 600 540 650 C540 715 540 730 540 780" 
+        fill="none" stroke="#FB7185" stroke-width="10" stroke-linecap="round" opacity="0.35"/>
+
+  <!-- Arrow markers manually -->
+  <path d="M540 392 L520 360 L560 360 Z" fill="#FB7185" opacity="0.65"/>
+  <path d="M540 522 L520 490 L560 490 Z" fill="#FB7185" opacity="0.65"/>
+  <path d="M540 652 L520 620 L560 620 Z" fill="#FB7185" opacity="0.65"/>
+  <path d="M540 782 L520 750 L560 750 Z" fill="#FB7185" opacity="0.65"/>
+
+  <!-- Step 1 -->
+  <g filter="url(#softShadow)">
+    <rect x="145" y="265" width="790" height="115" rx="34" fill="url(#cardGradient)"/>
+    <circle cx="215" cy="322" r="38" fill="#FDBA74"/>
+    <text x="215" y="334" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="800" fill="#FFFFFF">1</text>
+    <text x="285" y="310" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="30" font-weight="800" fill="#9F1239">輕鬆開場</text>
+    <text x="285" y="348" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="22" font-weight="500" fill="#7C2D12">從環境、興趣、近況切入，不急著查戶口。</text>
+  </g>
+
+  <!-- Step 2 -->
+  <g filter="url(#softShadow)">
+    <rect x="145" y="395" width="790" height="115" rx="34" fill="url(#cardGradient)"/>
+    <circle cx="215" cy="452" r="38" fill="#FB7185"/>
+    <text x="215" y="464" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="800" fill="#FFFFFF">2</text>
+    <text x="285" y="440" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="30" font-weight="800" fill="#9F1239">延伸話題</text>
+    <text x="285" y="478" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="22" font-weight="500" fill="#7C2D12">抓住對方關鍵字，追問感受、故事與選擇。</text>
+  </g>
+
+  <!-- Step 3 -->
+  <g filter="url(#softShadow)">
+    <rect x="145" y="525" width="790" height="115" rx="34" fill="url(#cardGradient)"/>
+    <circle cx="215" cy="582" r="38" fill="#F97316"/>
+    <text x="215" y="594" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="800" fill="#FFFFFF">3</text>
+    <text x="285" y="570" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="30" font-weight="800" fill="#9F1239">加入幽默</text>
+    <text x="285" y="608" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="22" font-weight="500" fill="#7C2D12">用自嘲、反差、輕吐槽，讓氣氛變得更放鬆。</text>
+  </g>
+
+  <!-- Step 4 -->
+  <g filter="url(#softShadow)">
+    <rect x="145" y="655" width="790" height="115" rx="34" fill="url(#cardGradient)"/>
+    <circle cx="215" cy="712" r="38" fill="#FDA4AF"/>
+    <text x="215" y="724" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="800" fill="#FFFFFF">4</text>
+    <text x="285" y="700" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="30" font-weight="800" fill="#9F1239">創造共鳴</text>
+    <text x="285" y="738" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="22" font-weight="500" fill="#7C2D12">分享自己的小故事，讓對方感覺被理解。</text>
+  </g>
+
+  <!-- Step 5 -->
+  <g filter="url(#softShadow)">
+    <rect x="145" y="785" width="790" height="115" rx="34" fill="url(#cardGradient)"/>
+    <circle cx="215" cy="842" r="38" fill="#EA580C"/>
+    <text x="215" y="854" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="800" fill="#FFFFFF">5</text>
+    <text x="285" y="830" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="30" font-weight="800" fill="#9F1239">自然收尾</text>
+    <text x="285" y="868" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="22" font-weight="500" fill="#7C2D12">留下期待感，例如：「下次再聽你講完整版。」</text>
+  </g>
+
+  <!-- Bottom tip -->
+  <g filter="url(#tinyShadow)">
+    <rect x="185" y="940" width="710" height="72" rx="36" fill="#FFF7ED"/>
+    <text x="540" y="985" text-anchor="middle" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="24" font-weight="700" fill="#C2410C">
+      小提醒：聊天不是表演，是讓彼此都舒服地靠近。
+    </text>
+  </g>
+
+  <!-- Cute chat bubbles -->
+  <g opacity="0.9">
+    <rect x="710" y="235" width="120" height="54" rx="27" fill="#FFFFFF" filter="url(#tinyShadow)"/>
+    <circle cx="745" cy="262" r="6" fill="#FB7185"/>
+    <circle cx="770" cy="262" r="6" fill="#FB7185"/>
+    <circle cx="795" cy="262" r="6" fill="#FB7185"/>
+
+    <rect x="240" y="915" width="110" height="48" rx="24" fill="#FFFFFF" filter="url(#tinyShadow)"/>
+    <path d="M277 915 L258 895 L300 915 Z" fill="#FFFFFF"/>
+    <text x="295" y="947" text-anchor="middle" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="18" font-weight="700" fill="#FB7185">Nice!</text>
+  </g>
+</svg>

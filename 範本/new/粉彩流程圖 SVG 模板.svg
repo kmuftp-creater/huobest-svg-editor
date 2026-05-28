@@ -1,0 +1,191 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#F2994A"/>
+    </marker>
+
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+
+    <style>
+      .line {
+        fill: none;
+        stroke: #F2994A;
+        stroke-width: 2;
+        marker-end: url(#arrow);
+      }
+
+      .thin-line {
+        fill: none;
+        stroke: #F2994A;
+        stroke-width: 1.8;
+        marker-end: url(#arrow);
+      }
+
+      .dash {
+        stroke: #D9D9D9;
+        stroke-width: 1.5;
+        stroke-dasharray: 5 5;
+      }
+
+      .text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        fill: #333333;
+      }
+
+      .small-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        fill: #333333;
+      }
+
+      .box-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        fill: #FFFFFF;
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="760" fill="#FFFFFF"/>
+
+  <!-- Center dashed line -->
+  <line x1="600" y1="0" x2="600" y2="760" class="dash"/>
+
+  <!-- Start -->
+  <rect x="60" y="45" width="100" height="62" rx="31" fill="#FFD983" stroke="#F5B544" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="110" y="82" text-anchor="middle" class="text">開始</text>
+
+  <!-- Top left decision -->
+  <polygon points="250,45 285,80 250,115 215,80" fill="#91E5D3" stroke="#6CCFBD" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="250" y="85" text-anchor="middle" class="small-text">判斷</text>
+
+  <!-- Yes / No circles left -->
+  <circle cx="365" cy="80" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="365" y="85" text-anchor="middle" class="small-text">是</text>
+
+  <circle cx="250" cy="170" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="250" y="175" text-anchor="middle" class="small-text">否</text>
+
+  <!-- Top left box -->
+  <rect x="475" y="45" width="135" height="62" rx="4" fill="#EFB2A4" stroke="#E59988" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="542.5" y="82" text-anchor="middle" class="box-text">流程內容</text>
+
+  <!-- Purple left boxes -->
+  <rect x="180" y="230" width="135" height="62" rx="5" fill="#C9A1F2" stroke="#B98CEA" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="247.5" y="267" text-anchor="middle" class="box-text">步驟一</text>
+
+  <rect x="180" y="322" width="135" height="62" rx="5" fill="#C9A1F2" stroke="#B98CEA" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="247.5" y="359" text-anchor="middle" class="box-text">步驟二</text>
+
+  <rect x="180" y="414" width="135" height="62" rx="5" fill="#C9A1F2" stroke="#B98CEA" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="247.5" y="451" text-anchor="middle" class="box-text">步驟三</text>
+
+  <!-- Middle pink and decision -->
+  <rect x="375" y="414" width="135" height="62" rx="5" fill="#F76F97" stroke="#ED5C87" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="442.5" y="451" text-anchor="middle" class="box-text">執行動作</text>
+
+  <polygon points="600,410 635,445 600,480 565,445" fill="#91E5D3" stroke="#6CCFBD" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="600" y="450" text-anchor="middle" class="small-text">判斷</text>
+
+  <circle cx="710" cy="445" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="710" y="450" text-anchor="middle" class="small-text">是</text>
+
+  <circle cx="600" cy="545" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="600" y="550" text-anchor="middle" class="small-text">否</text>
+
+  <!-- Right top decision -->
+  <polygon points="715,40 755,80 715,120 675,80" fill="#91E5D3" stroke="#6CCFBD" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="715" y="85" text-anchor="middle" class="small-text">判斷</text>
+
+  <circle cx="825" cy="80" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="825" y="85" text-anchor="middle" class="small-text">是</text>
+
+  <circle cx="715" cy="175" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="715" y="180" text-anchor="middle" class="small-text">否</text>
+
+  <!-- Right top peach boxes -->
+  <rect x="895" y="45" width="135" height="62" rx="5" fill="#EFB2A4" stroke="#E59988" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="962.5" y="82" text-anchor="middle" class="box-text">結果 A</text>
+
+  <rect x="895" y="130" width="135" height="62" rx="5" fill="#EFB2A4" stroke="#E59988" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="962.5" y="167" text-anchor="middle" class="box-text">結果 B</text>
+
+  <rect x="895" y="215" width="135" height="62" rx="5" fill="#EFB2A4" stroke="#E59988" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="962.5" y="252" text-anchor="middle" class="box-text">結果 C</text>
+
+  <rect x="650" y="235" width="135" height="62" rx="5" fill="#BCBBA7" stroke="#AAA994" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="717.5" y="272" text-anchor="middle" class="box-text">補充步驟</text>
+
+  <!-- Right middle pink boxes -->
+  <rect x="780" y="414" width="135" height="62" rx="5" fill="#F76F97" stroke="#ED5C87" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="847.5" y="451" text-anchor="middle" class="box-text">流程四</text>
+
+  <rect x="965" y="414" width="135" height="62" rx="5" fill="#F76F97" stroke="#ED5C87" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="1032.5" y="451" text-anchor="middle" class="box-text">流程五</text>
+
+  <rect x="965" y="520" width="135" height="62" rx="5" fill="#F76F97" stroke="#ED5C87" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="1032.5" y="557" text-anchor="middle" class="box-text">流程六</text>
+
+  <!-- Bottom decision and green boxes -->
+  <polygon points="1032,615 1072,655 1032,695 992,655" fill="#91E5D3" stroke="#6CCFBD" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="1032" y="660" text-anchor="middle" class="small-text">判斷</text>
+
+  <circle cx="925" cy="655" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="925" y="660" text-anchor="middle" class="small-text">是</text>
+
+  <circle cx="1032" cy="735" r="23" fill="#8ED8F0" stroke="#5DBBD7" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="1032" y="740" text-anchor="middle" class="small-text">否</text>
+
+  <rect x="720" y="625" width="135" height="62" rx="5" fill="#B6EFA9" stroke="#95DA87" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="787.5" y="662" text-anchor="middle" class="box-text">回收處理</text>
+
+  <rect x="550" y="625" width="135" height="62" rx="5" fill="#B6EFA9" stroke="#95DA87" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="617.5" y="662" text-anchor="middle" class="box-text">重新整理</text>
+
+  <!-- Lines: top left -->
+  <path d="M160 76 L215 80" class="line"/>
+  <path d="M285 80 L342 80" class="line"/>
+  <path d="M388 80 L475 80" class="line"/>
+  <path d="M250 115 L250 147" class="line"/>
+  <path d="M250 193 L250 230" class="line"/>
+  <path d="M247.5 292 L247.5 322" class="line"/>
+  <path d="M247.5 384 L247.5 414" class="line"/>
+  <path d="M315 445 L375 445" class="line"/>
+  <path d="M510 445 L565 445" class="line"/>
+
+  <!-- Lines: top right -->
+  <path d="M610 76 L675 80" class="line"/>
+  <path d="M755 80 L802 80" class="line"/>
+  <path d="M848 80 L895 80" class="line"/>
+  <path d="M825 103 L825 160 L895 160" class="thin-line"/>
+  <path d="M825 103 L825 245 L895 245" class="thin-line"/>
+  <path d="M715 120 L715 152" class="line"/>
+  <path d="M715 198 L715 235" class="line"/>
+
+  <!-- Long returning line -->
+  <path d="M715 297 L715 352 L315 352" class="thin-line"/>
+  <path d="M1032 277 L1032 352 L315 352" class="thin-line"/>
+
+  <!-- Middle decision lines -->
+  <path d="M635 445 L687 445" class="line"/>
+  <path d="M733 445 L780 445" class="line"/>
+  <path d="M915 445 L965 445" class="line"/>
+  <path d="M1032.5 476 L1032.5 520" class="line"/>
+  <path d="M600 480 L600 522" class="line"/>
+  <path d="M623 545 L965 545" class="thin-line"/>
+
+  <!-- Bottom decision lines -->
+  <path d="M1032.5 582 L1032 615" class="line"/>
+  <path d="M992 655 L948 655" class="line"/>
+  <path d="M902 655 L855 655" class="line"/>
+  <path d="M720 655 L685 655" class="line"/>
+  <path d="M550 655 L250 655 L250 476" class="thin-line"/>
+  <path d="M1032 695 L1032 712" class="line"/>
+</svg>

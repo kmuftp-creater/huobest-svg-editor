@@ -1,0 +1,104 @@
+﻿<svg width="1800" height="1100" viewBox="0 0 1800 1100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg { fill: #fff6e3; }
+      .centerBox { fill: #ffffff; stroke: #d8c7a3; stroke-width: 3; }
+      .title { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 34px; font-weight: 700; fill: #222; }
+      .subtitle { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 17px; fill: #555; }
+      .nodeTitle { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 23px; font-weight: 700; fill: #222; }
+      .nodeSub { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 15px; fill: #555; }
+      .desc { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 16px; fill: #333; }
+      .small { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 14px; fill: #666; }
+      .line { fill: none; stroke-width: 5; stroke-linecap: round; }
+      .box { fill: #ffffff; stroke-width: 2.5; }
+      .info { fill: #ffffff; stroke-width: 2; }
+      .numText { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; fill: white; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1800" height="1100"/>
+
+  <rect class="centerBox" x="700" y="470" width="400" height="120" rx="18"/>
+  <text class="title" x="900" y="525" text-anchor="middle">AI 工具分類</text>
+  <text class="subtitle" x="900" y="560" text-anchor="middle">依照用途與工作情境整理</text>
+
+  <path class="line" stroke="#f5a400" d="M1100 500 C1240 360, 1320 170, 1440 120"/>
+  <path class="line" stroke="#77c943" d="M1100 525 C1260 455, 1340 360, 1460 310"/>
+  <path class="line" stroke="#00aeef" d="M1100 550 C1260 610, 1350 700, 1460 720"/>
+  <path class="line" stroke="#ef3e36" d="M1070 590 C1200 760, 1320 910, 1440 940"/>
+  <path class="line" stroke="#8e44ad" d="M700 500 C560 350, 430 180, 300 130"/>
+  <path class="line" stroke="#f47c20" d="M700 545 C540 560, 420 620, 300 640"/>
+  <path class="line" stroke="#27ae60" d="M730 590 C600 770, 450 920, 300 950"/>
+
+  <circle cx="1440" cy="120" r="18" fill="#f5a400"/>
+  <text class="numText" x="1440" y="126" text-anchor="middle">1</text>
+  <rect class="box" x="1470" y="70" width="280" height="90" rx="12" stroke="#f5a400"/>
+  <text class="nodeTitle" x="1495" y="110">文字生成 / 對話</text>
+  <text class="nodeSub" x="1495" y="140">ChatGPT、Claude、Gemini</text>
+  <rect class="info" x="1320" y="190" width="430" height="120" rx="12" stroke="#f5a400"/>
+  <text class="desc" x="1345" y="225">用途：寫文案、摘要、翻譯、問答</text>
+  <text class="desc" x="1345" y="255">適合：學生、創作者、上班族</text>
+  <text class="desc" x="1345" y="285">特點：自然語言互動，快速產出初稿</text>
+
+  <circle cx="1460" cy="310" r="18" fill="#77c943"/>
+  <text class="numText" x="1460" y="316" text-anchor="middle">2</text>
+  <rect class="box" x="1490" y="265" width="260" height="85" rx="12" stroke="#77c943"/>
+  <text class="nodeTitle" x="1515" y="305">圖片生成</text>
+  <text class="nodeSub" x="1515" y="332">Midjourney、DALL·E</text>
+  <rect class="info" x="1320" y="380" width="430" height="120" rx="12" stroke="#77c943"/>
+  <text class="desc" x="1345" y="415">用途：插畫、海報、角色、商品圖</text>
+  <text class="desc" x="1345" y="445">適合：設計師、行銷、內容創作者</text>
+  <text class="desc" x="1345" y="475">特點：用提示詞生成視覺素材</text>
+
+  <circle cx="1460" cy="720" r="18" fill="#00aeef"/>
+  <text class="numText" x="1460" y="726" text-anchor="middle">3</text>
+  <rect class="box" x="1490" y="675" width="260" height="85" rx="12" stroke="#00aeef"/>
+  <text class="nodeTitle" x="1515" y="715">影音生成</text>
+  <text class="nodeSub" x="1515" y="742">Runway、Suno、ElevenLabs</text>
+  <rect class="info" x="1320" y="790" width="430" height="120" rx="12" stroke="#00aeef"/>
+  <text class="desc" x="1345" y="825">用途：影片、配音、音樂、字幕</text>
+  <text class="desc" x="1345" y="855">適合：YouTuber、短影音創作者</text>
+  <text class="desc" x="1345" y="885">特點：降低影音製作門檻</text>
+
+  <circle cx="1440" cy="940" r="18" fill="#ef3e36"/>
+  <text class="numText" x="1440" y="946" text-anchor="middle">4</text>
+  <rect class="box" x="1470" y="890" width="280" height="90" rx="12" stroke="#ef3e36"/>
+  <text class="nodeTitle" x="1495" y="930">生產力 / 辦公</text>
+  <text class="nodeSub" x="1495" y="958">Notion AI、Microsoft Copilot</text>
+  <rect class="info" x="1010" y="870" width="400" height="120" rx="12" stroke="#ef3e36"/>
+  <text class="desc" x="1035" y="905">用途：會議紀錄、文件整理、簡報</text>
+  <text class="desc" x="1035" y="935">適合：行政、PM、業務、管理者</text>
+  <text class="desc" x="1035" y="965">特點：整合工作流程與知識管理</text>
+
+  <circle cx="300" cy="130" r="18" fill="#8e44ad"/>
+  <text class="numText" x="300" y="136" text-anchor="middle">5</text>
+  <rect class="box" x="50" y="80" width="220" height="90" rx="12" stroke="#8e44ad"/>
+  <text class="nodeTitle" x="80" y="120">程式開發</text>
+  <text class="nodeSub" x="80" y="148">GitHub Copilot</text>
+  <rect class="info" x="50" y="210" width="430" height="120" rx="12" stroke="#8e44ad"/>
+  <text class="desc" x="75" y="245">用途：補全程式、除錯、產生測試</text>
+  <text class="desc" x="75" y="275">適合：工程師、資料分析師、學生</text>
+  <text class="desc" x="75" y="305">特點：提升開發速度與學習效率</text>
+
+  <circle cx="300" cy="640" r="18" fill="#f47c20"/>
+  <text class="numText" x="300" y="646" text-anchor="middle">6</text>
+  <rect class="box" x="50" y="590" width="220" height="90" rx="12" stroke="#f47c20"/>
+  <text class="nodeTitle" x="80" y="630">資料分析</text>
+  <text class="nodeSub" x="80" y="658">ChatGPT、Tableau AI</text>
+  <rect class="info" x="50" y="720" width="430" height="120" rx="12" stroke="#f47c20"/>
+  <text class="desc" x="75" y="755">用途：整理資料、製作圖表、找洞察</text>
+  <text class="desc" x="75" y="785">適合：行銷、營運、財務、研究人員</text>
+  <text class="desc" x="75" y="815">特點：把資料轉成可理解的決策資訊</text>
+
+  <circle cx="300" cy="950" r="18" fill="#27ae60"/>
+  <text class="numText" x="300" y="956" text-anchor="middle">7</text>
+  <rect class="box" x="50" y="900" width="260" height="90" rx="12" stroke="#27ae60"/>
+  <text class="nodeTitle" x="80" y="940">自動化 / 流程整合</text>
+  <text class="nodeSub" x="80" y="968">Zapier、Make、AI Agent</text>
+  <rect class="info" x="350" y="900" width="430" height="120" rx="12" stroke="#27ae60"/>
+  <text class="desc" x="375" y="935">用途：串接工具、排程、重複任務自動化</text>
+  <text class="desc" x="375" y="965">適合：創業者、營運、客服、行銷</text>
+  <text class="desc" x="375" y="995">特點：節省時間，讓系統自動處理流程</text>
+
+  <text class="small" x="900" y="1060" text-anchor="middle">AI 工具分類心智圖｜修正版：已加大間距，避免文字與節點重疊</text>
+</svg>

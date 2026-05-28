@@ -1,0 +1,298 @@
+<svg width="1200" height="820" viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg {
+        fill: #F8FAFC;
+      }
+
+      .system-box {
+        fill: #ECFDF5;
+        stroke: #16A34A;
+        stroke-width: 2.2;
+      }
+
+      .system-title {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 22px;
+        font-weight: 900;
+        fill: #14532D;
+      }
+
+      .actor-line {
+        stroke: #1F2937;
+        stroke-width: 1.8;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .connect-line {
+        stroke: #334155;
+        stroke-width: 1.7;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .include-line {
+        stroke: #2563EB;
+        stroke-width: 1.6;
+        fill: none;
+        stroke-dasharray: 5 5;
+        marker-end: url(#arrowBlue);
+      }
+
+      .extend-line {
+        stroke: #EA580C;
+        stroke-width: 1.6;
+        fill: none;
+        stroke-dasharray: 5 5;
+        marker-end: url(#arrowOrange);
+      }
+
+      .usecase-student {
+        fill: #DBEAFE;
+        stroke: #2563EB;
+        stroke-width: 2;
+      }
+
+      .usecase-teacher {
+        fill: #FFEDD5;
+        stroke: #EA580C;
+        stroke-width: 2;
+      }
+
+      .usecase-admin {
+        fill: #F3E8FF;
+        stroke: #9333EA;
+        stroke-width: 2;
+      }
+
+      .usecase-common {
+        fill: #FEF9C3;
+        stroke: #CA8A04;
+        stroke-width: 2;
+      }
+
+      .text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        fill: #111827;
+      }
+
+      .actor-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 800;
+        fill: #111827;
+      }
+
+      .relation-text-blue {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 12px;
+        font-weight: 800;
+        fill: #2563EB;
+      }
+
+      .relation-text-orange {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 12px;
+        font-weight: 800;
+        fill: #EA580C;
+      }
+
+      .legend-title {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 14px;
+        font-weight: 800;
+        fill: #334155;
+      }
+
+      .legend-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        fill: #475569;
+      }
+    </style>
+
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2563EB"/>
+    </marker>
+
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#EA580C"/>
+    </marker>
+
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="820" class="bg"/>
+
+  <!-- System boundary -->
+  <rect x="260" y="70" width="680" height="670" rx="18" class="system-box" filter="url(#softShadow)"/>
+  <text x="600" y="105" text-anchor="middle" class="system-title">線上課程平台系統</text>
+
+  <!-- ================= Actors ================= -->
+
+  <!-- Visitor -->
+  <g>
+    <circle cx="115" cy="155" r="11" fill="#FEF3C7" stroke="#1F2937" stroke-width="1.6"/>
+    <line x1="115" y1="166" x2="115" y2="205" class="actor-line"/>
+    <line x1="90" y1="180" x2="140" y2="180" class="actor-line"/>
+    <line x1="115" y1="205" x2="92" y2="240" class="actor-line"/>
+    <line x1="115" y1="205" x2="138" y2="240" class="actor-line"/>
+    <text x="115" y="268" text-anchor="middle" class="actor-text">訪客</text>
+  </g>
+
+  <!-- Student -->
+  <g>
+    <circle cx="115" cy="390" r="11" fill="#DBEAFE" stroke="#1F2937" stroke-width="1.6"/>
+    <line x1="115" y1="401" x2="115" y2="440" class="actor-line"/>
+    <line x1="90" y1="415" x2="140" y2="415" class="actor-line"/>
+    <line x1="115" y1="440" x2="92" y2="475" class="actor-line"/>
+    <line x1="115" y1="440" x2="138" y2="475" class="actor-line"/>
+    <text x="115" y="503" text-anchor="middle" class="actor-text">學生</text>
+  </g>
+
+  <!-- Teacher -->
+  <g>
+    <circle cx="1085" cy="240" r="11" fill="#FFEDD5" stroke="#1F2937" stroke-width="1.6"/>
+    <line x1="1085" y1="251" x2="1085" y2="290" class="actor-line"/>
+    <line x1="1060" y1="265" x2="1110" y2="265" class="actor-line"/>
+    <line x1="1085" y1="290" x2="1062" y2="325" class="actor-line"/>
+    <line x1="1085" y1="290" x2="1108" y2="325" class="actor-line"/>
+    <text x="1085" y="353" text-anchor="middle" class="actor-text">講師</text>
+  </g>
+
+  <!-- Admin -->
+  <g>
+    <circle cx="1085" cy="560" r="11" fill="#F3E8FF" stroke="#1F2937" stroke-width="1.6"/>
+    <line x1="1085" y1="571" x2="1085" y2="610" class="actor-line"/>
+    <line x1="1060" y1="585" x2="1110" y2="585" class="actor-line"/>
+    <line x1="1085" y1="610" x2="1062" y2="645" class="actor-line"/>
+    <line x1="1085" y1="610" x2="1108" y2="645" class="actor-line"/>
+    <text x="1085" y="673" text-anchor="middle" class="actor-text">管理員</text>
+  </g>
+
+  <!-- ================= Use Cases ================= -->
+
+  <!-- Common -->
+  <ellipse cx="430" cy="165" rx="95" ry="28" class="usecase-common"/>
+  <text x="430" y="171" text-anchor="middle" class="text">註冊 / 登入</text>
+
+  <ellipse cx="430" cy="250" rx="95" ry="28" class="usecase-common"/>
+  <text x="430" y="256" text-anchor="middle" class="text">瀏覽課程</text>
+
+  <ellipse cx="430" cy="335" rx="95" ry="28" class="usecase-common"/>
+  <text x="430" y="341" text-anchor="middle" class="text">搜尋課程</text>
+
+  <!-- Student -->
+  <ellipse cx="430" cy="430" rx="95" ry="28" class="usecase-student"/>
+  <text x="430" y="436" text-anchor="middle" class="text">購買課程</text>
+
+  <ellipse cx="430" cy="520" rx="95" ry="28" class="usecase-student"/>
+  <text x="430" y="526" text-anchor="middle" class="text">觀看課程</text>
+
+  <ellipse cx="430" cy="610" rx="95" ry="28" class="usecase-student"/>
+  <text x="430" y="616" text-anchor="middle" class="text">提交作業</text>
+
+  <!-- Center support use cases -->
+  <ellipse cx="650" cy="430" rx="95" ry="28" class="usecase-student"/>
+  <text x="650" y="436" text-anchor="middle" class="text">線上付款</text>
+
+  <ellipse cx="650" cy="520" rx="95" ry="28" class="usecase-student"/>
+  <text x="650" y="526" text-anchor="middle" class="text">查看學習進度</text>
+
+  <ellipse cx="650" cy="610" rx="95" ry="28" class="usecase-student"/>
+  <text x="650" y="616" text-anchor="middle" class="text">取得證書</text>
+
+  <!-- Teacher -->
+  <ellipse cx="760" cy="190" rx="95" ry="28" class="usecase-teacher"/>
+  <text x="760" y="196" text-anchor="middle" class="text">建立課程</text>
+
+  <ellipse cx="760" cy="280" rx="95" ry="28" class="usecase-teacher"/>
+  <text x="760" y="286" text-anchor="middle" class="text">上傳教材</text>
+
+  <ellipse cx="760" cy="370" rx="95" ry="28" class="usecase-teacher"/>
+  <text x="760" y="376" text-anchor="middle" class="text">批改作業</text>
+
+  <!-- Admin -->
+  <ellipse cx="760" cy="500" rx="95" ry="28" class="usecase-admin"/>
+  <text x="760" y="506" text-anchor="middle" class="text">審核課程</text>
+
+  <ellipse cx="760" cy="590" rx="95" ry="28" class="usecase-admin"/>
+  <text x="760" y="596" text-anchor="middle" class="text">管理會員</text>
+
+  <ellipse cx="760" cy="680" rx="95" ry="28" class="usecase-admin"/>
+  <text x="760" y="686" text-anchor="middle" class="text">查看營運報表</text>
+
+  <!-- ================= Actor association lines ================= -->
+
+  <!-- Visitor lines -->
+  <line x1="140" y1="180" x2="335" y2="165" class="connect-line"/>
+  <line x1="140" y1="205" x2="335" y2="250" class="connect-line"/>
+  <line x1="140" y1="230" x2="335" y2="335" class="connect-line"/>
+
+  <!-- Student lines -->
+  <line x1="140" y1="390" x2="335" y2="430" class="connect-line"/>
+  <line x1="140" y1="430" x2="335" y2="520" class="connect-line"/>
+  <line x1="140" y1="470" x2="335" y2="610" class="connect-line"/>
+  <line x1="140" y1="360" x2="335" y2="165" class="connect-line"/>
+
+  <!-- Teacher lines -->
+  <line x1="1060" y1="265" x2="855" y2="190" class="connect-line"/>
+  <line x1="1060" y1="285" x2="855" y2="280" class="connect-line"/>
+  <line x1="1060" y1="305" x2="855" y2="370" class="connect-line"/>
+
+  <!-- Admin lines -->
+  <line x1="1060" y1="560" x2="855" y2="500" class="connect-line"/>
+  <line x1="1060" y1="585" x2="855" y2="590" class="connect-line"/>
+  <line x1="1060" y1="610" x2="855" y2="680" class="connect-line"/>
+
+  <!-- ================= Include / Extend relationships ================= -->
+
+  <!-- Buy course includes payment -->
+  <line x1="525" y1="430" x2="555" y2="430" class="include-line"/>
+  <text x="540" y="418" text-anchor="middle" class="relation-text-blue">&lt;&lt;include&gt;&gt;</text>
+
+  <!-- Watch course includes progress -->
+  <line x1="525" y1="520" x2="555" y2="520" class="include-line"/>
+  <text x="540" y="508" text-anchor="middle" class="relation-text-blue">&lt;&lt;include&gt;&gt;</text>
+
+  <!-- Certificate extends progress -->
+  <path d="M650 582 C650 565 650 555 650 548" class="extend-line"/>
+  <text x="715" y="570" text-anchor="middle" class="relation-text-orange">&lt;&lt;extend&gt;&gt;</text>
+
+  <!-- Upload material includes create course -->
+  <path d="M760 252 C760 240 760 230 760 218" class="include-line"/>
+  <text x="825" y="238" text-anchor="middle" class="relation-text-blue">&lt;&lt;include&gt;&gt;</text>
+
+  <!-- Review course extends create course -->
+  <path d="M760 472 C760 420 760 270 760 218" class="extend-line"/>
+  <text x="835" y="430" text-anchor="middle" class="relation-text-orange">&lt;&lt;extend&gt;&gt;</text>
+
+  <!-- Search extends browse -->
+  <path d="M430 307 C430 295 430 287 430 278" class="extend-line"/>
+  <text x="500" y="298" text-anchor="middle" class="relation-text-orange">&lt;&lt;extend&gt;&gt;</text>
+
+  <!-- ================= Legend ================= -->
+  <rect x="285" y="755" width="630" height="42" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="315" y="781" class="legend-title">圖例：</text>
+
+  <ellipse cx="390" cy="776" rx="20" ry="9" class="usecase-common"/>
+  <text x="420" y="781" class="legend-text">共用功能</text>
+
+  <ellipse cx="510" cy="776" rx="20" ry="9" class="usecase-student"/>
+  <text x="540" y="781" class="legend-text">學生功能</text>
+
+  <ellipse cx="630" cy="776" rx="20" ry="9" class="usecase-teacher"/>
+  <text x="660" y="781" class="legend-text">講師功能</text>
+
+  <ellipse cx="750" cy="776" rx="20" ry="9" class="usecase-admin"/>
+  <text x="780" y="781" class="legend-text">管理功能</text>
+</svg>

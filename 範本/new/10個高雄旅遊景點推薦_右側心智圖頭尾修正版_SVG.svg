@@ -1,0 +1,223 @@
+<svg width="1100" height="1200" viewBox="0 0 1100 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg {
+        fill: #F6EBD8;
+      }
+
+      .paper-dot {
+        fill: #CDBD9F;
+        opacity: 0.18;
+      }
+
+      .title {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 28px;
+        font-weight: 900;
+        fill: #374151;
+      }
+
+      .center-box {
+        fill: #B7F000;
+        stroke: #89B800;
+        stroke-width: 2;
+      }
+
+      .center-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 25px;
+        font-weight: 900;
+        fill: #1F2937;
+      }
+
+      .node {
+        stroke: rgba(0,0,0,0.1);
+        stroke-width: 1;
+      }
+
+      .node-text {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 20px;
+        font-weight: 900;
+        fill: #FFFFFF;
+      }
+
+      .desc {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        fill: #374151;
+      }
+
+      .small {
+        font-family: Arial, "Noto Sans TC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        fill: #4B5563;
+      }
+
+      .spine {
+        stroke: #F59E0B;
+        stroke-width: 4;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .branch {
+        stroke-width: 3;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .detail {
+        stroke-width: 2.3;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+
+    <pattern id="paperTexture" patternUnits="userSpaceOnUse" width="44" height="44">
+      <rect width="44" height="44" fill="#F6EBD8"/>
+      <circle cx="8" cy="12" r="1.3" class="paper-dot"/>
+      <circle cx="24" cy="30" r="1.1" class="paper-dot"/>
+      <circle cx="38" cy="18" r="0.9" class="paper-dot"/>
+      <circle cx="15" cy="39" r="0.8" class="paper-dot"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="1200" fill="url(#paperTexture)"/>
+
+  <!-- Title -->
+  <text x="550" y="55" text-anchor="middle" class="title">高雄旅遊景點推薦</text>
+
+  <!-- Center topic -->
+  <rect x="65" y="552" width="285" height="58" rx="8" class="center-box" filter="url(#softShadow)"/>
+  <text x="207.5" y="589" text-anchor="middle" class="center-text">10 個高雄旅遊景點推薦</text>
+
+  <!-- Center to spine -->
+  <path d="M350 581 L430 581" class="spine"/>
+
+  <!-- Main vertical spine: direction fixed, opens to the right -->
+  <path d="
+    M470 135
+    C440 135 430 145 430 175
+    L430 1085
+    C430 1115 440 1125 470 1125
+  " class="spine"/>
+
+  <!-- 1 旗津 -->
+  <rect x="470" y="107" width="210" height="56" rx="7" fill="#0EA5E9" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="142" text-anchor="middle" class="node-text">旗津</text>
+  <path d="M680 135 C715 135 725 101 760 101" class="detail" stroke="#0EA5E9"/>
+  <path d="M680 135 L760 135" class="detail" stroke="#0EA5E9"/>
+  <path d="M680 135 C715 135 725 169 760 169" class="detail" stroke="#0EA5E9"/>
+  <text x="770" y="106" class="desc">高雄最具海島感的一日遊景點</text>
+  <text x="770" y="140" class="small">推薦：搭渡輪、吃海鮮、看海、騎腳踏車</text>
+  <text x="770" y="174" class="small">適合：親子、朋友出遊、海邊散步</text>
+
+  <!-- 2 龍虎塔 -->
+  <path d="M430 245 L470 245" class="branch" stroke="#14B8A6"/>
+  <rect x="470" y="217" width="210" height="56" rx="7" fill="#14B8A6" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="252" text-anchor="middle" class="node-text">龍虎塔</text>
+  <path d="M680 245 C715 245 725 211 760 211" class="detail" stroke="#14B8A6"/>
+  <path d="M680 245 L760 245" class="detail" stroke="#14B8A6"/>
+  <path d="M680 245 C715 245 725 279 760 279" class="detail" stroke="#14B8A6"/>
+  <text x="770" y="216" class="desc">高雄地標之一，位於蓮池潭旁</text>
+  <text x="770" y="250" class="small">推薦：色彩鮮明、造型獨特，拍照好看</text>
+  <text x="770" y="284" class="small">適合：文化景點、攝影、初次來高雄</text>
+
+  <!-- 3 駁二藝術特區 -->
+  <path d="M430 355 L470 355" class="branch" stroke="#F97316"/>
+  <rect x="470" y="327" width="210" height="56" rx="7" fill="#F97316" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="362" text-anchor="middle" class="node-text">駁二藝術特區</text>
+  <path d="M680 355 C715 355 725 321 760 321" class="detail" stroke="#F97316"/>
+  <path d="M680 355 L760 355" class="detail" stroke="#F97316"/>
+  <path d="M680 355 C715 355 725 389 760 389" class="detail" stroke="#F97316"/>
+  <text x="770" y="326" class="desc">由舊倉庫改造的文創園區</text>
+  <text x="770" y="360" class="small">推薦：展覽、市集、裝置藝術與港邊散步</text>
+  <text x="770" y="394" class="small">適合：拍照打卡、親子、情侶約會</text>
+
+  <!-- 4 西子灣 -->
+  <path d="M430 465 L470 465" class="branch" stroke="#2563EB"/>
+  <rect x="470" y="437" width="210" height="56" rx="7" fill="#2563EB" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="472" text-anchor="middle" class="node-text">西子灣</text>
+  <path d="M680 465 C715 465 725 431 760 431" class="detail" stroke="#2563EB"/>
+  <path d="M680 465 L760 465" class="detail" stroke="#2563EB"/>
+  <path d="M680 465 C715 465 725 499 760 499" class="detail" stroke="#2563EB"/>
+  <text x="770" y="436" class="desc">高雄經典夕陽景點</text>
+  <text x="770" y="470" class="small">推薦：海景、夕照、英國領事館周邊散步</text>
+  <text x="770" y="504" class="small">適合：看夕陽、攝影、慢旅行</text>
+
+  <!-- 5 蓮池潭 -->
+  <path d="M430 575 L470 575" class="branch" stroke="#22C55E"/>
+  <rect x="470" y="547" width="210" height="56" rx="7" fill="#22C55E" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="582" text-anchor="middle" class="node-text">蓮池潭</text>
+  <path d="M680 575 C715 575 725 541 760 541" class="detail" stroke="#22C55E"/>
+  <path d="M680 575 L760 575" class="detail" stroke="#22C55E"/>
+  <path d="M680 575 C715 575 725 609 760 609" class="detail" stroke="#22C55E"/>
+  <text x="770" y="546" class="desc">左營代表性湖景與廟宇景點</text>
+  <text x="770" y="580" class="small">推薦：龍虎塔、春秋閣、湖畔散步路線</text>
+  <text x="770" y="614" class="small">適合：文化旅遊、家庭出遊、晨間散步</text>
+
+  <!-- 6 流行音樂中心 -->
+  <path d="M430 685 L470 685" class="branch" stroke="#8B5CF6"/>
+  <rect x="470" y="657" width="210" height="56" rx="7" fill="#8B5CF6" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="692" text-anchor="middle" class="node-text">流行音樂中心</text>
+  <path d="M680 685 C715 685 725 651 760 651" class="detail" stroke="#8B5CF6"/>
+  <path d="M680 685 L760 685" class="detail" stroke="#8B5CF6"/>
+  <path d="M680 685 C715 685 725 719 760 719" class="detail" stroke="#8B5CF6"/>
+  <text x="770" y="656" class="desc">港灣旁的現代建築與展演空間</text>
+  <text x="770" y="690" class="small">推薦：夜間燈光、海風步道、演唱會活動</text>
+  <text x="770" y="724" class="small">適合：夜拍、音樂活動、城市散步</text>
+
+  <!-- 7 衛武營 -->
+  <path d="M430 795 L470 795" class="branch" stroke="#F43F5E"/>
+  <rect x="470" y="767" width="210" height="56" rx="7" fill="#F43F5E" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="802" text-anchor="middle" class="node-text">衛武營</text>
+  <path d="M680 795 C715 795 725 761 760 761" class="detail" stroke="#F43F5E"/>
+  <path d="M680 795 L760 795" class="detail" stroke="#F43F5E"/>
+  <path d="M680 795 C715 795 725 829 760 829" class="detail" stroke="#F43F5E"/>
+  <text x="770" y="766" class="desc">大型藝文場館與都會公園結合</text>
+  <text x="770" y="800" class="small">推薦：建築外觀、草地休憩、藝文展演</text>
+  <text x="770" y="834" class="small">適合：藝文旅行、家庭、午後散步</text>
+
+  <!-- 8 壽山觀景台 -->
+  <path d="M430 905 L470 905" class="branch" stroke="#A855F7"/>
+  <rect x="470" y="877" width="210" height="56" rx="7" fill="#A855F7" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="912" text-anchor="middle" class="node-text">壽山觀景台</text>
+  <path d="M680 905 C715 905 725 871 760 871" class="detail" stroke="#A855F7"/>
+  <path d="M680 905 L760 905" class="detail" stroke="#A855F7"/>
+  <path d="M680 905 C715 905 725 939 760 939" class="detail" stroke="#A855F7"/>
+  <text x="770" y="876" class="desc">俯瞰高雄市區與港灣夜景</text>
+  <text x="770" y="910" class="small">推薦：傍晚到夜晚視野最佳，氣氛浪漫</text>
+  <text x="770" y="944" class="small">適合：夜景、情侶、攝影</text>
+
+  <!-- 9 美麗島站 -->
+  <path d="M430 1015 L470 1015" class="branch" stroke="#EC4899"/>
+  <rect x="470" y="987" width="210" height="56" rx="7" fill="#EC4899" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="1022" text-anchor="middle" class="node-text">美麗島站</text>
+  <path d="M680 1015 C715 1015 725 981 760 981" class="detail" stroke="#EC4899"/>
+  <path d="M680 1015 L760 1015" class="detail" stroke="#EC4899"/>
+  <path d="M680 1015 C715 1015 725 1049 760 1049" class="detail" stroke="#EC4899"/>
+  <text x="770" y="986" class="desc">知名捷運站景點，光之穹頂吸睛</text>
+  <text x="770" y="1020" class="small">推薦：短時間即可參觀，適合市區順遊</text>
+  <text x="770" y="1054" class="small">適合：雨天備案、打卡、交通轉乘</text>
+
+  <!-- 10 佛陀紀念館 -->
+  <rect x="470" y="1097" width="210" height="56" rx="7" fill="#F59E0B" class="node" filter="url(#softShadow)"/>
+  <text x="575" y="1132" text-anchor="middle" class="node-text">佛陀紀念館</text>
+  <path d="M680 1125 C715 1125 725 1091 760 1091" class="detail" stroke="#F59E0B"/>
+  <path d="M680 1125 L760 1125" class="detail" stroke="#F59E0B"/>
+  <path d="M680 1125 C715 1125 725 1159 760 1159" class="detail" stroke="#F59E0B"/>
+  <text x="770" y="1096" class="desc">高雄大型宗教文化景點</text>
+  <text x="770" y="1130" class="small">推薦：宏偉建築、園區寬廣，適合半日遊</text>
+  <text x="770" y="1164" class="small">適合：文化參訪、長輩同行、靜態行程</text>
+</svg>
