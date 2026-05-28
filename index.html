@@ -73,21 +73,30 @@
 
   <!-- 主視圖：左側形狀庫 / 中央畫布 / 右側屬性面板 -->
   <main class="app-main">
-    <!-- 左側形狀庫 -->
+    <!-- 左側形狀庫 / 範本 -->
     <aside class="panel panel-left" id="panel-left">
       <div class="panel-tabs">
-        <button class="tab active" data-tab="shapes">圖形</button>
+        <button class="tab active" data-leftab="shapes">圖形</button>
+        <button class="tab" data-leftab="templates">範本</button>
         <button class="tab-close" id="btn-collapse-left" title="收摺左側面板">×</button>
       </div>
       <div class="panel-body">
-        <div class="search-box">
-          <input type="search" id="shape-search" placeholder="輸入 / 以搜尋" />
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-            <circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2" />
-            <path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
+        <!-- 圖形分頁 -->
+        <div class="left-pane active" data-leftpane="shapes">
+          <div class="search-box">
+            <input type="search" id="shape-search" placeholder="輸入 / 以搜尋" />
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2" />
+              <path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="shape-categories" id="shape-categories"></div>
         </div>
-        <div class="shape-categories" id="shape-categories"></div>
+        <!-- 範本分頁 -->
+        <div class="left-pane" data-leftpane="templates">
+          <div class="template-hint">點擊範本即套用至畫布（會清空現有內容，可 Ctrl+Z 還原）</div>
+          <div class="template-grid" id="template-grid"></div>
+        </div>
       </div>
     </aside>
 
@@ -532,12 +541,13 @@
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.2.7</span>
+    <span>系統版本 v0.3.0</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
 
   <script src="shapes.js"></script>
+  <script src="templates.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

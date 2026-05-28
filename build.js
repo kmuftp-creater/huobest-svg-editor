@@ -31,11 +31,12 @@ function build() {
   console.log('  霍家私塾 SVG 編輯器 - 單檔打包');
   console.log('===========================================\n');
 
-  // 1. 讀取四個來源檔
+  // 1. 讀取五個來源檔
   const sources = {
     html: path.join(ROOT, 'index.html'),
     css: path.join(ROOT, 'styles.css'),
     shapes: path.join(ROOT, 'shapes.js'),
+    templates: path.join(ROOT, 'templates.js'),
     app: path.join(ROOT, 'app.js'),
   };
 
@@ -49,6 +50,7 @@ function build() {
   const html = fs.readFileSync(sources.html, 'utf8');
   const css = fs.readFileSync(sources.css, 'utf8');
   const shapes = fs.readFileSync(sources.shapes, 'utf8');
+  const templates = fs.readFileSync(sources.templates, 'utf8');
   const app = fs.readFileSync(sources.app, 'utf8');
 
   const version = readVersion(html);
@@ -62,6 +64,7 @@ function build() {
     'index.html': html.length,
     'styles.css': css.length,
     'shapes.js': shapes.length,
+    'templates.js': templates.length,
     'app.js': app.length,
   };
   Object.entries(sizes).forEach(([name, size]) => {
@@ -101,6 +104,12 @@ function build() {
     () => `<script>\n/* === shapes.js === */\n${shapes}\n</script>`
   );
 
+  // 5.5 內聯 templates.js（順序：templates 必須先於 app）
+  bundled = bundled.replace(
+    /<script src="templates\.js"><\/script>/,
+    () => `<script>\n/* === templates.js === */\n${templates}\n</script>`
+  );
+
   // 6. 內聯 app.js
   bundled = bundled.replace(
     /<script src="app\.js"><\/script>/,
@@ -124,6 +133,7 @@ function build() {
   const checks = {
     '內聯 CSS': !bundled.includes('href="styles.css"') && bundled.includes('/* === styles.css === */'),
     '內聯 shapes.js': !bundled.includes('src="shapes.js"') && bundled.includes('/* === shapes.js === */'),
+    '內聯 templates.js': !bundled.includes('src="templates.js"') && bundled.includes('/* === templates.js === */'),
     '內聯 app.js': !bundled.includes('src="app.js"') && bundled.includes('/* === app.js === */'),
   };
   // 完整性檢查：app.js 內的 $$ 與 $() 個數必須與 bundle 內一致

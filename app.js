@@ -2438,8 +2438,66 @@
     pushHistory('範例流程圖載入', '');
   }
 
+  // ====== 範本面板 ======
+  function renderTemplates() {
+    const host = $('#template-grid');
+    if (!host) return;
+    const list = (window.__TEMPLATES__ || []);
+    host.innerHTML = '';
+    list.forEach((tpl) => {
+      const item = document.createElement('div');
+      item.className = 'template-item';
+      item.dataset.tplId = tpl.id;
+      item.title = `套用範本：${tpl.name}`;
+      item.innerHTML = `
+        <div class="thumb"><svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet">${tpl.thumb}</svg></div>
+        <div class="meta">
+          <span class="name">${tpl.name}</span>
+          <span class="cat">${tpl.category}</span>
+        </div>
+      `;
+      item.addEventListener('click', () => applyTemplate(tpl));
+      host.appendChild(item);
+    });
+  }
+
+  function applyTemplate(tpl) {
+    if (!tpl || typeof tpl.build !== 'function') return;
+    const hasContent = state.objects.length > 0;
+    if (hasContent) {
+      if (!confirm(`即將載入「${tpl.name}」範本，目前畫布上的 ${state.objects.length} 個物件將被清除。\n（可使用 Ctrl+Z 還原）\n\n確定要套用嗎？`)) return;
+    }
+    // 清空現有並寫入歷史
+    state.objects = [];
+    state.selected.clear();
+    // 建立範本物件並補上 id
+    const objs = tpl.build();
+    objs.forEach((o) => {
+      const obj = createObject(o.type, o);
+      Object.assign(obj, o);
+      obj.id = uid(o.type);
+      obj.name = obj.id;
+      state.objects.push(obj);
+    });
+    renderAll();
+    pushHistory('套用範本', tpl.name);
+    statusInfo.textContent = `已套用範本：${tpl.name}（${objs.length} 個物件）`;
+  }
+
+  // 左側分頁切換
+  $$('.panel-tabs [data-leftab]').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      $$('.panel-tabs [data-leftab]').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      const pane = tab.dataset.leftab;
+      $$('.left-pane').forEach((p) => p.classList.toggle('active', p.dataset.leftpane === pane));
+      if (pane === 'templates') renderTemplates();
+    });
+  });
+
   // ====== Boot ======
   renderShapeLibrary();
+  renderTemplates();
   renderPresets();
   setZoom(0.8);
   // 空白畫布，無預設範例
