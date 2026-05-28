@@ -356,6 +356,427 @@ function buildSWOT() {
 }
 
 // ========================================
+// 範本 7：UML 類別圖
+// ========================================
+function buildUMLClass() {
+  const objs = [];
+  // 標題
+  const title = _rect(420, 50, 360, 50, 'UML 類別圖', 'transparent', 'transparent', 24);
+  title.strokeEnabled = false; title.fillEnabled = false;
+  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  objs.push(title);
+
+  // 抽象類別 Animal（最上層）
+  const animX = 500, animY = 140;
+  objs.push(_rect(animX, animY, 200, 32, 'Animal', '#F3E5F5', '#8E24AA', 16));
+  objs.push(_rect(animX, animY + 32, 200, 50, '+ name: String\n+ age: int', '#FFFFFF', '#8E24AA', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+  objs.push(_rect(animX, animY + 82, 200, 50, '+ eat()\n+ sleep()', '#FFFFFF', '#8E24AA', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+
+  // Dog 類別（左下）
+  const dogX = 240, dogY = 340;
+  objs.push(_rect(dogX, dogY, 200, 32, 'Dog', '#E3F2FD', '#1565C0', 16));
+  objs.push(_rect(dogX, dogY + 32, 200, 48, '+ breed: String', '#FFFFFF', '#1565C0', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+  objs.push(_rect(dogX, dogY + 80, 200, 48, '+ bark()\n+ fetch()', '#FFFFFF', '#1565C0', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+
+  // Cat 類別（右下）
+  const catX = 760, catY = 340;
+  objs.push(_rect(catX, catY, 200, 32, 'Cat', '#FFF3E0', '#E65100', 16));
+  objs.push(_rect(catX, catY + 32, 200, 48, '+ color: String', '#FFFFFF', '#E65100', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+  objs.push(_rect(catX, catY + 80, 200, 48, '+ meow()\n+ scratch()', '#FFFFFF', '#E65100', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+
+  // 介面 Trainable（右上）
+  const trX = 900, trY = 150;
+  objs.push(_rect(trX, trY, 200, 32, '«interface»\nTrainable', '#E8F5E9', '#2E7D32', 12));
+  objs.push(_rect(trX, trY + 32, 200, 60, '+ train(): void\n+ obey(): boolean', '#FFFFFF', '#2E7D32', 12));
+  Object.assign(objs[objs.length - 1], { textAlign: 'left', textVAlign: 'top' });
+
+  // 繼承箭頭 Dog -> Animal、Cat -> Animal
+  objs.push(_arrow(340, 340, 540, 232, '#8E24AA', '繼承'));
+  objs.push(_arrow(860, 340, 660, 232, '#8E24AA', '繼承'));
+  // 實作 Dog -> Trainable
+  objs.push(_arrow(440, 380, 900, 200, '#2E7D32', '實作'));
+
+  // 說明文字
+  const note = _rect(80, 600, 1040, 100,
+    '說明：「+」表示 public 成員、「-」表示 private。實線箭頭代表繼承關係；虛線箭頭（«interface»）代表實作介面。',
+    '#FFFDE7', '#FBC02D', 13);
+  note.textAlign = 'left'; note.textVAlign = 'middle';
+  objs.push(note);
+  return objs;
+}
+
+// ========================================
+// 範本 8：泳道圖（Swim Lane）
+// ========================================
+function buildSwimLane() {
+  const objs = [];
+  // 標題
+  const title = _rect(400, 30, 400, 40, '跨部門協作泳道圖', 'transparent', 'transparent', 22);
+  title.strokeEnabled = false; title.fillEnabled = false;
+  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  objs.push(title);
+
+  // 4 條泳道
+  const lanes = [
+    { name: '客戶',   fill: '#FFEBEE', stroke: '#E53935', y: 100, h: 140 },
+    { name: '業務',   fill: '#E3F2FD', stroke: '#1E88E5', y: 240, h: 140 },
+    { name: '工程',   fill: '#E8F5E9', stroke: '#43A047', y: 380, h: 140 },
+    { name: '財務',   fill: '#FFF3E0', stroke: '#F57C00', y: 520, h: 140 },
+  ];
+  const laneX = 80, laneW = 1040, headerW = 100;
+  lanes.forEach((lane) => {
+    // 泳道標題（左側）
+    objs.push(_rect(laneX, lane.y, headerW, lane.h, lane.name, lane.fill, lane.stroke, 18));
+    objs[objs.length - 1].fontWeight = 'bold';
+    // 泳道區（右側）
+    objs.push(_rect(laneX + headerW, lane.y, laneW - headerW, lane.h, '', '#FAFAFA', lane.stroke, 12));
+  });
+
+  // 步驟方塊（依泳道）
+  const stepW = 140, stepH = 60;
+  // 客戶
+  objs.push(_roundRect(220, 140, stepW, stepH, '提交需求', '#FFCDD2', '#E53935', 14));
+  // 業務
+  objs.push(_roundRect(400, 280, stepW, stepH, '需求確認', '#BBDEFB', '#1E88E5', 14));
+  objs.push(_roundRect(600, 280, stepW, stepH, '報價', '#BBDEFB', '#1E88E5', 14));
+  // 工程
+  objs.push(_roundRect(800, 420, stepW, stepH, '設計開發', '#C8E6C9', '#43A047', 14));
+  // 業務（客戶確認）
+  objs.push(_roundRect(800, 280, stepW, stepH, '客戶確認', '#BBDEFB', '#1E88E5', 14));
+  // 財務
+  objs.push(_roundRect(960, 560, stepW, stepH, '請款收款', '#FFE0B2', '#F57C00', 14));
+  // 客戶（驗收）
+  objs.push(_roundRect(960, 140, stepW, stepH, '驗收', '#FFCDD2', '#E53935', 14));
+
+  // 流程箭頭
+  objs.push(_arrow(290, 200, 470, 280, '#6B7280'));
+  objs.push(_arrow(540, 310, 600, 310, '#6B7280'));
+  objs.push(_arrow(740, 310, 800, 310, '#6B7280'));
+  objs.push(_arrow(870, 340, 870, 420, '#6B7280'));
+  objs.push(_arrow(870, 480, 870, 280, '#6B7280'));
+  objs.push(_arrow(940, 310, 1030, 200, '#6B7280'));
+  objs.push(_arrow(1030, 200, 1030, 560, '#6B7280'));
+
+  return objs;
+}
+
+// ========================================
+// 範本 9：家族族譜（3 代）
+// ========================================
+function buildFamilyTree() {
+  const objs = [];
+  // 標題
+  const title = _rect(400, 40, 400, 50, '家族族譜', 'transparent', 'transparent', 26);
+  title.strokeEnabled = false; title.fillEnabled = false;
+  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  objs.push(title);
+
+  // 第 1 代（祖輩，最上）
+  objs.push(_roundRect(420, 140, 160, 70, '祖父\n王 大明', '#E3F2FD', '#1565C0', 14));
+  objs.push(_roundRect(620, 140, 160, 70, '祖母\n李 美芳', '#FFCDD2', '#E53935', 14));
+  objs.push(_line(580, 175, 620, 175, '#9CA3AF'));  // 婚姻線
+
+  // 第 2 代（父輩，中間 3 對）
+  // 大伯+伯母
+  objs.push(_roundRect(80, 320, 140, 70, '伯父\n王 大華', '#E3F2FD', '#1565C0', 13));
+  objs.push(_roundRect(240, 320, 140, 70, '伯母\n陳 雅琴', '#FFCDD2', '#E53935', 13));
+  objs.push(_line(220, 355, 240, 355, '#9CA3AF'));
+  // 父+母
+  objs.push(_roundRect(430, 320, 140, 70, '父親\n王 志強', '#E3F2FD', '#1565C0', 13));
+  objs.push(_roundRect(590, 320, 140, 70, '母親\n林 慧君', '#FFCDD2', '#E53935', 13));
+  objs.push(_line(570, 355, 590, 355, '#9CA3AF'));
+  // 姑姑+姑丈
+  objs.push(_roundRect(780, 320, 140, 70, '姑姑\n王 雪梅', '#FFCDD2', '#E53935', 13));
+  objs.push(_roundRect(940, 320, 140, 70, '姑丈\n張 文彬', '#E3F2FD', '#1565C0', 13));
+  objs.push(_line(920, 355, 940, 355, '#9CA3AF'));
+
+  // 第 3 代（孫輩）
+  const grandY = 530;
+  // 伯父的孩子
+  objs.push(_roundRect(60, grandY, 120, 60, '堂哥\n王 俊宏', '#E1BEE7', '#8E24AA', 12));
+  objs.push(_roundRect(190, grandY, 120, 60, '堂妹\n王 雅婷', '#E1BEE7', '#8E24AA', 12));
+  // 我這一輩
+  objs.push(_roundRect(360, grandY, 120, 60, '哥哥\n王 建宇', '#E1BEE7', '#8E24AA', 12));
+  objs.push(_roundRect(490, grandY, 120, 60, '我\n王 子瑜', '#FFF59D', '#F9A825', 13));
+  objs[objs.length - 1].fontWeight = 'bold';
+  objs.push(_roundRect(620, grandY, 120, 60, '妹妹\n王 思綺', '#E1BEE7', '#8E24AA', 12));
+  // 姑姑的孩子
+  objs.push(_roundRect(820, grandY, 120, 60, '表弟\n張 維倫', '#E1BEE7', '#8E24AA', 12));
+  objs.push(_roundRect(950, grandY, 120, 60, '表妹\n張 妍秋', '#E1BEE7', '#8E24AA', 12));
+
+  // 連接線（祖父母 -> 第二代）
+  objs.push(_line(600, 210, 600, 250, '#9CA3AF'));
+  objs.push(_line(170, 250, 1000, 250, '#9CA3AF'));
+  objs.push(_line(170, 250, 170, 320, '#9CA3AF'));
+  objs.push(_line(310, 250, 310, 320, '#9CA3AF'));
+  objs.push(_line(500, 250, 500, 320, '#9CA3AF'));
+  objs.push(_line(660, 250, 660, 320, '#9CA3AF'));
+  objs.push(_line(850, 250, 850, 320, '#9CA3AF'));
+  objs.push(_line(1000, 250, 1000, 320, '#9CA3AF'));
+  // 第二代 -> 第三代
+  objs.push(_line(220, 390, 220, 460, '#9CA3AF'));
+  objs.push(_line(120, 460, 250, 460, '#9CA3AF'));
+  objs.push(_line(120, 460, 120, 530, '#9CA3AF'));
+  objs.push(_line(250, 460, 250, 530, '#9CA3AF'));
+  objs.push(_line(500, 390, 500, 460, '#9CA3AF'));
+  objs.push(_line(420, 460, 680, 460, '#9CA3AF'));
+  objs.push(_line(420, 460, 420, 530, '#9CA3AF'));
+  objs.push(_line(550, 460, 550, 530, '#9CA3AF'));
+  objs.push(_line(680, 460, 680, 530, '#9CA3AF'));
+  objs.push(_line(860, 390, 860, 460, '#9CA3AF'));
+  objs.push(_line(880, 460, 1010, 460, '#9CA3AF'));
+  objs.push(_line(880, 460, 880, 530, '#9CA3AF'));
+  objs.push(_line(1010, 460, 1010, 530, '#9CA3AF'));
+  return objs;
+}
+
+// ========================================
+// 範本 10：行業分類樹
+// ========================================
+function buildIndustryTree() {
+  const objs = [];
+  // 根節點
+  objs.push(_roundRect(500, 60, 200, 60, '產業分類', '#212121', '#212121', 18));
+  objs[objs.length - 1].textColor = '#FFFFFF'; objs[objs.length - 1].fontWeight = 'bold';
+
+  // 三大分類（第二層）
+  const cats = [
+    { name: '第一級產業', fill: '#C8E6C9', stroke: '#43A047', x: 100 },
+    { name: '第二級產業', fill: '#BBDEFB', stroke: '#1E88E5', x: 500 },
+    { name: '第三級產業', fill: '#E1BEE7', stroke: '#8E24AA', x: 900 },
+  ];
+  cats.forEach((c) => {
+    objs.push(_roundRect(c.x, 200, 200, 60, c.name, c.fill, c.stroke, 16));
+    objs[objs.length - 1].fontWeight = 'bold';
+    // 連線
+    objs.push(_line(600, 120, c.x + 100, 200, '#9CA3AF'));
+  });
+
+  // 第三層 子分類
+  const subs = [
+    // 第一級
+    { parent: 0, x: 30,  text: '農業',     color: '#E8F5E9', stroke: '#81C784' },
+    { parent: 0, x: 160, text: '林業',     color: '#E8F5E9', stroke: '#81C784' },
+    { parent: 0, x: 290, text: '漁業',     color: '#E8F5E9', stroke: '#81C784' },
+    // 第二級
+    { parent: 1, x: 430, text: '製造業',   color: '#E3F2FD', stroke: '#64B5F6' },
+    { parent: 1, x: 560, text: '建築業',   color: '#E3F2FD', stroke: '#64B5F6' },
+    { parent: 1, x: 690, text: '能源業',   color: '#E3F2FD', stroke: '#64B5F6' },
+    // 第三級
+    { parent: 2, x: 830, text: '金融業',   color: '#F3E5F5', stroke: '#BA68C8' },
+    { parent: 2, x: 960, text: '零售業',   color: '#F3E5F5', stroke: '#BA68C8' },
+    { parent: 2, x: 1090, text: '服務業',  color: '#F3E5F5', stroke: '#BA68C8' },
+  ];
+  subs.forEach((s) => {
+    objs.push(_roundRect(s.x, 340, 110, 50, s.text, s.color, s.stroke, 13));
+    const parentX = cats[s.parent].x + 100;
+    objs.push(_line(parentX, 260, s.x + 55, 340, '#9CA3AF'));
+  });
+
+  // 第四層 範例（服務業）
+  const detail = [
+    { x: 30,  text: '稻米' },
+    { x: 160, text: '木材' },
+    { x: 290, text: '養殖' },
+    { x: 430, text: '電子' },
+    { x: 560, text: '住宅' },
+    { x: 690, text: '太陽能' },
+    { x: 830, text: '銀行' },
+    { x: 960, text: '百貨' },
+    { x: 1090, text: '餐飲' },
+  ];
+  detail.forEach((d) => {
+    objs.push(_rect(d.x + 10, 460, 90, 36, d.text, '#FAFAFA', '#9CA3AF', 12));
+    objs.push(_line(d.x + 55, 390, d.x + 55, 460, '#9CA3AF'));
+  });
+
+  return objs;
+}
+
+// ========================================
+// 範本 11：個人年度規劃
+// ========================================
+function buildPersonalPlan() {
+  const objs = [];
+  const title = _rect(400, 30, 400, 50, '2026 年度規劃', 'transparent', 'transparent', 26);
+  title.strokeEnabled = false; title.fillEnabled = false;
+  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  objs.push(title);
+
+  // 中心：年度主題
+  objs.push(_ellipse(490, 350, 220, 100, '年度主題\n持續學習', '#FFF59D', '#F9A825', 18));
+  objs[objs.length - 1].fontWeight = 'bold';
+
+  // 6 大領域（環繞中心）
+  const areas = [
+    { x: 80,   y: 120, name: '工作', detail: '• 完成 OKR\n• 新技能 ×2\n• 升職機會', fill: '#BBDEFB', stroke: '#1E88E5' },
+    { x: 500,  y: 120, name: '健康', detail: '• 每週運動 3 次\n• 體重 -5kg\n• 飲食控制', fill: '#C8E6C9', stroke: '#43A047' },
+    { x: 920,  y: 120, name: '財務', detail: '• 儲蓄 100k\n• 投資配置\n• 減少消費', fill: '#FFE0B2', stroke: '#F57C00' },
+    { x: 80,   y: 540, name: '學習', detail: '• 讀書 ×12 本\n• 線上課程 ×3\n• 證照 ×1', fill: '#E1BEE7', stroke: '#8E24AA' },
+    { x: 500,  y: 540, name: '關係', detail: '• 陪伴家人\n• 朋友聚會\n• 拓展人脈', fill: '#FFCDD2', stroke: '#E53935' },
+    { x: 920,  y: 540, name: '興趣', detail: '• 攝影旅遊\n• 學習樂器\n• 創作部落格', fill: '#B2DFDB', stroke: '#00897B' },
+  ];
+  areas.forEach((a) => {
+    objs.push(_roundRect(a.x, a.y, 200, 50, a.name, a.fill, a.stroke, 18));
+    objs[objs.length - 1].fontWeight = 'bold';
+    const det = _rect(a.x, a.y + 60, 200, 120, a.detail, '#FFFFFF', a.stroke, 13);
+    det.textAlign = 'left'; det.textVAlign = 'top';
+    objs.push(det);
+    // 連線到中心
+    objs.push(_line(a.x + 100, a.y + 50, 600, 400, a.stroke));
+  });
+  return objs;
+}
+
+// ========================================
+// 範本 12：心智圖（中心 + 多層分支）
+// ========================================
+function buildMindMap() {
+  const objs = [];
+  // 中心節點
+  objs.push(_roundRect(500, 360, 200, 80, '專案規劃', '#FFF59D', '#F9A825', 22));
+  objs[objs.length - 1].fontWeight = 'bold';
+
+  // 4 大分支
+  const branches = [
+    { name: '目標',   x: 100,  y: 100, color: '#BBDEFB', stroke: '#1E88E5', subs: [
+      { text: '增加營收',    x: 50,   y: 30 },
+      { text: '降低成本',    x: 50,   y: 100 },
+      { text: '提升效率',    x: 50,   y: 170 },
+    ]},
+    { name: '人員',   x: 900,  y: 100, color: '#C8E6C9', stroke: '#43A047', subs: [
+      { text: 'PM × 1',    x: 220,  y: 30 },
+      { text: '工程 × 5',   x: 220,  y: 100 },
+      { text: '設計 × 2',   x: 220,  y: 170 },
+    ]},
+    { name: '時程',   x: 100,  y: 600, color: '#FFE0B2', stroke: '#F57C00', subs: [
+      { text: 'Q1 規劃',    x: 50,   y: 230 },
+      { text: 'Q2 開發',    x: 50,   y: 300 },
+      { text: 'Q3 上線',    x: 50,   y: 370 },
+    ]},
+    { name: '預算',   x: 900,  y: 600, color: '#E1BEE7', stroke: '#8E24AA', subs: [
+      { text: '人事 60%',    x: 220,  y: 230 },
+      { text: '設備 20%',    x: 220,  y: 300 },
+      { text: '行銷 20%',    x: 220,  y: 370 },
+    ]},
+  ];
+  branches.forEach((b) => {
+    // 一級分支
+    objs.push(_roundRect(b.x, b.y, 200, 60, b.name, b.color, b.stroke, 18));
+    objs[objs.length - 1].fontWeight = 'bold';
+    // 連到中心
+    objs.push(_line(b.x + 100, b.y + 30, 600, 400, b.stroke));
+    // 二級分支
+    b.subs.forEach((s) => {
+      // 計算二級節點位置（取決於一級節點位置）
+      const subX = b.x < 600 ? b.x - 160 : b.x + 220;
+      const subY = b.y + (s.y - 30);
+      objs.push(_roundRect(subX, subY, 140, 36, s.text, '#FFFFFF', b.stroke, 12));
+      // 連線
+      objs.push(_line(b.x + (b.x < 600 ? 0 : 200), b.y + 30, subX + (b.x < 600 ? 140 : 0), subY + 18, b.stroke));
+    });
+  });
+  return objs;
+}
+
+// ========================================
+// 範本 13：概念圖（5W1H）
+// ========================================
+function buildConcept5W1H() {
+  const objs = [];
+  const title = _rect(400, 30, 400, 50, '5W1H 分析法', 'transparent', 'transparent', 24);
+  title.strokeEnabled = false; title.fillEnabled = false;
+  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  objs.push(title);
+
+  // 中心
+  objs.push(_ellipse(490, 350, 220, 100, '事件 / 議題', '#212121', '#212121', 18));
+  objs[objs.length - 1].textColor = '#FFFFFF'; objs[objs.length - 1].fontWeight = 'bold';
+
+  // 6 個 W/H
+  const ws = [
+    { en: 'WHY',   zh: '為什麼', desc: '目的與動機', x: 100,  y: 120, color: '#FFCDD2', stroke: '#E53935' },
+    { en: 'WHAT',  zh: '是什麼', desc: '對象與內容', x: 500,  y: 100, color: '#FFE0B2', stroke: '#F57C00' },
+    { en: 'WHO',   zh: '誰',     desc: '相關人物',   x: 900,  y: 120, color: '#FFF59D', stroke: '#F9A825' },
+    { en: 'WHEN',  zh: '何時',   desc: '時間點',     x: 100,  y: 540, color: '#C8E6C9', stroke: '#43A047' },
+    { en: 'WHERE', zh: '何地',   desc: '地點',       x: 500,  y: 560, color: '#BBDEFB', stroke: '#1E88E5' },
+    { en: 'HOW',   zh: '如何',   desc: '方法步驟',   x: 900,  y: 540, color: '#E1BEE7', stroke: '#8E24AA' },
+  ];
+  ws.forEach((w) => {
+    // 主框
+    objs.push(_roundRect(w.x, w.y, 200, 80, w.en + '\n' + w.zh, w.color, w.stroke, 18));
+    objs[objs.length - 1].fontWeight = 'bold';
+    // 副框
+    const sub = _rect(w.x, w.y + 90, 200, 90, w.desc + '\n\n（在此填入內容）', '#FFFFFF', w.stroke, 13);
+    sub.textColor = '#4B5563';
+    objs.push(sub);
+    // 連線
+    objs.push(_line(w.x + 100, w.y + 40, 600, 400, w.stroke));
+  });
+  return objs;
+}
+
+// ========================================
+// 範本 14：甘特圖
+// ========================================
+function buildGantt() {
+  const objs = [];
+  const title = _rect(400, 30, 400, 50, '專案甘特圖', 'transparent', 'transparent', 24);
+  title.strokeEnabled = false; title.fillEnabled = false;
+  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  objs.push(title);
+
+  // 表頭欄位
+  const startX = 60, headerY = 110;
+  const colTask = 200;
+  const colMonth = 70;
+  const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  // 任務欄表頭
+  objs.push(_rect(startX, headerY, colTask, 40, '任務名稱', '#212121', '#212121', 14));
+  objs[objs.length - 1].textColor = '#FFFFFF'; objs[objs.length - 1].fontWeight = 'bold';
+  // 月份表頭
+  months.forEach((m, i) => {
+    objs.push(_rect(startX + colTask + i * colMonth, headerY, colMonth, 40, m, '#424242', '#424242', 12));
+    objs[objs.length - 1].textColor = '#FFFFFF';
+  });
+
+  // 任務列
+  const tasks = [
+    { name: '需求調查',   from: 0, to: 1, color: '#BBDEFB', stroke: '#1E88E5' },
+    { name: '系統設計',   from: 1, to: 3, color: '#C8E6C9', stroke: '#43A047' },
+    { name: '前端開發',   from: 2, to: 6, color: '#FFE0B2', stroke: '#F57C00' },
+    { name: '後端開發',   from: 2, to: 7, color: '#FFCDD2', stroke: '#E53935' },
+    { name: '整合測試',   from: 6, to: 8, color: '#E1BEE7', stroke: '#8E24AA' },
+    { name: '使用者測試', from: 8, to: 9, color: '#FFF59D', stroke: '#F9A825' },
+    { name: '上線部署',   from: 9, to: 10, color: '#B2DFDB', stroke: '#00897B' },
+    { name: '維護優化',   from: 10, to: 12, color: '#90CAF9', stroke: '#1565C0' },
+  ];
+  const rowH = 40;
+  tasks.forEach((t, i) => {
+    const y = headerY + 40 + i * rowH;
+    // 任務名稱
+    objs.push(_rect(startX, y, colTask, rowH, t.name, '#FAFAFA', '#9CA3AF', 13));
+    objs[objs.length - 1].textAlign = 'left';
+    // 月份背景格
+    for (let m = 0; m < 12; m++) {
+      objs.push(_rect(startX + colTask + m * colMonth, y, colMonth, rowH, '', '#FFFFFF', '#E5E7EB', 10));
+    }
+    // 任務時間條
+    const barX = startX + colTask + t.from * colMonth + 4;
+    const barW = (t.to - t.from) * colMonth - 8;
+    objs.push(_roundRect(barX, y + 8, barW, rowH - 16, '', t.color, t.stroke, 11));
+  });
+
+  return objs;
+}
+
+// ========================================
 // 範本縮圖（小型 SVG，於範本面板顯示）
 // ========================================
 const TEMPLATES = [
@@ -459,6 +880,164 @@ const TEMPLATES = [
       <text x="58" y="42" font-size="7" fill="currentColor" font-weight="700">T</text>
     `,
     build: buildSWOT,
+  },
+  {
+    id: 'uml-class',
+    name: 'UML 類別圖',
+    category: 'UML',
+    thumb: `
+      <rect x="40" y="6" width="22" height="6" fill="#F3E5F5" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="40" y="12" width="22" height="6" fill="#fff" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="40" y="18" width="22" height="6" fill="#fff" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="10" y="36" width="22" height="6" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="10" y="42" width="22" height="6" fill="#fff" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="70" y="36" width="22" height="6" fill="#FFF3E0" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="70" y="42" width="22" height="6" fill="#fff" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="21" y1="36" x2="46" y2="24" stroke="currentColor" stroke-width="0.4"/>
+      <line x1="81" y1="36" x2="56" y2="24" stroke="currentColor" stroke-width="0.4"/>
+    `,
+    build: buildUMLClass,
+  },
+  {
+    id: 'swim-lane',
+    name: '泳道圖',
+    category: '流程',
+    thumb: `
+      <rect x="6" y="8"  width="14" height="11" fill="#FFEBEE" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="20" y="8" width="74" height="11" fill="#FAFAFA" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="6" y="19" width="14" height="11" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="20" y="19" width="74" height="11" fill="#FAFAFA" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="6" y="30" width="14" height="11" fill="#E8F5E9" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="20" y="30" width="74" height="11" fill="#FAFAFA" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="6" y="41" width="14" height="11" fill="#FFF3E0" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="20" y="41" width="74" height="11" fill="#FAFAFA" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="24" y="10" width="14" height="7" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="44" y="21" width="14" height="7" fill="#BBDEFB" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="64" y="32" width="14" height="7" fill="#C8E6C9" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="78" y="43" width="14" height="7" fill="#FFE0B2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+    `,
+    build: buildSwimLane,
+  },
+  {
+    id: 'family-tree',
+    name: '家族族譜',
+    category: '結構',
+    thumb: `
+      <rect x="32" y="6"  width="16" height="7" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="52" y="6"  width="16" height="7" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <line x1="48" y1="10" x2="52" y2="10" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="6"  y="24" width="14" height="7" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="22" y="24" width="14" height="7" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="42" y="24" width="14" height="7" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="58" y="24" width="14" height="7" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="78" y="24" width="14" height="7" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="6"  y="44" width="10" height="6" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="18" y="44" width="10" height="6" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="40" y="44" width="10" height="6" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="52" y="44" width="10" height="6" fill="#FFF59D" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="64" y="44" width="10" height="6" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="80" y="44" width="10" height="6" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+    `,
+    build: buildFamilyTree,
+  },
+  {
+    id: 'industry-tree',
+    name: '行業分類',
+    category: '結構',
+    thumb: `
+      <rect x="42" y="4"  width="16" height="6" fill="#212121" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="10" y="18" width="20" height="6" fill="#C8E6C9" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="40" y="18" width="20" height="6" fill="#BBDEFB" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="70" y="18" width="20" height="6" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="6"  y="32" width="9"  height="5" fill="#E8F5E9" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="16" y="32" width="9"  height="5" fill="#E8F5E9" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="36" y="32" width="9"  height="5" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="46" y="32" width="9"  height="5" fill="#E3F2FD" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="66" y="32" width="9"  height="5" fill="#F3E5F5" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="76" y="32" width="9"  height="5" fill="#F3E5F5" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="50" y1="10" x2="20" y2="18" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="50" y1="10" x2="50" y2="18" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="50" y1="10" x2="80" y2="18" stroke="currentColor" stroke-width="0.3"/>
+    `,
+    build: buildIndustryTree,
+  },
+  {
+    id: 'personal-plan',
+    name: '年度規劃',
+    category: '個人',
+    thumb: `
+      <ellipse cx="50" cy="30" rx="14" ry="8" fill="#FFF59D" stroke="currentColor" stroke-width="0.4"/>
+      <rect x="6"  y="6"  width="18" height="9" fill="#BBDEFB" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="42" y="6"  width="18" height="9" fill="#C8E6C9" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="76" y="6"  width="18" height="9" fill="#FFE0B2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="6"  y="44" width="18" height="9" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="42" y="44" width="18" height="9" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="76" y="44" width="18" height="9" fill="#B2DFDB" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <line x1="15" y1="15" x2="42" y2="26" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="51" y1="15" x2="50" y2="22" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="85" y1="15" x2="58" y2="26" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="15" y1="44" x2="42" y2="35" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="51" y1="44" x2="50" y2="38" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="85" y1="44" x2="58" y2="35" stroke="currentColor" stroke-width="0.3"/>
+    `,
+    build: buildPersonalPlan,
+  },
+  {
+    id: 'mind-map',
+    name: '心智圖',
+    category: '思考',
+    thumb: `
+      <rect x="38" y="24" width="24" height="12" fill="#FFF59D" stroke="currentColor" stroke-width="0.4" rx="2"/>
+      <rect x="6"  y="6"  width="20" height="8" fill="#BBDEFB" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="74" y="6"  width="20" height="8" fill="#C8E6C9" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="6"  y="46" width="20" height="8" fill="#FFE0B2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="74" y="46" width="20" height="8" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <line x1="26" y1="10" x2="42" y2="28" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="74" y1="10" x2="58" y2="28" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="26" y1="50" x2="42" y2="34" stroke="currentColor" stroke-width="0.3"/>
+      <line x1="74" y1="50" x2="58" y2="34" stroke="currentColor" stroke-width="0.3"/>
+    `,
+    build: buildMindMap,
+  },
+  {
+    id: 'concept-5w1h',
+    name: '5W1H 分析',
+    category: '思考',
+    thumb: `
+      <ellipse cx="50" cy="30" rx="14" ry="7" fill="#212121" stroke="currentColor" stroke-width="0.3"/>
+      <rect x="6"  y="6"  width="18" height="9" fill="#FFCDD2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="42" y="4"  width="18" height="9" fill="#FFE0B2" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="76" y="6"  width="18" height="9" fill="#FFF59D" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="6"  y="46" width="18" height="9" fill="#C8E6C9" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="42" y="48" width="18" height="9" fill="#BBDEFB" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <rect x="76" y="46" width="18" height="9" fill="#E1BEE7" stroke="currentColor" stroke-width="0.3" rx="1"/>
+      <text x="15" y="13" font-size="4" fill="currentColor" font-weight="700">WHY</text>
+      <text x="50" y="11" font-size="3" fill="currentColor" font-weight="700" text-anchor="middle">WHAT</text>
+      <text x="85" y="13" font-size="4" fill="currentColor" font-weight="700" text-anchor="middle">WHO</text>
+    `,
+    build: buildConcept5W1H,
+  },
+  {
+    id: 'gantt',
+    name: '甘特圖',
+    category: '時序',
+    thumb: `
+      <rect x="6"  y="6"  width="22" height="6" fill="#212121"/>
+      <rect x="28" y="6"  width="66" height="6" fill="#424242"/>
+      <rect x="6"  y="14" width="22" height="5" fill="#FAFAFA" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="30" y="15" width="10" height="3" fill="#BBDEFB" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="6"  y="20" width="22" height="5" fill="#FAFAFA" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="36" y="21" width="20" height="3" fill="#C8E6C9" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="6"  y="26" width="22" height="5" fill="#FAFAFA" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="42" y="27" width="30" height="3" fill="#FFE0B2" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="6"  y="32" width="22" height="5" fill="#FAFAFA" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="42" y="33" width="36" height="3" fill="#FFCDD2" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="6"  y="38" width="22" height="5" fill="#FAFAFA" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="64" y="39" width="14" height="3" fill="#E1BEE7" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="6"  y="44" width="22" height="5" fill="#FAFAFA" stroke="currentColor" stroke-width="0.2"/>
+      <rect x="76" y="45" width="14" height="3" fill="#FFF59D" stroke="currentColor" stroke-width="0.2"/>
+    `,
+    build: buildGantt,
   },
 ];
 

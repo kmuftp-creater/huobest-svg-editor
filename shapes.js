@@ -91,38 +91,42 @@ const SHAPES = [
   ]},
 ];
 
-/* 樣式預設色卡（柔和配色 8 欄 × 3 列 = 24 色）
-   每筆含 fill（填滿）與 stroke（描邊，略深於 fill）以維持視覺一致 */
+/* 樣式預設色卡（v0.3.1 重新設計）
+   結構：8 色相 × 3 亮度 = 24 色，每色完全區隔不重複
+   參考 Material Design 50 / 100 / 200 色階
+   - 列（亮度）：最淺 → 淺 → 中等
+   - 欄（色相）：中性 / 紅 / 橘 / 黃 / 綠 / 青 / 藍 / 紫
+   每筆含 fill（填滿）與 stroke（描邊，使用對應色相的 400 / 600 / 700 等深色）*/
 const PRESET_STYLES = [
-  // 第 1 列 — 中性 / 米色系（亮 → 暗）
-  { fill: '#FFFFFF', stroke: '#222831' },  // 純白
-  { fill: '#F5F5F5', stroke: '#9CA3AF' },  // 淺灰
-  { fill: '#E5E5E5', stroke: '#6B7280' },  // 灰
-  { fill: '#FAF6F0', stroke: '#B8A88A' },  // 奶油白
-  { fill: '#F5EBE0', stroke: '#C9B190' },  // 米色
-  { fill: '#EFE0CD', stroke: '#B89870' },  // 杏色
-  { fill: '#D9CAB3', stroke: '#9B7A50' },  // 沙色
-  { fill: '#C9B79E', stroke: '#8B6A45' },  // 淺褐
+  // 第 1 列 — 最淺（接近白）
+  { fill: '#FFFFFF', stroke: '#212121' },  // 純白
+  { fill: '#FFEBEE', stroke: '#E57373' },  // 淺紅
+  { fill: '#FFF3E0', stroke: '#FFA726' },  // 淺橘
+  { fill: '#FFFDE7', stroke: '#FFEE58' },  // 淺黃
+  { fill: '#E8F5E9', stroke: '#81C784' },  // 淺綠
+  { fill: '#E0F2F1', stroke: '#4DB6AC' },  // 淺青
+  { fill: '#E3F2FD', stroke: '#64B5F6' },  // 淺藍
+  { fill: '#F3E5F5', stroke: '#BA68C8' },  // 淺紫
 
-  // 第 2 列 — 暖系（粉 / 桃 / 黃）
-  { fill: '#FFE5E5', stroke: '#F8A8A8' },  // 淺粉
-  { fill: '#FFD0D0', stroke: '#F08080' },  // 玫瑰粉
-  { fill: '#FFC8B8', stroke: '#E07060' },  // 蜜桃
-  { fill: '#FFE5D0', stroke: '#FFB74D' },  // 淺橘
-  { fill: '#FFD8B8', stroke: '#F0A060' },  // 杏橘
-  { fill: '#FFF4C9', stroke: '#E0A700' },  // 奶油黃
-  { fill: '#FFEFA8', stroke: '#D49000' },  // 檸檬黃
-  { fill: '#FFE090', stroke: '#C08000' },  // 蜜黃
+  // 第 2 列 — 淺（標準柔和）
+  { fill: '#EEEEEE', stroke: '#9E9E9E' },  // 淺灰
+  { fill: '#FFCDD2', stroke: '#E53935' },  // 玫瑰
+  { fill: '#FFE0B2', stroke: '#F57C00' },  // 杏橘
+  { fill: '#FFF9C4', stroke: '#FBC02D' },  // 奶油黃
+  { fill: '#C8E6C9', stroke: '#43A047' },  // 薄荷
+  { fill: '#B2DFDB', stroke: '#00897B' },  // 蒂芬妮
+  { fill: '#BBDEFB', stroke: '#1E88E5' },  // 天空藍
+  { fill: '#E1BEE7', stroke: '#8E24AA' },  // 薰衣草
 
-  // 第 3 列 — 冷系（綠 / 藍 / 紫）
-  { fill: '#D9EFE0', stroke: '#5AC8A5' },  // 薄荷
-  { fill: '#C5E0D0', stroke: '#4FAA8F' },  // 草綠
-  { fill: '#B8D8C8', stroke: '#3D8E70' },  // 青綠
-  { fill: '#D6E4F5', stroke: '#4A90E2' },  // 粉藍
-  { fill: '#C5D9F1', stroke: '#3A7BC8' },  // 天空藍
-  { fill: '#B8C8E8', stroke: '#5A78B0' },  // 薰衣草藍
-  { fill: '#E6D9FA', stroke: '#9B6EF3' },  // 薰衣草
-  { fill: '#DCC9F0', stroke: '#7B4DC0' },  // 淺紫
+  // 第 3 列 — 中等（飽和但柔和）
+  { fill: '#BDBDBD', stroke: '#424242' },  // 中灰
+  { fill: '#EF9A9A', stroke: '#C62828' },  // 珊瑚紅
+  { fill: '#FFCC80', stroke: '#E65100' },  // 橘
+  { fill: '#FFF59D', stroke: '#F9A825' },  // 麥黃
+  { fill: '#A5D6A7', stroke: '#2E7D32' },  // 草綠
+  { fill: '#80CBC4', stroke: '#00695C' },  // 青綠
+  { fill: '#90CAF9', stroke: '#1565C0' },  // 海藍
+  { fill: '#CE93D8', stroke: '#6A1B9A' },  // 紫
 ];
 
 if (typeof window !== 'undefined') {
