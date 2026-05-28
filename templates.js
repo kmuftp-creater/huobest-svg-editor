@@ -51,13 +51,18 @@ function _ellipse(x, y, w, h, text, fill, stroke, fontSize) {
 }
 
 function _line(x1, y1, x2, y2, color) {
-  const x = Math.min(x1, x2);
-  const y = Math.min(y1, y2);
+  const minX = Math.min(x1, x2);
+  const minY = Math.min(y1, y2);
   const w = Math.max(2, Math.abs(x2 - x1));
   const h = Math.max(2, Math.abs(y2 - y1));
   return {
     type: 'line',
-    x, y, w, h,
+    x: minX, y: minY, w, h,
+    // 保留兩端相對 bbox 的位置，渲染時走真正的對角線
+    lineX1: x1 - minX,
+    lineY1: y1 - minY,
+    lineX2: x2 - minX,
+    lineY2: y2 - minY,
     fill: 'transparent',
     fillEnabled: false,
     stroke: color || '#4B5563',

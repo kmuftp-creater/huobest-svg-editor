@@ -114,6 +114,14 @@
       toId: props.toId || null,
       connectorStyle: props.connectorStyle || 'straight', // straight | elbow
       arrowEnd: props.arrowEnd !== false, // 預設有箭頭
+      // 線端點（相對 bbox），用於 type=line 物件繪製對角 / 垂直線
+      // 若 null 則退回預設水平線（0, h/2 → w, h/2）
+      lineX1: props.lineX1 != null ? props.lineX1 : null,
+      lineY1: props.lineY1 != null ? props.lineY1 : null,
+      lineX2: props.lineX2 != null ? props.lineX2 : null,
+      lineY2: props.lineY2 != null ? props.lineY2 : null,
+      // 外框：包覆其他物件的標記框
+      frameStyle: props.frameStyle || null, // 'frame' | null
     };
     return base;
   }
@@ -409,8 +417,11 @@
     }
     if (obj.type === 'line') {
       const l = document.createElementNS(SVG_NS, 'line');
-      l.setAttribute('x1', 0); l.setAttribute('y1', obj.h / 2);
-      l.setAttribute('x2', obj.w); l.setAttribute('y2', obj.h / 2);
+      const useExplicit = obj.lineX1 != null && obj.lineX2 != null;
+      l.setAttribute('x1', useExplicit ? obj.lineX1 : 0);
+      l.setAttribute('y1', useExplicit ? obj.lineY1 : obj.h / 2);
+      l.setAttribute('x2', useExplicit ? obj.lineX2 : obj.w);
+      l.setAttribute('y2', useExplicit ? obj.lineY2 : obj.h / 2);
       applyStroke(l);
       l.setAttribute('fill', 'none');
       return l;
@@ -1242,9 +1253,19 @@
     if (drag.mode === 'create') {
       const x = Math.min(drag.startPt.x, pt.x);
       const y = Math.min(drag.startPt.y, pt.y);
-      const w = Math.max(20, Math.abs(pt.x - drag.startPt.x));
-      const h = Math.max(20, Math.abs(pt.y - drag.startPt.y));
-      const obj = createObject(drag.type, { x, y, w, h });
+      const w = drag.type === 'line' ? Math.max(2, Math.abs(pt.x - drag.startPt.x))
+                                     : Math.max(20, Math.abs(pt.x - drag.startPt.x));
+      const h = drag.type === 'line' ? Math.max(2, Math.abs(pt.y - drag.startPt.y))
+                                     : Math.max(20, Math.abs(pt.y - drag.startPt.y));
+      const extra = {};
+      if (drag.type === 'line') {
+        // 紀錄真實的起終點位置（相對 bbox），支援任意方向直線
+        extra.lineX1 = drag.startPt.x - x;
+        extra.lineY1 = drag.startPt.y - y;
+        extra.lineX2 = pt.x - x;
+        extra.lineY2 = pt.y - y;
+      }
+      const obj = createObject(drag.type, Object.assign({ x, y, w, h }, extra));
       obj.name = uid(drag.type);
       addObject(obj, '新增 ' + drag.type);
       setTool('select');
@@ -1608,6 +1629,99 @@
   $('#btn-sibling-node').onclick = addSiblingNode;
   $('#btn-parent-node').onclick = addParentNode;
   $('#btn-relation').onclick = addRelation;
+
+  // 外框：將選取的物件以虛線外框包覆
+  function addFrame() {
+    const targets = Array.from(state.selected)
+      .map(findObj)
+      .filter((o) => o && o.type !== 'connector');
+    if (targets.length === 0) {
+      statusInfo.textContent = '請先選取一或多個物件再加外框';
+      return;
+    }
+    let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+    targets.forEach((o) => {
+      x1 = Math.min(x1, o.x);
+      y1 = Math.min(y1, o.y);
+      x2 = Math.max(x2, o.x + o.w);
+      y2 = Math.max(y2, o.y + o.h);
+    });
+    const pad = 24, titleH = 28;
+    const frame = createObject('rect', {
+      x: x1 - pad,
+      y: y1 - pad - titleH,
+      w: x2 - x1 + pad * 2,
+      h: y2 - y1 + pad * 2 + titleH,
+      fill: 'transparent',
+      stroke: '#9CA3AF',
+    });
+    frame.rx = 8;
+    frame.strokeStyle = 'dash';
+    frame.strokeWidth = 1.5;
+    frame.fillEnabled = false;
+    frame.frameStyle = 'frame';
+    frame.text = '外框標題';
+    frame.fontSize = 14;
+    frame.textColor = 'currentColor';
+    frame.textAlign = 'left';
+    frame.textVAlign = 'top';
+    frame.name = uid('frame');
+    // 插入到所有目標物件之前（圖層位於下方）
+    const firstTargetIdx = Math.min(...targets.map((t) => state.objects.findIndex((o) => o.id === t.id)));
+    state.objects.splice(firstTargetIdx, 0, frame);
+    state.selected = new Set([frame.id]);
+    renderAll();
+    pushHistory('新增外框', `包覆 ${targets.length} 個物件`);
+    setTimeout(() => openInlineTextEditor(frame), 80);
+  }
+  $('#btn-frame').onclick = addFrame;
+
+  // 格式刷：複製樣式 + 貼上樣式
+  function copyStyleFromSelected() {
+    const first = getSelectedNode();
+    if (!first) {
+      statusInfo.textContent = '請先選取一個物件以複製樣式';
+      return;
+    }
+    state.clipboard = {
+      fill: first.fill,
+      fillEnabled: first.fillEnabled,
+      stroke: first.stroke,
+      strokeEnabled: first.strokeEnabled,
+      strokeWidth: first.strokeWidth,
+      strokeStyle: first.strokeStyle,
+      opacity: first.opacity,
+      shadow: first.shadow,
+      fontFamily: first.fontFamily,
+      fontSize: first.fontSize,
+      fontWeight: first.fontWeight,
+      fontStyle: first.fontStyle,
+      textColor: first.textColor,
+      textAlign: first.textAlign,
+      textVAlign: first.textVAlign,
+    };
+    statusInfo.textContent = `已複製 ${first.name} 的樣式（Ctrl+Shift+V 貼上）`;
+  }
+  function pasteStyleToSelected() {
+    if (!state.clipboard) {
+      statusInfo.textContent = '剪貼簿為空，請先複製樣式（Ctrl+Shift+C）';
+      return;
+    }
+    let count = 0;
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      if (!o || o.locked || o.type === 'connector') return;
+      Object.assign(o, state.clipboard);
+      count += 1;
+    });
+    if (count > 0) {
+      renderAll();
+      pushHistory('貼上樣式', `${count} 個物件`);
+      statusInfo.textContent = `已套用樣式至 ${count} 個物件`;
+    }
+  }
+  $('#btn-copy-style').onclick = copyStyleFromSelected;
+  $('#btn-paste-style').onclick = pasteStyleToSelected;
 
   // 連線樣式切換
   $$('[data-conn-style]').forEach((btn) => {
@@ -2413,19 +2527,7 @@
     return null;
   }
 
-  $('#btn-copy-style').onclick = () => {
-    if (state.selected.size === 0) return;
-    const src = findObj(Array.from(state.selected)[0]);
-    state.clipboard = {
-      fill: src.fill, fillEnabled: src.fillEnabled,
-      stroke: src.stroke, strokeEnabled: src.strokeEnabled,
-      strokeWidth: src.strokeWidth, strokeStyle: src.strokeStyle,
-      opacity: src.opacity, shadow: src.shadow,
-      fontFamily: src.fontFamily, fontSize: src.fontSize,
-      textColor: src.textColor, textAlign: src.textAlign,
-    };
-    statusInfo.textContent = '樣式已複製';
-  };
+  // btn-copy-style 綁定已於上方節點操作區實作（含 paste-style）
 
   // ====== History buttons & hotkeys ======
   $('#btn-undo').onclick = undo;
@@ -2442,6 +2544,11 @@
       if (e.key === 'g' && !e.shiftKey) { e.preventDefault(); doGroup(); return; }
       if (e.key === 'g' && e.shiftKey) { e.preventDefault(); doUngroup(); return; }
       if (e.key === 'a') { e.preventDefault(); state.selected = new Set(state.objects.map((o) => o.id)); renderAll(); return; }
+      // 格式刷
+      if ((e.key === 'c' || e.key === 'C') && e.shiftKey) { e.preventDefault(); copyStyleFromSelected(); return; }
+      if ((e.key === 'v' || e.key === 'V') && e.shiftKey) { e.preventDefault(); pasteStyleToSelected(); return; }
+      // 外框
+      if (e.altKey && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); addFrame(); return; }
     }
     // 節點操作快捷鍵
     if (e.key === 'Tab' && !e.shiftKey) {
