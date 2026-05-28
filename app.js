@@ -266,6 +266,9 @@
     const sw = obj.strokeWidth || 1.5;
     const dasharray = obj.strokeStyle === 'dash' ? '6 4' : (obj.strokeStyle === 'dot' ? '1 4' : '');
 
+    // 計算箭頭基準方向（曲線在後面覆蓋）
+    let arrowAngle = Math.atan2(geo.to.y - geo.from.y, geo.to.x - geo.from.x);
+
     // 主線
     if (obj.connectorStyle === 'elbow') {
       // 折線：中點轉折
@@ -278,6 +281,27 @@
       poly.setAttribute('stroke-width', sw);
       if (dasharray) poly.setAttribute('stroke-dasharray', dasharray);
       g.appendChild(poly);
+      // 折線末段水平 / 垂直，箭頭方向依據是否水平到 to.x
+      arrowAngle = Math.atan2(geo.to.y - geo.to.y, geo.to.x - midX);
+    } else if (obj.connectorStyle === 'curve') {
+      // 曲線：二次貝茲，控制點為兩端中點向垂直方向偏移
+      const mx = (geo.from.x + geo.to.x) / 2;
+      const my = (geo.from.y + geo.to.y) / 2;
+      const dx = geo.to.x - geo.from.x;
+      const dy = geo.to.y - geo.from.y;
+      const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+      const offset = Math.min(80, dist * 0.25);
+      const cx = mx - (dy / dist) * offset;
+      const cy = my + (dx / dist) * offset;
+      const path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', `M${geo.from.x},${geo.from.y} Q${cx},${cy} ${geo.to.x},${geo.to.y}`);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', stroke);
+      path.setAttribute('stroke-width', sw);
+      if (dasharray) path.setAttribute('stroke-dasharray', dasharray);
+      g.appendChild(path);
+      // 箭頭方向取控制點到終點的切線
+      arrowAngle = Math.atan2(geo.to.y - cy, geo.to.x - cx);
     } else {
       const line = document.createElementNS(SVG_NS, 'line');
       line.setAttribute('x1', geo.from.x);
@@ -292,15 +316,12 @@
 
     // 箭頭（終點）
     if (obj.arrowEnd) {
-      const dx = geo.to.x - geo.from.x;
-      const dy = geo.to.y - geo.from.y;
-      const angle = Math.atan2(dy, dx);
       const arrowLen = 10;
-      const arrowAngle = Math.PI / 7;
-      const ax1 = geo.to.x - arrowLen * Math.cos(angle - arrowAngle);
-      const ay1 = geo.to.y - arrowLen * Math.sin(angle - arrowAngle);
-      const ax2 = geo.to.x - arrowLen * Math.cos(angle + arrowAngle);
-      const ay2 = geo.to.y - arrowLen * Math.sin(angle + arrowAngle);
+      const headAng = Math.PI / 7;
+      const ax1 = geo.to.x - arrowLen * Math.cos(arrowAngle - headAng);
+      const ay1 = geo.to.y - arrowLen * Math.sin(arrowAngle - headAng);
+      const ax2 = geo.to.x - arrowLen * Math.cos(arrowAngle + headAng);
+      const ay2 = geo.to.y - arrowLen * Math.sin(arrowAngle + headAng);
       const arrow = document.createElementNS(SVG_NS, 'polyline');
       arrow.setAttribute('points', `${ax1},${ay1} ${geo.to.x},${geo.to.y} ${ax2},${ay2}`);
       arrow.setAttribute('fill', 'none');
@@ -560,10 +581,27 @@
       if (obj.type === 'connector') box.classList.add('connector-select');
       overlay.appendChild(box);
 
-      // Ghost 物件 或 連接線：不渲染縮放與旋轉控點
-      // - Ghost：請於右側「文字」分頁編輯內容
-      // - Connector：尺寸由兩端物件決定，無法獨立縮放
-      if (obj.ghostFor || obj.type === 'connector') return;
+      // 連接線：渲染兩端的可拖曳端點（用於重接其他節點）
+      if (obj.type === 'connector') {
+        const geo = computeConnectorGeometry(obj);
+        if (geo) {
+          ['from', 'to'].forEach((end) => {
+            const pt = geo[end];
+            const ep = document.createElementNS(SVG_NS, 'circle');
+            ep.setAttribute('class', 'endpoint-handle');
+            ep.setAttribute('cx', pt.x);
+            ep.setAttribute('cy', pt.y);
+            ep.setAttribute('r', 6);
+            ep.setAttribute('data-endpoint', end);
+            ep.setAttribute('data-id', obj.id);
+            overlay.appendChild(ep);
+          });
+        }
+        return;
+      }
+
+      // Ghost 物件：不渲染縮放與旋轉控點（編輯文字請於右側「文字」分頁）
+      if (obj.ghostFor) return;
 
       // 8 個縮放點 + 1 個旋轉點
       const positions = [
@@ -978,6 +1016,10 @@
   function hitTest(target) {
     let el = target;
     while (el && el !== stage) {
+      // 連線端點優先於一般 handle 與物件
+      if (el.dataset && el.dataset.endpoint) {
+        return { kind: 'endpoint', end: el.dataset.endpoint, id: el.dataset.id };
+      }
       if (el.dataset && el.dataset.handle) {
         return { kind: 'handle', dir: el.dataset.handle, id: el.dataset.id };
       }
@@ -998,6 +1040,13 @@
     const pt = clientToSvg(e.clientX, e.clientY);
 
     if (state.tool === 'select') {
+      if (hit.kind === 'endpoint') {
+        // 拖曳連線端點以重接其他節點
+        const conn = findObj(hit.id);
+        if (!conn || conn.locked) return;
+        drag = { mode: 'reconnect', connectorId: hit.id, end: hit.end, startPt: pt, orig: deepClone(conn) };
+        return;
+      }
       if (hit.kind === 'handle') {
         const obj = findObj(hit.id);
         if (!obj || obj.locked) return;
@@ -1118,6 +1167,50 @@
       preview.setAttribute('x', x); preview.setAttribute('y', y);
       preview.setAttribute('width', w); preview.setAttribute('height', h);
       overlay.appendChild(preview);
+    } else if (drag.mode === 'reconnect') {
+      // 即時繪製預覽線：從固定端到游標
+      const conn = findObj(drag.connectorId);
+      if (!conn) return;
+      const geo = computeConnectorGeometry(conn);
+      if (!geo) return;
+      const fixed = drag.end === 'from' ? geo.to : geo.from;
+      // 偵測游標下的目標物件
+      const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+      let candidate = null;
+      let p = targetEl;
+      while (p && p !== stage) {
+        if (p.dataset && p.dataset.id && p.dataset.id !== conn.id) {
+          const obj = findObj(p.dataset.id);
+          if (obj && obj.type !== 'connector') { candidate = obj; break; }
+        }
+        p = p.parentNode;
+      }
+      // 重繪 overlay：選取框 + 預覽線 + 高亮目標
+      renderOverlay();
+      const previewLine = document.createElementNS(SVG_NS, 'line');
+      previewLine.setAttribute('x1', fixed.x);
+      previewLine.setAttribute('y1', fixed.y);
+      previewLine.setAttribute('x2', pt.x);
+      previewLine.setAttribute('y2', pt.y);
+      previewLine.setAttribute('stroke', candidate ? '#5AC8A5' : '#4A90E2');
+      previewLine.setAttribute('stroke-width', '2');
+      previewLine.setAttribute('stroke-dasharray', '5 3');
+      previewLine.setAttribute('pointer-events', 'none');
+      overlay.appendChild(previewLine);
+      if (candidate) {
+        const highlight = document.createElementNS(SVG_NS, 'rect');
+        highlight.setAttribute('x', candidate.x - 4);
+        highlight.setAttribute('y', candidate.y - 4);
+        highlight.setAttribute('width', candidate.w + 8);
+        highlight.setAttribute('height', candidate.h + 8);
+        highlight.setAttribute('fill', 'none');
+        highlight.setAttribute('stroke', '#5AC8A5');
+        highlight.setAttribute('stroke-width', '2');
+        highlight.setAttribute('stroke-dasharray', '4 2');
+        highlight.setAttribute('pointer-events', 'none');
+        overlay.appendChild(highlight);
+      }
+      drag.candidateId = candidate ? candidate.id : null;
     } else if (drag.mode === 'marquee') {
       drag.currentPt = pt;
       const x = Math.min(drag.startPt.x, pt.x);
@@ -1157,6 +1250,16 @@
       setTool('select');
     } else if (drag.mode === 'move' || drag.mode === 'resize' || drag.mode === 'rotate') {
       pushHistory(drag.mode === 'move' ? '移動' : drag.mode === 'resize' ? '縮放' : '旋轉', '');
+    } else if (drag.mode === 'reconnect') {
+      const conn = findObj(drag.connectorId);
+      if (conn && drag.candidateId) {
+        if (drag.end === 'from') conn.fromId = drag.candidateId;
+        else conn.toId = drag.candidateId;
+        pushHistory('重新連接', `${conn.fromId} → ${conn.toId}`);
+        statusInfo.textContent = `已將連線端點重接至 ${drag.candidateId}`;
+      } else {
+        statusInfo.textContent = '取消重接（未指向任何物件）';
+      }
     } else if (drag.mode === 'marquee') {
       if (state.selected.size > 0) {
         statusSel.textContent = `已選取 ${state.selected.size} 個物件`;
@@ -1506,6 +1609,33 @@
   $('#btn-parent-node').onclick = addParentNode;
   $('#btn-relation').onclick = addRelation;
 
+  // 連線樣式切換
+  $$('[data-conn-style]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const style = btn.dataset.connStyle;
+      let count = 0;
+      state.selected.forEach((id) => {
+        const o = findObj(id);
+        if (o && o.type === 'connector') {
+          o.connectorStyle = style;
+          count += 1;
+        }
+      });
+      if (count > 0) {
+        renderAll();
+        pushHistory('連線樣式', style);
+        statusInfo.textContent = `已切換 ${count} 條連線為「${({ straight: '直線', elbow: '折線', curve: '曲線' })[style]}」`;
+      }
+    });
+  });
+  $('#conn-arrow').addEventListener('change', (e) => {
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      if (o && o.type === 'connector') o.arrowEnd = e.target.checked;
+    });
+    renderAll();
+  });
+
   $('#btn-zoom-in').onclick = () => setZoom(state.zoom * ZOOM_STEP);
   $('#btn-zoom-out').onclick = () => setZoom(state.zoom / ZOOM_STEP);
   $('#btn-zoom-100').onclick = () => setZoom(1);
@@ -1632,6 +1762,23 @@
       return;
     }
     statusSel.textContent = `已選取：${first.name}（${first.type}）`;
+
+    // 連線專屬：選到 connector 時顯示樣式切換區
+    const connOptions = document.getElementById('connector-options');
+    if (connOptions) {
+      if (first.type === 'connector') {
+        connOptions.style.display = '';
+        const curStyle = first.connectorStyle || 'straight';
+        ['straight', 'elbow', 'curve'].forEach((s) => {
+          const btn = document.getElementById('conn-style-' + s);
+          if (btn) btn.classList.toggle('active', curStyle === s);
+        });
+        const arrow = document.getElementById('conn-arrow');
+        if (arrow) arrow.checked = first.arrowEnd !== false;
+      } else {
+        connOptions.style.display = 'none';
+      }
+    }
 
     // 文字內容輸入區同步
     if (textContentInput) {

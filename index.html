@@ -245,6 +245,23 @@
             <label class="check"><input type="checkbox" id="effect-shadow" /><span>陰影</span></label>
           </div>
 
+          <!-- 連線專屬：樣式切換（僅選到 connector 時啟用） -->
+          <div class="connector-only" id="connector-options" style="display:none">
+            <div class="section-title">連線樣式</div>
+            <div class="form-row btn-bar">
+              <button class="btn-square" id="conn-style-straight" data-conn-style="straight" title="直線">
+                <svg viewBox="0 0 24 14" width="22" height="12"><line x1="2" y1="7" x2="22" y2="7" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+              <button class="btn-square" id="conn-style-elbow" data-conn-style="elbow" title="折線">
+                <svg viewBox="0 0 24 14" width="22" height="12"><polyline points="2,3 12,3 12,11 22,11" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+              <button class="btn-square" id="conn-style-curve" data-conn-style="curve" title="曲線">
+                <svg viewBox="0 0 24 14" width="22" height="12"><path d="M2 3 Q12 -4 22 11" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+              <label class="check" style="margin-left:auto"><input type="checkbox" id="conn-arrow" checked /><span>箭頭</span></label>
+            </div>
+          </div>
+
           <div class="form-row">
             <select class="select" id="edit-menu">
               <option>編輯…</option>
@@ -568,7 +585,7 @@
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.4.0</span>
+    <span>系統版本 v0.5.0</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>

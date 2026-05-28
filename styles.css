@@ -455,6 +455,8 @@ body[data-theme='dark'] .theme-ico {
   width: 1200px;
   height: 800px;
   flex: 0 0 auto;
+  /* 主畫布的 currentColor 鎖定為主文字色，讓 fill="currentColor" 的 <text> 自動依主題切換 */
+  color: var(--text-main);
 }
 #canvas-grid {
   color: var(--grid);
@@ -911,6 +913,17 @@ body[data-theme='dark'] .theme-ico {
 .handle.h-rotate {
   fill: var(--primary);
   cursor: grab;
+}
+.endpoint-handle {
+  fill: var(--surface);
+  stroke: var(--info);
+  stroke-width: 2;
+  cursor: crosshair;
+  pointer-events: all;
+}
+.endpoint-handle:hover {
+  fill: var(--info);
+  stroke: var(--info);
 }
 
 /* 物件 hover 游標 */

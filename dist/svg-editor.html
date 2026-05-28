@@ -2,8 +2,8 @@
 <!--
   ============================================================
    霍家私塾 SVG 編輯器（HuoBest SVG Editor）
-   版本：v0.4.0
-   建置時間：2026-05-28 07:37:47
+   版本：v0.5.0
+   建置時間：2026-05-28 09:16:02
    官方網站：https://huobest.com/
    授權：MIT License
   ============================================================
@@ -478,6 +478,8 @@ body[data-theme='dark'] .theme-ico {
   width: 1200px;
   height: 800px;
   flex: 0 0 auto;
+  /* 主畫布的 currentColor 鎖定為主文字色，讓 fill="currentColor" 的 <text> 自動依主題切換 */
+  color: var(--text-main);
 }
 #canvas-grid {
   color: var(--grid);
@@ -935,6 +937,17 @@ body[data-theme='dark'] .theme-ico {
   fill: var(--primary);
   cursor: grab;
 }
+.endpoint-handle {
+  fill: var(--surface);
+  stroke: var(--info);
+  stroke-width: 2;
+  cursor: crosshair;
+  pointer-events: all;
+}
+.endpoint-handle:hover {
+  fill: var(--info);
+  stroke: var(--info);
+}
 
 /* 物件 hover 游標 */
 #layer-root [data-id] { cursor: move; }
@@ -1233,6 +1246,23 @@ body[data-theme='dark'] .theme-ico {
           <div class="form-row two-col">
             <label class="check"><input type="checkbox" id="effect-sketch" /><span>草圖</span></label>
             <label class="check"><input type="checkbox" id="effect-shadow" /><span>陰影</span></label>
+          </div>
+
+          <!-- 連線專屬：樣式切換（僅選到 connector 時啟用） -->
+          <div class="connector-only" id="connector-options" style="display:none">
+            <div class="section-title">連線樣式</div>
+            <div class="form-row btn-bar">
+              <button class="btn-square" id="conn-style-straight" data-conn-style="straight" title="直線">
+                <svg viewBox="0 0 24 14" width="22" height="12"><line x1="2" y1="7" x2="22" y2="7" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+              <button class="btn-square" id="conn-style-elbow" data-conn-style="elbow" title="折線">
+                <svg viewBox="0 0 24 14" width="22" height="12"><polyline points="2,3 12,3 12,11 22,11" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+              <button class="btn-square" id="conn-style-curve" data-conn-style="curve" title="曲線">
+                <svg viewBox="0 0 24 14" width="22" height="12"><path d="M2 3 Q12 -4 22 11" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+              <label class="check" style="margin-left:auto"><input type="checkbox" id="conn-arrow" checked /><span>箭頭</span></label>
+            </div>
           </div>
 
           <div class="form-row">
@@ -1558,7 +1588,7 @@ body[data-theme='dark'] .theme-ico {
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.4.0</span>
+    <span>系統版本 v0.5.0</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
@@ -1898,7 +1928,7 @@ function buildHorizontalFlow() {
   // 標題
   const title = _rect(400, 180, 400, 60, '流程圖標題', 'transparent', 'transparent', 28);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   return objs;
 }
@@ -1942,7 +1972,7 @@ function buildTimeline() {
   // 標題
   const title = _rect(400, 60, 400, 50, '時間軸標題', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   // 主軸線
   objs.push(_line(80, 400, 1120, 400, '#9CA3AF'));
@@ -1990,7 +2020,7 @@ function buildQuadrant() {
   // 標題
   const title = _rect(400, 50, 400, 50, '四象限分析', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   // 四個區塊
   objs.push(_rect(cx - halfW, cy - halfH, halfW, halfH, '', '#D6E4F5', '#4A90E2', 14));
@@ -2028,7 +2058,7 @@ function buildSWOT() {
   // 標題
   const title = _rect(400, 50, 400, 50, 'SWOT 分析', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   // 四象限
   const cx = 600, cy = 430;
@@ -2069,7 +2099,7 @@ function buildUMLClass() {
   // 標題
   const title = _rect(420, 50, 360, 50, 'UML 類別圖', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 抽象類別 Animal（最上層）
@@ -2125,7 +2155,7 @@ function buildSwimLane() {
   // 標題
   const title = _rect(400, 30, 400, 40, '跨部門協作泳道圖', 'transparent', 'transparent', 22);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 4 條泳道
@@ -2180,7 +2210,7 @@ function buildFamilyTree() {
   // 標題
   const title = _rect(400, 40, 400, 50, '家族族譜', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 第 1 代（祖輩，最上）
@@ -2312,7 +2342,7 @@ function buildPersonalPlan() {
   const objs = [];
   const title = _rect(400, 30, 400, 50, '2026 年度規劃', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 中心：年度主題
@@ -2342,50 +2372,54 @@ function buildPersonalPlan() {
 
 // ========================================
 // 範本 12：心智圖（中心 + 多層分支）
+// 完整在 1200×800 畫布內，左右上下對稱
 // ========================================
 function buildMindMap() {
   const objs = [];
-  // 中心節點
-  objs.push(_roundRect(500, 360, 200, 80, '專案規劃', '#FFF59D', '#F9A825', 22));
+  // 中心節點（畫布中央）
+  objs.push(_roundRect(525, 360, 150, 80, '專案規劃', '#FFF59D', '#F9A825', 22));
   objs[objs.length - 1].fontWeight = 'bold';
 
-  // 4 大分支
+  // 4 大分支與其子節點
   const branches = [
-    { name: '目標',   x: 100,  y: 100, color: '#BBDEFB', stroke: '#1E88E5', subs: [
-      { text: '增加營收',    x: 50,   y: 30 },
-      { text: '降低成本',    x: 50,   y: 100 },
-      { text: '提升效率',    x: 50,   y: 170 },
-    ]},
-    { name: '人員',   x: 900,  y: 100, color: '#C8E6C9', stroke: '#43A047', subs: [
-      { text: 'PM × 1',    x: 220,  y: 30 },
-      { text: '工程 × 5',   x: 220,  y: 100 },
-      { text: '設計 × 2',   x: 220,  y: 170 },
-    ]},
-    { name: '時程',   x: 100,  y: 600, color: '#FFE0B2', stroke: '#F57C00', subs: [
-      { text: 'Q1 規劃',    x: 50,   y: 230 },
-      { text: 'Q2 開發',    x: 50,   y: 300 },
-      { text: 'Q3 上線',    x: 50,   y: 370 },
-    ]},
-    { name: '預算',   x: 900,  y: 600, color: '#E1BEE7', stroke: '#8E24AA', subs: [
-      { text: '人事 60%',    x: 220,  y: 230 },
-      { text: '設備 20%',    x: 220,  y: 300 },
-      { text: '行銷 20%',    x: 220,  y: 370 },
-    ]},
+    { name: '目標', x: 260, y: 110, color: '#BBDEFB', stroke: '#1E88E5', side: 'topLeft',
+      subs: ['增加營收', '降低成本', '提升效率'] },
+    { name: '人員', x: 800, y: 110, color: '#C8E6C9', stroke: '#43A047', side: 'topRight',
+      subs: ['PM × 1', '工程 × 5', '設計 × 2'] },
+    { name: '時程', x: 260, y: 640, color: '#FFE0B2', stroke: '#F57C00', side: 'bottomLeft',
+      subs: ['Q1 規劃', 'Q2 開發', 'Q3 上線'] },
+    { name: '預算', x: 800, y: 640, color: '#E1BEE7', stroke: '#8E24AA', side: 'bottomRight',
+      subs: ['人事 60%', '設備 20%', '行銷 20%'] },
   ];
+
+  const branchW = 140, branchH = 50;
+  const subW = 110, subH = 32, subGap = 8;
+
   branches.forEach((b) => {
-    // 一級分支
-    objs.push(_roundRect(b.x, b.y, 200, 60, b.name, b.color, b.stroke, 18));
+    // 一級分支節點
+    objs.push(_roundRect(b.x, b.y, branchW, branchH, b.name, b.color, b.stroke, 18));
     objs[objs.length - 1].fontWeight = 'bold';
-    // 連到中心
-    objs.push(_line(b.x + 100, b.y + 30, 600, 400, b.stroke));
-    // 二級分支
-    b.subs.forEach((s) => {
-      // 計算二級節點位置（取決於一級節點位置）
-      const subX = b.x < 600 ? b.x - 160 : b.x + 220;
-      const subY = b.y + (s.y - 30);
-      objs.push(_roundRect(subX, subY, 140, 36, s.text, '#FFFFFF', b.stroke, 12));
-      // 連線
-      objs.push(_line(b.x + (b.x < 600 ? 0 : 200), b.y + 30, subX + (b.x < 600 ? 140 : 0), subY + 18, b.stroke));
+    // 中心連線
+    const branchCx = b.x + branchW / 2;
+    const branchCy = b.y + branchH / 2;
+    objs.push(_line(branchCx, branchCy, 600, 400, b.stroke));
+
+    // 二級子節點：左側分支放在分支「左邊」，右側分支放在分支「右邊」
+    // Y 軸依分支位置決定（上方分支往下排，下方分支往上排）
+    const isLeft = b.side === 'topLeft' || b.side === 'bottomLeft';
+    const isTop  = b.side === 'topLeft' || b.side === 'topRight';
+    const subX = isLeft ? b.x - subW - 30 : b.x + branchW + 30;
+    const subTotalH = b.subs.length * (subH + subGap) - subGap;
+    // 子節點區塊垂直置中對齊分支中心
+    const subY0 = b.y + branchH / 2 - subTotalH / 2;
+
+    b.subs.forEach((s, i) => {
+      const sy = subY0 + i * (subH + subGap);
+      objs.push(_roundRect(subX, sy, subW, subH, s, '#FFFFFF', b.stroke, 12));
+      // 子節點 → 一級分支：水平直線連接
+      const lineFromX = isLeft ? subX + subW : subX;
+      const lineToX   = isLeft ? b.x         : b.x + branchW;
+      objs.push(_line(lineFromX, sy + subH / 2, lineToX, branchCy, b.stroke));
     });
   });
   return objs;
@@ -2398,7 +2432,7 @@ function buildConcept5W1H() {
   const objs = [];
   const title = _rect(400, 30, 400, 50, '5W1H 分析法', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 中心
@@ -2435,7 +2469,7 @@ function buildGantt() {
   const objs = [];
   const title = _rect(400, 30, 400, 50, '專案甘特圖', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 表頭欄位
@@ -3022,6 +3056,9 @@ if (typeof window !== 'undefined') {
     const sw = obj.strokeWidth || 1.5;
     const dasharray = obj.strokeStyle === 'dash' ? '6 4' : (obj.strokeStyle === 'dot' ? '1 4' : '');
 
+    // 計算箭頭基準方向（曲線在後面覆蓋）
+    let arrowAngle = Math.atan2(geo.to.y - geo.from.y, geo.to.x - geo.from.x);
+
     // 主線
     if (obj.connectorStyle === 'elbow') {
       // 折線：中點轉折
@@ -3034,6 +3071,27 @@ if (typeof window !== 'undefined') {
       poly.setAttribute('stroke-width', sw);
       if (dasharray) poly.setAttribute('stroke-dasharray', dasharray);
       g.appendChild(poly);
+      // 折線末段水平 / 垂直，箭頭方向依據是否水平到 to.x
+      arrowAngle = Math.atan2(geo.to.y - geo.to.y, geo.to.x - midX);
+    } else if (obj.connectorStyle === 'curve') {
+      // 曲線：二次貝茲，控制點為兩端中點向垂直方向偏移
+      const mx = (geo.from.x + geo.to.x) / 2;
+      const my = (geo.from.y + geo.to.y) / 2;
+      const dx = geo.to.x - geo.from.x;
+      const dy = geo.to.y - geo.from.y;
+      const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+      const offset = Math.min(80, dist * 0.25);
+      const cx = mx - (dy / dist) * offset;
+      const cy = my + (dx / dist) * offset;
+      const path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', `M${geo.from.x},${geo.from.y} Q${cx},${cy} ${geo.to.x},${geo.to.y}`);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', stroke);
+      path.setAttribute('stroke-width', sw);
+      if (dasharray) path.setAttribute('stroke-dasharray', dasharray);
+      g.appendChild(path);
+      // 箭頭方向取控制點到終點的切線
+      arrowAngle = Math.atan2(geo.to.y - cy, geo.to.x - cx);
     } else {
       const line = document.createElementNS(SVG_NS, 'line');
       line.setAttribute('x1', geo.from.x);
@@ -3048,15 +3106,12 @@ if (typeof window !== 'undefined') {
 
     // 箭頭（終點）
     if (obj.arrowEnd) {
-      const dx = geo.to.x - geo.from.x;
-      const dy = geo.to.y - geo.from.y;
-      const angle = Math.atan2(dy, dx);
       const arrowLen = 10;
-      const arrowAngle = Math.PI / 7;
-      const ax1 = geo.to.x - arrowLen * Math.cos(angle - arrowAngle);
-      const ay1 = geo.to.y - arrowLen * Math.sin(angle - arrowAngle);
-      const ax2 = geo.to.x - arrowLen * Math.cos(angle + arrowAngle);
-      const ay2 = geo.to.y - arrowLen * Math.sin(angle + arrowAngle);
+      const headAng = Math.PI / 7;
+      const ax1 = geo.to.x - arrowLen * Math.cos(arrowAngle - headAng);
+      const ay1 = geo.to.y - arrowLen * Math.sin(arrowAngle - headAng);
+      const ax2 = geo.to.x - arrowLen * Math.cos(arrowAngle + headAng);
+      const ay2 = geo.to.y - arrowLen * Math.sin(arrowAngle + headAng);
       const arrow = document.createElementNS(SVG_NS, 'polyline');
       arrow.setAttribute('points', `${ax1},${ay1} ${geo.to.x},${geo.to.y} ${ax2},${ay2}`);
       arrow.setAttribute('fill', 'none');
@@ -3316,10 +3371,27 @@ if (typeof window !== 'undefined') {
       if (obj.type === 'connector') box.classList.add('connector-select');
       overlay.appendChild(box);
 
-      // Ghost 物件 或 連接線：不渲染縮放與旋轉控點
-      // - Ghost：請於右側「文字」分頁編輯內容
-      // - Connector：尺寸由兩端物件決定，無法獨立縮放
-      if (obj.ghostFor || obj.type === 'connector') return;
+      // 連接線：渲染兩端的可拖曳端點（用於重接其他節點）
+      if (obj.type === 'connector') {
+        const geo = computeConnectorGeometry(obj);
+        if (geo) {
+          ['from', 'to'].forEach((end) => {
+            const pt = geo[end];
+            const ep = document.createElementNS(SVG_NS, 'circle');
+            ep.setAttribute('class', 'endpoint-handle');
+            ep.setAttribute('cx', pt.x);
+            ep.setAttribute('cy', pt.y);
+            ep.setAttribute('r', 6);
+            ep.setAttribute('data-endpoint', end);
+            ep.setAttribute('data-id', obj.id);
+            overlay.appendChild(ep);
+          });
+        }
+        return;
+      }
+
+      // Ghost 物件：不渲染縮放與旋轉控點（編輯文字請於右側「文字」分頁）
+      if (obj.ghostFor) return;
 
       // 8 個縮放點 + 1 個旋轉點
       const positions = [
@@ -3734,6 +3806,10 @@ if (typeof window !== 'undefined') {
   function hitTest(target) {
     let el = target;
     while (el && el !== stage) {
+      // 連線端點優先於一般 handle 與物件
+      if (el.dataset && el.dataset.endpoint) {
+        return { kind: 'endpoint', end: el.dataset.endpoint, id: el.dataset.id };
+      }
       if (el.dataset && el.dataset.handle) {
         return { kind: 'handle', dir: el.dataset.handle, id: el.dataset.id };
       }
@@ -3754,6 +3830,13 @@ if (typeof window !== 'undefined') {
     const pt = clientToSvg(e.clientX, e.clientY);
 
     if (state.tool === 'select') {
+      if (hit.kind === 'endpoint') {
+        // 拖曳連線端點以重接其他節點
+        const conn = findObj(hit.id);
+        if (!conn || conn.locked) return;
+        drag = { mode: 'reconnect', connectorId: hit.id, end: hit.end, startPt: pt, orig: deepClone(conn) };
+        return;
+      }
       if (hit.kind === 'handle') {
         const obj = findObj(hit.id);
         if (!obj || obj.locked) return;
@@ -3874,6 +3957,50 @@ if (typeof window !== 'undefined') {
       preview.setAttribute('x', x); preview.setAttribute('y', y);
       preview.setAttribute('width', w); preview.setAttribute('height', h);
       overlay.appendChild(preview);
+    } else if (drag.mode === 'reconnect') {
+      // 即時繪製預覽線：從固定端到游標
+      const conn = findObj(drag.connectorId);
+      if (!conn) return;
+      const geo = computeConnectorGeometry(conn);
+      if (!geo) return;
+      const fixed = drag.end === 'from' ? geo.to : geo.from;
+      // 偵測游標下的目標物件
+      const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+      let candidate = null;
+      let p = targetEl;
+      while (p && p !== stage) {
+        if (p.dataset && p.dataset.id && p.dataset.id !== conn.id) {
+          const obj = findObj(p.dataset.id);
+          if (obj && obj.type !== 'connector') { candidate = obj; break; }
+        }
+        p = p.parentNode;
+      }
+      // 重繪 overlay：選取框 + 預覽線 + 高亮目標
+      renderOverlay();
+      const previewLine = document.createElementNS(SVG_NS, 'line');
+      previewLine.setAttribute('x1', fixed.x);
+      previewLine.setAttribute('y1', fixed.y);
+      previewLine.setAttribute('x2', pt.x);
+      previewLine.setAttribute('y2', pt.y);
+      previewLine.setAttribute('stroke', candidate ? '#5AC8A5' : '#4A90E2');
+      previewLine.setAttribute('stroke-width', '2');
+      previewLine.setAttribute('stroke-dasharray', '5 3');
+      previewLine.setAttribute('pointer-events', 'none');
+      overlay.appendChild(previewLine);
+      if (candidate) {
+        const highlight = document.createElementNS(SVG_NS, 'rect');
+        highlight.setAttribute('x', candidate.x - 4);
+        highlight.setAttribute('y', candidate.y - 4);
+        highlight.setAttribute('width', candidate.w + 8);
+        highlight.setAttribute('height', candidate.h + 8);
+        highlight.setAttribute('fill', 'none');
+        highlight.setAttribute('stroke', '#5AC8A5');
+        highlight.setAttribute('stroke-width', '2');
+        highlight.setAttribute('stroke-dasharray', '4 2');
+        highlight.setAttribute('pointer-events', 'none');
+        overlay.appendChild(highlight);
+      }
+      drag.candidateId = candidate ? candidate.id : null;
     } else if (drag.mode === 'marquee') {
       drag.currentPt = pt;
       const x = Math.min(drag.startPt.x, pt.x);
@@ -3913,6 +4040,16 @@ if (typeof window !== 'undefined') {
       setTool('select');
     } else if (drag.mode === 'move' || drag.mode === 'resize' || drag.mode === 'rotate') {
       pushHistory(drag.mode === 'move' ? '移動' : drag.mode === 'resize' ? '縮放' : '旋轉', '');
+    } else if (drag.mode === 'reconnect') {
+      const conn = findObj(drag.connectorId);
+      if (conn && drag.candidateId) {
+        if (drag.end === 'from') conn.fromId = drag.candidateId;
+        else conn.toId = drag.candidateId;
+        pushHistory('重新連接', `${conn.fromId} → ${conn.toId}`);
+        statusInfo.textContent = `已將連線端點重接至 ${drag.candidateId}`;
+      } else {
+        statusInfo.textContent = '取消重接（未指向任何物件）';
+      }
     } else if (drag.mode === 'marquee') {
       if (state.selected.size > 0) {
         statusSel.textContent = `已選取 ${state.selected.size} 個物件`;
@@ -4262,6 +4399,33 @@ if (typeof window !== 'undefined') {
   $('#btn-parent-node').onclick = addParentNode;
   $('#btn-relation').onclick = addRelation;
 
+  // 連線樣式切換
+  $$('[data-conn-style]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const style = btn.dataset.connStyle;
+      let count = 0;
+      state.selected.forEach((id) => {
+        const o = findObj(id);
+        if (o && o.type === 'connector') {
+          o.connectorStyle = style;
+          count += 1;
+        }
+      });
+      if (count > 0) {
+        renderAll();
+        pushHistory('連線樣式', style);
+        statusInfo.textContent = `已切換 ${count} 條連線為「${({ straight: '直線', elbow: '折線', curve: '曲線' })[style]}」`;
+      }
+    });
+  });
+  $('#conn-arrow').addEventListener('change', (e) => {
+    state.selected.forEach((id) => {
+      const o = findObj(id);
+      if (o && o.type === 'connector') o.arrowEnd = e.target.checked;
+    });
+    renderAll();
+  });
+
   $('#btn-zoom-in').onclick = () => setZoom(state.zoom * ZOOM_STEP);
   $('#btn-zoom-out').onclick = () => setZoom(state.zoom / ZOOM_STEP);
   $('#btn-zoom-100').onclick = () => setZoom(1);
@@ -4388,6 +4552,23 @@ if (typeof window !== 'undefined') {
       return;
     }
     statusSel.textContent = `已選取：${first.name}（${first.type}）`;
+
+    // 連線專屬：選到 connector 時顯示樣式切換區
+    const connOptions = document.getElementById('connector-options');
+    if (connOptions) {
+      if (first.type === 'connector') {
+        connOptions.style.display = '';
+        const curStyle = first.connectorStyle || 'straight';
+        ['straight', 'elbow', 'curve'].forEach((s) => {
+          const btn = document.getElementById('conn-style-' + s);
+          if (btn) btn.classList.toggle('active', curStyle === s);
+        });
+        const arrow = document.getElementById('conn-arrow');
+        if (arrow) arrow.checked = first.arrowEnd !== false;
+      } else {
+        connOptions.style.display = 'none';
+      }
+    }
 
     // 文字內容輸入區同步
     if (textContentInput) {

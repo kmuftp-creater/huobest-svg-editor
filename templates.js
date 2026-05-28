@@ -192,7 +192,7 @@ function buildHorizontalFlow() {
   // 標題
   const title = _rect(400, 180, 400, 60, '流程圖標題', 'transparent', 'transparent', 28);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   return objs;
 }
@@ -236,7 +236,7 @@ function buildTimeline() {
   // 標題
   const title = _rect(400, 60, 400, 50, '時間軸標題', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   // 主軸線
   objs.push(_line(80, 400, 1120, 400, '#9CA3AF'));
@@ -284,7 +284,7 @@ function buildQuadrant() {
   // 標題
   const title = _rect(400, 50, 400, 50, '四象限分析', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   // 四個區塊
   objs.push(_rect(cx - halfW, cy - halfH, halfW, halfH, '', '#D6E4F5', '#4A90E2', 14));
@@ -322,7 +322,7 @@ function buildSWOT() {
   // 標題
   const title = _rect(400, 50, 400, 50, 'SWOT 分析', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
   // 四象限
   const cx = 600, cy = 430;
@@ -363,7 +363,7 @@ function buildUMLClass() {
   // 標題
   const title = _rect(420, 50, 360, 50, 'UML 類別圖', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 抽象類別 Animal（最上層）
@@ -419,7 +419,7 @@ function buildSwimLane() {
   // 標題
   const title = _rect(400, 30, 400, 40, '跨部門協作泳道圖', 'transparent', 'transparent', 22);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 4 條泳道
@@ -474,7 +474,7 @@ function buildFamilyTree() {
   // 標題
   const title = _rect(400, 40, 400, 50, '家族族譜', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 第 1 代（祖輩，最上）
@@ -606,7 +606,7 @@ function buildPersonalPlan() {
   const objs = [];
   const title = _rect(400, 30, 400, 50, '2026 年度規劃', 'transparent', 'transparent', 26);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 中心：年度主題
@@ -636,50 +636,54 @@ function buildPersonalPlan() {
 
 // ========================================
 // 範本 12：心智圖（中心 + 多層分支）
+// 完整在 1200×800 畫布內，左右上下對稱
 // ========================================
 function buildMindMap() {
   const objs = [];
-  // 中心節點
-  objs.push(_roundRect(500, 360, 200, 80, '專案規劃', '#FFF59D', '#F9A825', 22));
+  // 中心節點（畫布中央）
+  objs.push(_roundRect(525, 360, 150, 80, '專案規劃', '#FFF59D', '#F9A825', 22));
   objs[objs.length - 1].fontWeight = 'bold';
 
-  // 4 大分支
+  // 4 大分支與其子節點
   const branches = [
-    { name: '目標',   x: 100,  y: 100, color: '#BBDEFB', stroke: '#1E88E5', subs: [
-      { text: '增加營收',    x: 50,   y: 30 },
-      { text: '降低成本',    x: 50,   y: 100 },
-      { text: '提升效率',    x: 50,   y: 170 },
-    ]},
-    { name: '人員',   x: 900,  y: 100, color: '#C8E6C9', stroke: '#43A047', subs: [
-      { text: 'PM × 1',    x: 220,  y: 30 },
-      { text: '工程 × 5',   x: 220,  y: 100 },
-      { text: '設計 × 2',   x: 220,  y: 170 },
-    ]},
-    { name: '時程',   x: 100,  y: 600, color: '#FFE0B2', stroke: '#F57C00', subs: [
-      { text: 'Q1 規劃',    x: 50,   y: 230 },
-      { text: 'Q2 開發',    x: 50,   y: 300 },
-      { text: 'Q3 上線',    x: 50,   y: 370 },
-    ]},
-    { name: '預算',   x: 900,  y: 600, color: '#E1BEE7', stroke: '#8E24AA', subs: [
-      { text: '人事 60%',    x: 220,  y: 230 },
-      { text: '設備 20%',    x: 220,  y: 300 },
-      { text: '行銷 20%',    x: 220,  y: 370 },
-    ]},
+    { name: '目標', x: 260, y: 110, color: '#BBDEFB', stroke: '#1E88E5', side: 'topLeft',
+      subs: ['增加營收', '降低成本', '提升效率'] },
+    { name: '人員', x: 800, y: 110, color: '#C8E6C9', stroke: '#43A047', side: 'topRight',
+      subs: ['PM × 1', '工程 × 5', '設計 × 2'] },
+    { name: '時程', x: 260, y: 640, color: '#FFE0B2', stroke: '#F57C00', side: 'bottomLeft',
+      subs: ['Q1 規劃', 'Q2 開發', 'Q3 上線'] },
+    { name: '預算', x: 800, y: 640, color: '#E1BEE7', stroke: '#8E24AA', side: 'bottomRight',
+      subs: ['人事 60%', '設備 20%', '行銷 20%'] },
   ];
+
+  const branchW = 140, branchH = 50;
+  const subW = 110, subH = 32, subGap = 8;
+
   branches.forEach((b) => {
-    // 一級分支
-    objs.push(_roundRect(b.x, b.y, 200, 60, b.name, b.color, b.stroke, 18));
+    // 一級分支節點
+    objs.push(_roundRect(b.x, b.y, branchW, branchH, b.name, b.color, b.stroke, 18));
     objs[objs.length - 1].fontWeight = 'bold';
-    // 連到中心
-    objs.push(_line(b.x + 100, b.y + 30, 600, 400, b.stroke));
-    // 二級分支
-    b.subs.forEach((s) => {
-      // 計算二級節點位置（取決於一級節點位置）
-      const subX = b.x < 600 ? b.x - 160 : b.x + 220;
-      const subY = b.y + (s.y - 30);
-      objs.push(_roundRect(subX, subY, 140, 36, s.text, '#FFFFFF', b.stroke, 12));
-      // 連線
-      objs.push(_line(b.x + (b.x < 600 ? 0 : 200), b.y + 30, subX + (b.x < 600 ? 140 : 0), subY + 18, b.stroke));
+    // 中心連線
+    const branchCx = b.x + branchW / 2;
+    const branchCy = b.y + branchH / 2;
+    objs.push(_line(branchCx, branchCy, 600, 400, b.stroke));
+
+    // 二級子節點：左側分支放在分支「左邊」，右側分支放在分支「右邊」
+    // Y 軸依分支位置決定（上方分支往下排，下方分支往上排）
+    const isLeft = b.side === 'topLeft' || b.side === 'bottomLeft';
+    const isTop  = b.side === 'topLeft' || b.side === 'topRight';
+    const subX = isLeft ? b.x - subW - 30 : b.x + branchW + 30;
+    const subTotalH = b.subs.length * (subH + subGap) - subGap;
+    // 子節點區塊垂直置中對齊分支中心
+    const subY0 = b.y + branchH / 2 - subTotalH / 2;
+
+    b.subs.forEach((s, i) => {
+      const sy = subY0 + i * (subH + subGap);
+      objs.push(_roundRect(subX, sy, subW, subH, s, '#FFFFFF', b.stroke, 12));
+      // 子節點 → 一級分支：水平直線連接
+      const lineFromX = isLeft ? subX + subW : subX;
+      const lineToX   = isLeft ? b.x         : b.x + branchW;
+      objs.push(_line(lineFromX, sy + subH / 2, lineToX, branchCy, b.stroke));
     });
   });
   return objs;
@@ -692,7 +696,7 @@ function buildConcept5W1H() {
   const objs = [];
   const title = _rect(400, 30, 400, 50, '5W1H 分析法', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 中心
@@ -729,7 +733,7 @@ function buildGantt() {
   const objs = [];
   const title = _rect(400, 30, 400, 50, '專案甘特圖', 'transparent', 'transparent', 24);
   title.strokeEnabled = false; title.fillEnabled = false;
-  title.textColor = '#1F2937'; title.fontWeight = 'bold';
+  title.textColor = 'currentColor'; title.fontWeight = 'bold';
   objs.push(title);
 
   // 表頭欄位
