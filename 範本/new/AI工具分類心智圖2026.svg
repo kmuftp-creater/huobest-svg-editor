@@ -1,0 +1,185 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="2700" height="1500" viewBox="0 0 2700 1500">
+  <defs>
+    <style>
+      .bg {
+        fill: #fff6e6;
+      }
+
+      .centerBox {
+        fill: #ffffff;
+        stroke: #d8c7a3;
+        stroke-width: 4;
+      }
+
+      .centerTitle {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 48px;
+        font-weight: 700;
+        fill: #222222;
+      }
+
+      .centerSub {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 24px;
+        fill: #555555;
+      }
+
+      .card {
+        fill: #ffffff;
+        stroke-width: 4;
+      }
+
+      .cardTitle {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        fill: #222222;
+      }
+
+      .toolText {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 22px;
+        fill: #555555;
+      }
+
+      .descText {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 23px;
+        fill: #333333;
+      }
+
+      .line {
+        fill: none;
+        stroke-width: 7;
+        stroke-linecap: round;
+      }
+
+      .numText {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        fill: #ffffff;
+      }
+
+      .footer {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 20px;
+        fill: #777777;
+      }
+    </style>
+  </defs>
+
+  <!-- 背景 -->
+  <rect class="bg" x="0" y="0" width="2700" height="1500"/>
+
+  <!-- 中心主題 -->
+  <rect class="centerBox" x="1070" y="640" width="560" height="180" rx="28"/>
+  <text class="centerTitle" x="1350" y="715" text-anchor="middle">2026 AI 工具分類</text>
+  <text class="centerSub" x="1350" y="765" text-anchor="middle">依照用途與工作情境整理</text>
+
+  <!-- 分支線 -->
+  <path class="line" stroke="#f5a400" d="M1350 640 C1500 390, 1710 230, 1985 200"/>
+  <path class="line" stroke="#77c943" d="M1630 675 C1780 570, 1910 475, 2095 470"/>
+  <path class="line" stroke="#00aeef" d="M1630 735 C1790 745, 1930 790, 2105 860"/>
+  <path class="line" stroke="#ef3e36" d="M1560 820 C1680 1040, 1820 1210, 1995 1290"/>
+
+  <path class="line" stroke="#8e44ad" d="M1070 670 C870 470, 690 240, 605 200"/>
+  <path class="line" stroke="#f47c20" d="M1070 725 C850 715, 660 680, 645 660"/>
+  <path class="line" stroke="#34495e" d="M1070 760 C840 840, 660 900, 645 980"/>
+  <path class="line" stroke="#27ae60" d="M1090 810 C870 1020, 690 1210, 645 1290"/>
+
+  <!-- 1 通用型 AI 助理 -->
+  <circle cx="1985" cy="200" r="28" fill="#f5a400"/>
+  <text class="numText" x="1985" y="209" text-anchor="middle">1</text>
+
+  <rect class="card" x="2035" y="70" width="560" height="260" rx="24" stroke="#f5a400"/>
+  <text class="cardTitle" x="2075" y="130">通用型 AI 助理</text>
+  <text class="toolText" x="2075" y="172">ChatGPT、Claude、Gemini</text>
+  <text class="descText" x="2075" y="220">用途：問答、寫作、摘要、企劃</text>
+  <text class="descText" x="2075" y="262">適合：學生、創作者、上班族</text>
+  <text class="descText" x="2075" y="304">特點：多模態與長上下文能力</text>
+
+  <!-- 2 AI 搜尋與研究 -->
+  <circle cx="2095" cy="470" r="28" fill="#77c943"/>
+  <text class="numText" x="2095" y="479" text-anchor="middle">2</text>
+
+  <rect class="card" x="2145" y="350" width="500" height="240" rx="24" stroke="#77c943"/>
+  <text class="cardTitle" x="2185" y="408">AI 搜尋與研究</text>
+  <text class="toolText" x="2185" y="450">Perplexity、NotebookLM</text>
+  <text class="descText" x="2185" y="498">用途：查資料、找來源、讀論文</text>
+  <text class="descText" x="2185" y="540">適合：研究者、學生、知識工作者</text>
+  <text class="descText" x="2185" y="582">特點：重視引用來源與資料整理</text>
+
+  <!-- 3 圖像與設計 -->
+  <circle cx="2105" cy="860" r="28" fill="#00aeef"/>
+  <text class="numText" x="2105" y="869" text-anchor="middle">3</text>
+
+  <rect class="card" x="2155" y="730" width="500" height="260" rx="24" stroke="#00aeef"/>
+  <text class="cardTitle" x="2195" y="790">圖像與設計</text>
+  <text class="toolText" x="2195" y="832">Midjourney、Firefly、Canva AI</text>
+  <text class="descText" x="2195" y="880">用途：海報、插畫、商品圖</text>
+  <text class="descText" x="2195" y="922">適合：設計師、行銷、電商</text>
+  <text class="descText" x="2195" y="964">特點：快速生成品牌視覺素材</text>
+
+  <!-- 4 影音生成 -->
+  <circle cx="1995" cy="1290" r="28" fill="#ef3e36"/>
+  <text class="numText" x="1995" y="1299" text-anchor="middle">4</text>
+
+  <rect class="card" x="2045" y="1160" width="560" height="260" rx="24" stroke="#ef3e36"/>
+  <text class="cardTitle" x="2085" y="1220">影音生成</text>
+  <text class="toolText" x="2085" y="1262">Runway、Sora、Kling、Suno</text>
+  <text class="descText" x="2085" y="1310">用途：影片、配音、音樂、廣告短片</text>
+  <text class="descText" x="2085" y="1352">適合：YouTuber、短影音、品牌行銷</text>
+  <text class="descText" x="2085" y="1394">特點：降低影音製作與剪輯門檻</text>
+
+  <!-- 5 程式開發 -->
+  <circle cx="605" cy="200" r="28" fill="#8e44ad"/>
+  <text class="numText" x="605" y="209" text-anchor="middle">5</text>
+
+  <rect class="card" x="80" y="70" width="475" height="260" rx="24" stroke="#8e44ad"/>
+  <text class="cardTitle" x="120" y="130">程式開發</text>
+  <text class="toolText" x="120" y="172">GitHub Copilot、Cursor</text>
+  <text class="toolText" x="120" y="210">Windsurf</text>
+  <text class="descText" x="120" y="258">用途：寫程式、除錯、重構</text>
+  <text class="descText" x="120" y="300">特點：從補程式進化到專案協作</text>
+
+  <!-- 6 辦公與知識管理 -->
+  <circle cx="645" cy="660" r="28" fill="#f47c20"/>
+  <text class="numText" x="645" y="669" text-anchor="middle">6</text>
+
+  <rect class="card" x="80" y="520" width="515" height="280" rx="24" stroke="#f47c20"/>
+  <text class="cardTitle" x="120" y="585">辦公與知識管理</text>
+  <text class="toolText" x="120" y="627">Notion AI、Microsoft 365 Copilot</text>
+  <text class="toolText" x="120" y="665">Google Workspace with Gemini</text>
+  <text class="descText" x="120" y="715">用途：會議紀錄、文件、簡報</text>
+  <text class="descText" x="120" y="757">適合：PM、行政、業務、管理者</text>
+
+  <!-- 8 數據分析與商業決策 -->
+  <circle cx="645" cy="980" r="28" fill="#34495e"/>
+  <text class="numText" x="645" y="989" text-anchor="middle">8</text>
+
+  <rect class="card" x="80" y="850" width="515" height="260" rx="24" stroke="#34495e"/>
+  <text class="cardTitle" x="120" y="910">數據分析與商業決策</text>
+  <text class="toolText" x="120" y="952">ChatGPT、Tableau AI</text>
+  <text class="toolText" x="120" y="990">Power BI Copilot</text>
+  <text class="descText" x="120" y="1038">用途：整理資料、圖表、洞察</text>
+  <text class="descText" x="120" y="1080">特點：把資料轉成可執行決策</text>
+
+  <!-- 7 自動化與 AI Agent -->
+  <circle cx="645" cy="1290" r="28" fill="#27ae60"/>
+  <text class="numText" x="645" y="1299" text-anchor="middle">7</text>
+
+  <rect class="card" x="80" y="1150" width="515" height="280" rx="24" stroke="#27ae60"/>
+  <text class="cardTitle" x="120" y="1215">自動化與 AI Agent</text>
+  <text class="toolText" x="120" y="1257">Zapier、Make、n8n、AI Agents</text>
+  <text class="descText" x="120" y="1307">用途：串接工具、排程、自動任務</text>
+  <text class="descText" x="120" y="1349">適合：營運、客服、創業者、行銷</text>
+  <text class="descText" x="120" y="1391">特點：多步驟代理流程</text>
+
+  <!-- 小標籤 -->
+  <rect x="1130" y="860" width="440" height="58" rx="18" fill="#fff0d6" stroke="#e3c783" stroke-width="2"/>
+  <text class="centerSub" x="1350" y="898" text-anchor="middle">2026 趨勢：多模態、自動化、AI Agent</text>
+
+  <!-- 頁尾 -->
+  <text class="footer" x="1350" y="1470" text-anchor="middle">AI 工具分類心智圖｜2026 SVG 版</text>
+</svg>

@@ -15,10 +15,16 @@ const path = require('path');
 const SRC_DIR = path.join(__dirname, '範本', 'new');
 const OUT_FILE = path.join(__dirname, 'templates-data.js');
 
+// 跳過清單：保留檔案於資料夾備份，但不收錄至範本庫
+const SKIP_FILES = new Set([
+  'AI工具分類心智圖.svg',   // 已被 2026 版取代（依使用者要求）
+]);
+
 // 範本中文化名稱與分類對應表
 const META = {
   '10個高雄旅遊景點推薦_右側心智圖頭尾修正版_SVG.svg': { name: '高雄景點心智圖', category: '心智圖' },
   'AI工具分類心智圖.svg': { name: 'AI 工具分類', category: '心智圖' },
+  'AI工具分類心智圖2026.svg': { name: 'AI 工具分類 (2026)', category: '心智圖' },
   'PMP 十大知識領域心智圖_不裁切版 SVG.svg': { name: 'PMP 十大領域', category: '心智圖' },
   '商業模式畫布分析圖 SVG.svg': { name: '商業模式畫布', category: '矩陣' },
   '專案成員結構圖 SVG.svg': { name: '專案成員結構', category: '結構' },
@@ -99,7 +105,10 @@ function extractSvg(content) {
 }
 
 function build() {
-  const files = fs.readdirSync(SRC_DIR).filter((f) => f.endsWith('.svg')).sort();
+  const files = fs.readdirSync(SRC_DIR)
+    .filter((f) => f.endsWith('.svg'))
+    .filter((f) => !SKIP_FILES.has(f))
+    .sort();
   const templates = files.map((filename, index) => {
     const fullPath = path.join(SRC_DIR, filename);
     const content = fs.readFileSync(fullPath, 'utf8');

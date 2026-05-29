@@ -1,104 +1,180 @@
-﻿<svg width="1800" height="1100" viewBox="0 0 1800 1100" xmlns="http://www.w3.org/2000/svg">
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="2500" height="1400" viewBox="0 0 2500 1400">
   <defs>
     <style>
-      .bg { fill: #fff6e3; }
-      .centerBox { fill: #ffffff; stroke: #d8c7a3; stroke-width: 3; }
-      .title { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 34px; font-weight: 700; fill: #222; }
-      .subtitle { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 17px; fill: #555; }
-      .nodeTitle { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 23px; font-weight: 700; fill: #222; }
-      .nodeSub { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 15px; fill: #555; }
-      .desc { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 16px; fill: #333; }
-      .small { font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; font-size: 14px; fill: #666; }
-      .line { fill: none; stroke-width: 5; stroke-linecap: round; }
-      .box { fill: #ffffff; stroke-width: 2.5; }
-      .info { fill: #ffffff; stroke-width: 2; }
-      .numText { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; fill: white; }
+      .bg {
+        fill: #fff6e6;
+      }
+
+      .centerBox {
+        fill: #ffffff;
+        stroke: #d8c7a3;
+        stroke-width: 4;
+      }
+
+      .centerTitle {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 46px;
+        font-weight: 700;
+        fill: #222222;
+      }
+
+      .centerSub {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 24px;
+        fill: #555555;
+      }
+
+      .card {
+        fill: #ffffff;
+        stroke-width: 4;
+      }
+
+      .cardTitle {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        fill: #222222;
+      }
+
+      .toolText {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 22px;
+        fill: #555555;
+      }
+
+      .descText {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 23px;
+        fill: #333333;
+      }
+
+      .line {
+        fill: none;
+        stroke-width: 7;
+        stroke-linecap: round;
+      }
+
+      .num {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        fill: #ffffff;
+      }
+
+      .footer {
+        font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        font-size: 20px;
+        fill: #777777;
+      }
     </style>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="1800" height="1100"/>
+  <!-- 背景 -->
+  <rect class="bg" x="0" y="0" width="2500" height="1400"/>
 
-  <rect class="centerBox" x="700" y="470" width="400" height="120" rx="18"/>
-  <text class="title" x="900" y="525" text-anchor="middle">AI 工具分類</text>
-  <text class="subtitle" x="900" y="560" text-anchor="middle">依照用途與工作情境整理</text>
+  <!-- 中心節點 -->
+  <rect class="centerBox" x="995" y="610" width="510" height="170" rx="26"/>
+  <text class="centerTitle" x="1250" y="685" text-anchor="middle">AI 工具分類</text>
+  <text class="centerSub" x="1250" y="735" text-anchor="middle">依照用途與工作情境整理</text>
 
-  <path class="line" stroke="#f5a400" d="M1100 500 C1240 360, 1320 170, 1440 120"/>
-  <path class="line" stroke="#77c943" d="M1100 525 C1260 455, 1340 360, 1460 310"/>
-  <path class="line" stroke="#00aeef" d="M1100 550 C1260 610, 1350 700, 1460 720"/>
-  <path class="line" stroke="#ef3e36" d="M1070 590 C1200 760, 1320 910, 1440 940"/>
-  <path class="line" stroke="#8e44ad" d="M700 500 C560 350, 430 180, 300 130"/>
-  <path class="line" stroke="#f47c20" d="M700 545 C540 560, 420 620, 300 640"/>
-  <path class="line" stroke="#27ae60" d="M730 590 C600 770, 450 920, 300 950"/>
+  <!-- 分支線 -->
+  <path class="line" stroke="#f5a400" d="M1250 610 C1370 390, 1580 230, 1810 190"/>
+  <path class="line" stroke="#77c943" d="M1505 660 C1660 570, 1790 500, 1930 470"/>
+  <path class="line" stroke="#00aeef" d="M1505 725 C1660 790, 1790 875, 1930 930"/>
+  <path class="line" stroke="#ef3e36" d="M1320 780 C1400 1000, 1580 1160, 1810 1200"/>
 
-  <circle cx="1440" cy="120" r="18" fill="#f5a400"/>
-  <text class="numText" x="1440" y="126" text-anchor="middle">1</text>
-  <rect class="box" x="1470" y="70" width="280" height="90" rx="12" stroke="#f5a400"/>
-  <text class="nodeTitle" x="1495" y="110">文字生成 / 對話</text>
-  <text class="nodeSub" x="1495" y="140">ChatGPT、Claude、Gemini</text>
-  <rect class="info" x="1320" y="190" width="430" height="120" rx="12" stroke="#f5a400"/>
-  <text class="desc" x="1345" y="225">用途：寫文案、摘要、翻譯、問答</text>
-  <text class="desc" x="1345" y="255">適合：學生、創作者、上班族</text>
-  <text class="desc" x="1345" y="285">特點：自然語言互動，快速產出初稿</text>
+  <path class="line" stroke="#8e44ad" d="M995 650 C800 470, 720 250, 650 220"/>
+  <path class="line" stroke="#f47c20" d="M995 700 C780 710, 720 720, 670 745"/>
+  <path class="line" stroke="#27ae60" d="M1050 780 C850 1010, 720 1170, 730 1215"/>
 
-  <circle cx="1460" cy="310" r="18" fill="#77c943"/>
-  <text class="numText" x="1460" y="316" text-anchor="middle">2</text>
-  <rect class="box" x="1490" y="265" width="260" height="85" rx="12" stroke="#77c943"/>
-  <text class="nodeTitle" x="1515" y="305">圖片生成</text>
-  <text class="nodeSub" x="1515" y="332">Midjourney、DALL·E</text>
-  <rect class="info" x="1320" y="380" width="430" height="120" rx="12" stroke="#77c943"/>
-  <text class="desc" x="1345" y="415">用途：插畫、海報、角色、商品圖</text>
-  <text class="desc" x="1345" y="445">適合：設計師、行銷、內容創作者</text>
-  <text class="desc" x="1345" y="475">特點：用提示詞生成視覺素材</text>
+  <!-- 1 文字生成 / 對話 -->
+  <rect class="card" x="1855" y="95" width="500" height="230" rx="22" stroke="#f5a400"/>
+  <text class="cardTitle" x="1890" y="150">文字生成 / 對話</text>
+  <text class="toolText" x="1890" y="190">ChatGPT、Claude、Gemini</text>
+  <text class="descText" x="1890" y="235">用途：寫文案、摘要、翻譯、問答</text>
+  <text class="descText" x="1890" y="275">適合：學生、創作者、上班族</text>
+  <text class="descText" x="1890" y="315">特點：快速產出初稿與想法</text>
 
-  <circle cx="1460" cy="720" r="18" fill="#00aeef"/>
-  <text class="numText" x="1460" y="726" text-anchor="middle">3</text>
-  <rect class="box" x="1490" y="675" width="260" height="85" rx="12" stroke="#00aeef"/>
-  <text class="nodeTitle" x="1515" y="715">影音生成</text>
-  <text class="nodeSub" x="1515" y="742">Runway、Suno、ElevenLabs</text>
-  <rect class="info" x="1320" y="790" width="430" height="120" rx="12" stroke="#00aeef"/>
-  <text class="desc" x="1345" y="825">用途：影片、配音、音樂、字幕</text>
-  <text class="desc" x="1345" y="855">適合：YouTuber、短影音創作者</text>
-  <text class="desc" x="1345" y="885">特點：降低影音製作門檻</text>
+  <!-- 2 圖片生成 -->
+  <rect class="card" x="1975" y="375" width="500" height="230" rx="22" stroke="#77c943"/>
+  <text class="cardTitle" x="2010" y="430">圖片生成</text>
+  <text class="toolText" x="2010" y="470">Midjourney、DALL·E</text>
+  <text class="descText" x="2010" y="515">用途：插畫、海報、角色、商品圖</text>
+  <text class="descText" x="2010" y="555">適合：設計師、行銷、內容創作者</text>
+  <text class="descText" x="2010" y="595">特點：用提示詞生成視覺素材</text>
 
-  <circle cx="1440" cy="940" r="18" fill="#ef3e36"/>
-  <text class="numText" x="1440" y="946" text-anchor="middle">4</text>
-  <rect class="box" x="1470" y="890" width="280" height="90" rx="12" stroke="#ef3e36"/>
-  <text class="nodeTitle" x="1495" y="930">生產力 / 辦公</text>
-  <text class="nodeSub" x="1495" y="958">Notion AI、Microsoft Copilot</text>
-  <rect class="info" x="1010" y="870" width="400" height="120" rx="12" stroke="#ef3e36"/>
-  <text class="desc" x="1035" y="905">用途：會議紀錄、文件整理、簡報</text>
-  <text class="desc" x="1035" y="935">適合：行政、PM、業務、管理者</text>
-  <text class="desc" x="1035" y="965">特點：整合工作流程與知識管理</text>
+  <!-- 3 影音生成 -->
+  <rect class="card" x="1975" y="835" width="500" height="230" rx="22" stroke="#00aeef"/>
+  <text class="cardTitle" x="2010" y="890">影音生成</text>
+  <text class="toolText" x="2010" y="930">Runway、Suno、ElevenLabs</text>
+  <text class="descText" x="2010" y="975">用途：影片、配音、音樂、字幕</text>
+  <text class="descText" x="2010" y="1015">適合：YouTuber、短影音創作者</text>
+  <text class="descText" x="2010" y="1055">特點：降低影音製作門檻</text>
 
-  <circle cx="300" cy="130" r="18" fill="#8e44ad"/>
-  <text class="numText" x="300" y="136" text-anchor="middle">5</text>
-  <rect class="box" x="50" y="80" width="220" height="90" rx="12" stroke="#8e44ad"/>
-  <text class="nodeTitle" x="80" y="120">程式開發</text>
-  <text class="nodeSub" x="80" y="148">GitHub Copilot</text>
-  <rect class="info" x="50" y="210" width="430" height="120" rx="12" stroke="#8e44ad"/>
-  <text class="desc" x="75" y="245">用途：補全程式、除錯、產生測試</text>
-  <text class="desc" x="75" y="275">適合：工程師、資料分析師、學生</text>
-  <text class="desc" x="75" y="305">特點：提升開發速度與學習效率</text>
+  <!-- 4 生產力 / 辦公 -->
+  <rect class="card" x="1855" y="1095" width="540" height="250" rx="22" stroke="#ef3e36"/>
+  <text class="cardTitle" x="1890" y="1150">生產力 / 辦公</text>
+  <text class="toolText" x="1890" y="1190">Notion AI、Microsoft Copilot</text>
+  <text class="descText" x="1890" y="1235">用途：會議紀錄、文件整理、簡報</text>
+  <text class="descText" x="1890" y="1275">適合：行政、PM、業務、管理者</text>
+  <text class="descText" x="1890" y="1315">特點：整合工作流程與知識管理</text>
 
-  <circle cx="300" cy="640" r="18" fill="#f47c20"/>
-  <text class="numText" x="300" y="646" text-anchor="middle">6</text>
-  <rect class="box" x="50" y="590" width="220" height="90" rx="12" stroke="#f47c20"/>
-  <text class="nodeTitle" x="80" y="630">資料分析</text>
-  <text class="nodeSub" x="80" y="658">ChatGPT、Tableau AI</text>
-  <rect class="info" x="50" y="720" width="430" height="120" rx="12" stroke="#f47c20"/>
-  <text class="desc" x="75" y="755">用途：整理資料、製作圖表、找洞察</text>
-  <text class="desc" x="75" y="785">適合：行銷、營運、財務、研究人員</text>
-  <text class="desc" x="75" y="815">特點：把資料轉成可理解的決策資訊</text>
+  <!-- 5 程式開發 -->
+  <rect class="card" x="65" y="95" width="540" height="250" rx="22" stroke="#8e44ad"/>
+  <text class="cardTitle" x="100" y="150">程式開發</text>
+  <text class="toolText" x="100" y="190">GitHub Copilot</text>
+  <text class="descText" x="100" y="235">用途：補全程式、除錯、產生測試</text>
+  <text class="descText" x="100" y="275">適合：工程師、資料分析師、學生</text>
+  <text class="descText" x="100" y="315">特點：提升開發速度與學習效率</text>
 
-  <circle cx="300" cy="950" r="18" fill="#27ae60"/>
-  <text class="numText" x="300" y="956" text-anchor="middle">7</text>
-  <rect class="box" x="50" y="900" width="260" height="90" rx="12" stroke="#27ae60"/>
-  <text class="nodeTitle" x="80" y="940">自動化 / 流程整合</text>
-  <text class="nodeSub" x="80" y="968">Zapier、Make、AI Agent</text>
-  <rect class="info" x="350" y="900" width="430" height="120" rx="12" stroke="#27ae60"/>
-  <text class="desc" x="375" y="935">用途：串接工具、排程、重複任務自動化</text>
-  <text class="desc" x="375" y="965">適合：創業者、營運、客服、行銷</text>
-  <text class="desc" x="375" y="995">特點：節省時間，讓系統自動處理流程</text>
+  <!-- 6 資料分析 -->
+  <rect class="card" x="65" y="610" width="560" height="270" rx="22" stroke="#f47c20"/>
+  <text class="cardTitle" x="100" y="665">資料分析</text>
+  <text class="toolText" x="100" y="705">ChatGPT、Tableau AI</text>
+  <text class="descText" x="100" y="750">用途：整理資料、製作圖表、找洞察</text>
+  <text class="descText" x="100" y="790">適合：行銷、營運、財務、研究人員</text>
+  <text class="descText" x="100" y="830">特點：把資料轉成決策資訊</text>
 
-  <text class="small" x="900" y="1060" text-anchor="middle">AI 工具分類心智圖｜修正版：已加大間距，避免文字與節點重疊</text>
+  <!-- 7 自動化 / 流程整合 -->
+  <rect class="card" x="65" y="1080" width="620" height="270" rx="22" stroke="#27ae60"/>
+  <text class="cardTitle" x="100" y="1135">自動化 / 流程整合</text>
+  <text class="toolText" x="100" y="1175">Zapier、Make、AI Agent</text>
+  <text class="descText" x="100" y="1220">用途：串接工具、排程、重複任務自動化</text>
+  <text class="descText" x="100" y="1260">適合：創業者、營運、客服、行銷</text>
+  <text class="descText" x="100" y="1300">特點：節省時間，讓系統自動處理流程</text>
+
+  <!-- 編號圓點：最後繪製，避免被卡片蓋住 -->
+
+  <!-- 右側編號 -->
+  <circle cx="1810" cy="190" r="26" fill="#f5a400"/>
+  <text class="num" x="1810" y="199" text-anchor="middle">1</text>
+
+  <circle cx="1930" cy="470" r="26" fill="#77c943"/>
+  <text class="num" x="1930" y="479" text-anchor="middle">2</text>
+
+  <circle cx="1930" cy="930" r="26" fill="#00aeef"/>
+  <text class="num" x="1930" y="939" text-anchor="middle">3</text>
+
+  <circle cx="1810" cy="1200" r="26" fill="#ef3e36"/>
+  <text class="num" x="1810" y="1209" text-anchor="middle">4</text>
+
+  <!-- 左側編號 -->
+  <circle cx="650" cy="220" r="26" fill="#8e44ad"/>
+  <text class="num" x="650" y="229" text-anchor="middle">5</text>
+
+  <circle cx="670" cy="745" r="26" fill="#f47c20"/>
+  <text class="num" x="670" y="754" text-anchor="middle">6</text>
+
+  <circle cx="730" cy="1215" r="26" fill="#27ae60"/>
+  <text class="num" x="730" y="1224" text-anchor="middle">7</text>
+
+  <!-- 裝飾點 -->
+  <circle cx="820" cy="210" r="8" fill="#f5a400" opacity="0.35"/>
+  <circle cx="1680" cy="345" r="8" fill="#77c943" opacity="0.35"/>
+  <circle cx="1680" cy="780" r="8" fill="#00aeef" opacity="0.35"/>
+  <circle cx="820" cy="1160" r="8" fill="#27ae60" opacity="0.35"/>
+  <circle cx="675" cy="445" r="8" fill="#8e44ad" opacity="0.35"/>
+
+  <!-- 頁尾 -->
+  <text class="footer" x="1250" y="1370" text-anchor="middle">AI 工具分類心智圖｜2025 SVG 版</text>
 </svg>
