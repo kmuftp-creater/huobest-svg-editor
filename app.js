@@ -2983,24 +2983,52 @@
   });
 
   // ====== 匯出 ======
-  function buildExportSvg() {
-    const w = 1200, h = 800;
+  // opts: { region: 'canvas'|'content', bg: 'white'|'transparent' }
+  function buildExportSvg(opts) {
+    opts = opts || {};
+    let vbX = 0, vbY = 0, w = CANVAS_W, h = CANVAS_H;
+    if (opts.region === 'content') {
+      const bb = getContentBBox();
+      if (bb) { vbX = bb.x; vbY = bb.y; w = bb.w; h = bb.h; }
+    }
     const svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('xmlns', SVG_NS);
     svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
     svg.setAttribute('width', w); svg.setAttribute('height', h);
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const bg = document.createElementNS(SVG_NS, 'rect');
-    bg.setAttribute('width', w); bg.setAttribute('height', h); bg.setAttribute('fill', '#ffffff');
-    svg.appendChild(bg);
+    svg.setAttribute('viewBox', `${vbX} ${vbY} ${w} ${h}`);
+    if (opts.bg !== 'transparent') {
+      const bg = document.createElementNS(SVG_NS, 'rect');
+      bg.setAttribute('x', vbX); bg.setAttribute('y', vbY);
+      bg.setAttribute('width', w); bg.setAttribute('height', h);
+      bg.setAttribute('fill', '#ffffff');
+      svg.appendChild(bg);
+    }
     state.objects.forEach((o) => {
       const el = renderObject(o);
       if (el) svg.appendChild(el);
     });
-    return svg;
+    return { svg, x: vbX, y: vbY, w, h };
+  }
+
+  // 計算所有物件的合併邊界框（含 8px 邊距）
+  function getContentBBox() {
+    if (state.objects.length === 0) return null;
+    let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+    state.objects.forEach((o) => {
+      x1 = Math.min(x1, o.x);
+      y1 = Math.min(y1, o.y);
+      x2 = Math.max(x2, o.x + o.w);
+      y2 = Math.max(y2, o.y + o.h);
+    });
+    const pad = 8;
+    x1 = Math.max(0, x1 - pad);
+    y1 = Math.max(0, y1 - pad);
+    x2 = x2 + pad;
+    y2 = y2 + pad;
+    return { x: x1, y: y1, w: Math.max(1, x2 - x1), h: Math.max(1, y2 - y1) };
   }
   function exportSvg() {
-    const svg = buildExportSvg();
+    const { svg } = buildExportSvg({ region: 'canvas', bg: 'white' });
     const str = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(svg);
     const blob = new Blob([str], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
@@ -3010,29 +3038,147 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     statusInfo.textContent = '已匯出 SVG';
   }
-  function exportPng() {
-    const svg = buildExportSvg();
+
+  // 依設定匯出 PNG
+  // settings: { region, bg, outW, outH }
+  function exportPngWith(settings) {
+    const { svg, w: baseW, h: baseH } = buildExportSvg({ region: settings.region, bg: settings.bg });
+    const outW = Math.max(1, Math.round(settings.outW));
+    const outH = Math.max(1, Math.round(settings.outH));
     const str = new XMLSerializer().serializeToString(svg);
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = 1200; canvas.height = 800;
+      canvas.width = outW; canvas.height = outH;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 1200, 800);
-      ctx.drawImage(img, 0, 0);
+      if (settings.bg !== 'transparent') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, outW, outH);
+      }
+      ctx.drawImage(img, 0, 0, outW, outH);
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `design-${Date.now()}.png`;
+        a.href = url; a.download = `design-${outW}x${outH}-${Date.now()}.png`;
         a.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-        statusInfo.textContent = '已匯出 PNG';
+        statusInfo.textContent = `已匯出 PNG（${outW} × ${outH} px）`;
       }, 'image/png');
     };
+    img.onerror = () => { statusInfo.textContent = 'PNG 匯出失敗'; };
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(str)));
   }
+
+  // ====== 匯出 PNG 設定對話框 ======
+  const exportModal = $('#modal-export');
+  const exportState = { region: 'canvas', scale: 2, bg: 'white' };
+
+  // 取得目前基準尺寸（依 region）
+  function getExportBaseSize() {
+    if (exportState.region === 'content') {
+      const bb = getContentBBox();
+      if (bb) return { w: Math.round(bb.w), h: Math.round(bb.h) };
+    }
+    return { w: CANVAS_W, h: CANVAS_H };
+  }
+
+  // 依目前設定計算輸出尺寸，並更新預覽文字
+  function updateExportPreview() {
+    const info = $('#export-preview-info');
+    let outW, outH;
+    if (exportState.scale === 'custom') {
+      outW = parseInt($('#export-w').value, 10) || 0;
+      outH = parseInt($('#export-h').value, 10) || 0;
+    } else {
+      const base = getExportBaseSize();
+      outW = base.w * exportState.scale;
+      outH = base.h * exportState.scale;
+    }
+    exportState.outW = outW;
+    exportState.outH = outH;
+    if (info) info.textContent = `輸出尺寸：${Math.round(outW)} × ${Math.round(outH)} px`;
+  }
+
+  // 當切到自訂 / 切換範圍時，用基準尺寸 × 當前倍率填入自訂框
+  function syncCustomInputsFromScale() {
+    const base = getExportBaseSize();
+    const mult = (typeof exportState.scale === 'number') ? exportState.scale : 2;
+    $('#export-w').value = base.w * mult;
+    $('#export-h').value = base.h * mult;
+  }
+
+  function openExportModal() {
+    if (state.objects.length === 0) {
+      statusInfo.textContent = '畫布為空，沒有可匯出的內容';
+      return;
+    }
+    syncCustomInputsFromScale();
+    updateExportPreview();
+    exportModal.classList.add('open');
+  }
+  function closeExportModal() { exportModal.classList.remove('open'); }
+
+  $('#btn-export-png').onclick = openExportModal;
+  $('#btn-export-close').onclick = closeExportModal;
+  $('#btn-export-cancel').onclick = closeExportModal;
+  $('#modal-export [data-close-export]').onclick = closeExportModal;
+
+  // 範圍選擇
+  $$('input[name="export-range"]').forEach((r) => r.addEventListener('change', (e) => {
+    exportState.region = e.target.value;
+    if (exportState.scale === 'custom') syncCustomInputsFromScale();
+    updateExportPreview();
+  }));
+  // 背景選擇
+  $$('input[name="export-bg"]').forEach((r) => r.addEventListener('change', (e) => {
+    exportState.bg = e.target.value;
+  }));
+  // 倍率按鈕
+  $$('.scale-btn').forEach((b) => b.addEventListener('click', () => {
+    $$('.scale-btn').forEach((x) => x.classList.remove('active'));
+    b.classList.add('active');
+    const val = b.dataset.scale;
+    if (val === 'custom') {
+      exportState.scale = 'custom';
+      $('#export-custom-row').style.display = '';
+      syncCustomInputsFromScale();
+    } else {
+      exportState.scale = parseInt(val, 10);
+      $('#export-custom-row').style.display = 'none';
+    }
+    updateExportPreview();
+  }));
+  // 自訂寬高（鎖定比例）
+  const exportW = $('#export-w');
+  const exportH = $('#export-h');
+  exportW.addEventListener('input', () => {
+    if ($('#export-ratio-lock').checked) {
+      const base = getExportBaseSize();
+      const ratio = base.h / base.w;
+      exportH.value = Math.round((parseInt(exportW.value, 10) || 0) * ratio);
+    }
+    updateExportPreview();
+  });
+  exportH.addEventListener('input', () => {
+    if ($('#export-ratio-lock').checked) {
+      const base = getExportBaseSize();
+      const ratio = base.w / base.h;
+      exportW.value = Math.round((parseInt(exportH.value, 10) || 0) * ratio);
+    }
+    updateExportPreview();
+  });
+  // 確認匯出
+  $('#btn-export-confirm').onclick = () => {
+    updateExportPreview();
+    if (!exportState.outW || !exportState.outH) {
+      statusInfo.textContent = '請輸入有效的尺寸';
+      return;
+    }
+    exportPngWith({ region: exportState.region, bg: exportState.bg, outW: exportState.outW, outH: exportState.outH });
+    closeExportModal();
+  };
+
   $('#btn-export-svg').onclick = exportSvg;
-  $('#btn-export-png').onclick = exportPng;
 
   // ====== 自訂範本管理（localStorage 持久化）======
   const CUSTOM_TPL_KEY = 'svgeditor-custom-templates';
@@ -3056,7 +3202,7 @@
 
   // 產生目前畫布的縮圖 SVG 字串（簡化版，僅供範本面板預覽）
   function buildThumbSvg() {
-    const svg = buildExportSvg(); // 既有匯出函式
+    const { svg } = buildExportSvg({ region: 'canvas', bg: 'white' });
     // 取出內層 innerHTML 作為 thumb 內容
     return svg.innerHTML;
   }

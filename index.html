@@ -501,6 +501,7 @@
           <li>支援將 SVG / PNG 直接拖曳至應用程式視窗匯入。</li>
           <li>匯入多檔時，系統自動以 item-01、item-02 規則編號。</li>
           <li>可匯出為 SVG（保留向量資訊）或 PNG（高品質點陣圖）。</li>
+          <li>匯出 PNG 時可選擇輸出範圍（整個畫布 / 依內容裁切）、解析度倍率（1× ~ 4× 或自訂尺寸）與背景（白色 / 透明）。</li>
         </ul>
         <h3>節點操作（自動連線）</h3>
         <ul>
@@ -617,12 +618,68 @@
     </div>
   </div>
 
+  <!-- PNG 匯出設定 Modal -->
+  <div class="modal" id="modal-export" aria-hidden="true">
+    <div class="modal-backdrop" data-close-export></div>
+    <div class="modal-card modal-export-card">
+      <header>
+        <h2>匯出 PNG 設定</h2>
+        <button class="modal-close" id="btn-export-close">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="export-field">
+          <label>輸出範圍</label>
+          <div class="export-radio-group" id="export-range">
+            <label class="export-radio"><input type="radio" name="export-range" value="canvas" checked /><span>整個畫布（1200 × 800）</span></label>
+            <label class="export-radio"><input type="radio" name="export-range" value="content" /><span>依內容裁切（只輸出有物件的範圍）</span></label>
+          </div>
+        </div>
+
+        <div class="export-field">
+          <label>解析度倍率</label>
+          <div class="export-scale-group" id="export-scale">
+            <button class="scale-btn" data-scale="1">1×</button>
+            <button class="scale-btn active" data-scale="2">2×</button>
+            <button class="scale-btn" data-scale="3">3×</button>
+            <button class="scale-btn" data-scale="4">4×</button>
+            <button class="scale-btn" data-scale="custom">自訂</button>
+          </div>
+        </div>
+
+        <div class="export-field" id="export-custom-row" style="display:none">
+          <label>自訂尺寸</label>
+          <div class="export-custom-inputs">
+            <div class="num-input"><input type="number" id="export-w" min="1" max="10000" value="2400" /><span class="unit">px</span></div>
+            <span class="export-x">×</span>
+            <div class="num-input"><input type="number" id="export-h" min="1" max="10000" value="1600" /><span class="unit">px</span></div>
+            <label class="check" style="margin-left:8px"><input type="checkbox" id="export-ratio-lock" checked /><span>鎖定比例</span></label>
+          </div>
+        </div>
+
+        <div class="export-field">
+          <label>背景</label>
+          <div class="export-radio-group">
+            <label class="export-radio"><input type="radio" name="export-bg" value="white" checked /><span>白色</span></label>
+            <label class="export-radio"><input type="radio" name="export-bg" value="transparent" /><span>透明</span></label>
+          </div>
+        </div>
+
+        <div class="export-preview-info" id="export-preview-info">輸出尺寸：2400 × 1600 px</div>
+
+        <div class="export-actions">
+          <button class="btn-block" id="btn-export-cancel">取消</button>
+          <button class="btn-block primary-btn" id="btn-export-confirm">匯出 PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 隱藏的檔案選擇器 -->
   <input type="file" id="file-input" accept=".svg,image/svg+xml,.png,image/png" style="display:none" multiple />
 
   <!-- Footer -->
   <footer class="app-footer">
-    <span>系統版本 v0.7.1</span>
+    <span>系統版本 v0.8.0</span>
     <span class="dot">·</span>
     <span>©2026 <a href="https://huobest.com/" target="_blank" rel="noopener">霍家私塾</a></span>
   </footer>
