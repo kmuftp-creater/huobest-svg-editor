@@ -500,7 +500,63 @@ Root cause（兩層）：
 - 但複雜視覺佈局（心智圖、組織圖、概念圖）必須靠視覺工具
 - 解法：讓編輯器本身能儲存設計成果為範本
 
-## 十七、未實作但 PRD 提及（後續排程）
+## 十七、PNG 匯出自訂尺寸（v0.8.0）
+
+### 使用者反饋
+「匯出 png 時，檔案太小都只有 1200×800，要能夠自訂大小 或 照原尺寸輸出」
+
+### Root Cause
+`exportPng()` 的 canvas 寫死：
+```js
+canvas.width = 1200; canvas.height = 800;
+ctx.drawImage(img, 0, 0);   // 沒有指定目標尺寸
+```
+無論畫布內容多大、使用者需要多高解析度，輸出永遠是 1200×800。
+
+### 設計決策：對話框 vs 直接輸出
+兩個候選：
+- A. 頂部加一個「倍率」下拉選單，點匯出直接輸出
+- B. 點匯出跳出設定對話框
+
+選 B。理由：匯出需要同時決定「範圍 / 倍率 / 背景」三個維度，塞在工具列會太擠；而且匯出是低頻但高重要性的操作，多一次確認可避免輸出錯尺寸後重來。
+
+### 實作
+**參數化 buildExportSvg**
+```js
+function buildExportSvg(opts) {   // { region, bg }
+  let vbX=0, vbY=0, w=CANVAS_W, h=CANVAS_H;
+  if (opts.region === 'content') {
+    const bb = getContentBBox();
+    if (bb) { vbX=bb.x; vbY=bb.y; w=bb.w; h=bb.h; }
+  }
+  // viewBox 依 region 位移，背景依 bg 決定是否繪製
+  return { svg, x: vbX, y: vbY, w, h };
+}
+```
+回傳型別從 `svg` 改為 `{ svg, x, y, w, h }`，需同步更新三個呼叫端（exportSvg、exportPngWith、buildThumbSvg）。
+
+**高解析輸出的關鍵**
+```js
+ctx.drawImage(img, 0, 0, outW, outH);   // 指定目標尺寸，SVG 向量重新光柵化
+```
+因為來源是 SVG（向量），放大不會模糊 —— 瀏覽器會以目標解析度重新光柵化。這是 SVG → PNG 相較 PNG → PNG 放大的關鍵優勢。
+
+**依內容裁切**
+`getContentBBox()` 計算所有物件的合併邊界 + 8px 邊距，配合 viewBox 位移實現裁切。
+
+**鎖定比例**
+改寬度時依基準尺寸的長寬比自動算高度，反之亦然。
+
+### 驗證方式（本次改進）
+之前多次「盲寫→使用者回報→再修」的循環，這次改為**在瀏覽器實測後才提交**：
+- 起 Node 靜態伺服器 → 瀏覽器載入 → 套範本讓畫布有內容
+- 用 JS 攔截 `HTMLCanvasElement.prototype.toBlob` 讀取實際 canvas 尺寸
+- 逐一驗證：1×(1200×800) / 4×(4800×3200) / 內容裁切 3×(2568×1998) / 自訂鎖比例(3000→2000) / 透明底(alpha=0)
+- 全部通過才 commit
+
+**教訓延續**：v0.6.0 學到「複雜視覺佈局不能盲寫」，這次進一步落實「能實測的就實測，不要靠使用者當測試員」。
+
+## 十八、未實作但 PRD 提及（後續排程）
 - Google Fonts 雲端整合
 - PWA 離線支援
 - 路徑節點 > 1000 時切 Canvas 渲染
